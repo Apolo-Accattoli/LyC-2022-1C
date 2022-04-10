@@ -2,8 +2,11 @@
 .333
 333.
 .
-"@sdADaSjfla%dfg"
-"asldk fh sjf"
+"@sdADaSjfla%dfg"-/asdasdasd/-
+"solo un texto con espacios"
+"un texto con espacios y una comilla escapada \" debería funcionar"
+"un texto con todos los simbolos validos que se me ocurrieron deberia funcionar !~`@#$%^&*()_+=-[];',./|{}:<>?á"
+"un texto escapando algo inexistente, no debería funcionar \\\\\\ "
 -//-
 -/asdasdasd/-
 -/sadasdas2342343asdasd/-

@@ -16,8 +16,8 @@ int yyerror(void);
 DIGITO    		[0-9]
 LETRA     		[a-zA-Z]
 COMENTARIO		"-/"(.*?)"/-"
+CONS_STR  		\"([^\"\\]|\\\"|\\\\)*\"
 ID 		  		{LETRA}({LETRA}|{DIGITO})*
-CONS_STR  		\"([^\"\\\\]|\\\\.)*\"
 CONS_FLOAT 		{DIGITO}*.{DIGITO}+|{DIGITO}+.{DIGITO}*
 CONS_INT  		{DIGITO}+
 PUNTOCOMA 		";"
@@ -91,6 +91,9 @@ SIMBOLO       	[!|@|#|$|%|^|&|=|*|.|/|-|+|\"|" "|:|)|(|<|>]
 .				yyerror(); //Esta función está porque toma cualquier caracter que no se haya reconocido por una regla, y devuelve el error.
 
 %%
+
+//TODO: REVISAR!!!!!!
+//CONST_STR Antes estaba así: \"([^\"\\\\]|\\\\.)*\"
 
 int main(int argc,char *argv[])
 {

@@ -1,7 +1,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include <conio.h>
+
 FILE *yyin;
 char *yyltext;
 int yyval;
@@ -15,13 +15,15 @@ int yyerror(void);
 
 DIGITO    		[0-9]
 LETRA     		[a-zA-Z]
+COMENTARIO		"-/"(.*?)"/-"
 ID 		  		{LETRA}({LETRA}|{DIGITO})*
-CONS_STR  		\"({LETRA}|{DIGITO}|{SIMBOLO})*\"
-CONS_FLOAT 		{DIGITO}+.{DIGITO}+
+CONS_STR  		\"([^\"\\\\]|\\\\.)*\"
+CONS_FLOAT 		{DIGITO}*.{DIGITO}+|{DIGITO}+.{DIGITO}*
 CONS_INT  		{DIGITO}+
 PUNTOCOMA 		";"
 COMA  	  		","
-OPASIG   		":"
+OPASIG   		":="
+DOSPUNTOS   	":"
 OPSUMA   		"+"
 OPRESTA  		"-"
 OPMUL  			"*"
@@ -42,20 +44,25 @@ SIMBOLO       	[!|@|#|$|%|^|&|=|*|.|/|-|+|\"|" "|:|)|(|<|>]
 %%
 "DECVAR"    	printf("\nDECVAR  	(%s)",yytext);
 "ENDDEC"    	printf("\nENDDEC  	(%s)",yytext);
-"write"     	printf("\nWRITE   	(%s)",yytext);
-"Integer"   	printf("\nINTEGER 	(%s)",yytext);
-"Float"     	printf("\nFLOAT   	(%s)",yytext);
-		    
-"while"     	printf("\nWHILE   	(%s)",yytext);
-"for"       	printf("\nFOR     	(%s)",yytext);
-"if"        	printf("\nIF      	(%s)",yytext);
-"else"      	printf("\nELSE    	(%s)",yytext);
+"WRITE"     	printf("\nWRITE   	(%s)",yytext);
+"READ"     		printf("\nREAD   	(%s)",yytext);
+"INTEGER"   	printf("\nINTEGER 	(%s)",yytext);
+"FLOAT"     	printf("\nFLOAT   	(%s)",yytext);
+"STRING"   		printf("\nSTRING 	(%s)",yytext);
+"AND"     		printf("\nAND   	(%s)",yytext);
+"OR"     		printf("\nOR   		(%s)",yytext);
+"NOT"     		printf("\nNOT   	(%s)",yytext);	    
+"WHILE"     	printf("\nWHILE   	(%s)",yytext);
+"FOR"       	printf("\nFOR     	(%s)",yytext);
+"IF"        	printf("\nIF      	(%s)",yytext);
+"ELSE"      	printf("\nELSE    	(%s)",yytext);
+"ENDIF"      	printf("\nENDIF    	(%s)",yytext);
 		    
 {ID}    		printf("\nID 	    (%s)",yytext);
-
 {PUNTOCOMA}   	printf("\nPUNTOCOMA 	(%s)",yytext);
 {COMA}      	printf("\nCOMA    		(%s)",yytext);
 {OPASIG}   		printf("\nOPASIG 		(%s)",yytext);
+{DOSPUNTOS}    	printf("\nDOSPUNTOS 		(%s)",yytext);
 {OPSUMA}   		printf("\nOPSUMA 		(%s)",yytext);
 {OPRESTA}  		printf("\nOPRESTA  		(%s)",yytext);
 {OPMUL}  		printf("\nOPMULT  		(%s)",yytext);
@@ -73,7 +80,8 @@ SIMBOLO       	[!|@|#|$|%|^|&|=|*|.|/|-|+|\"|" "|:|)|(|<|>]
 {LLAVEC}   		printf("\nLLAVEC 		(%s)",yytext);
 {PARENTESISA}   printf("\nPARENTESISA 	(%s)",yytext);
 {PARENTESISC}   printf("\nPARENTESISAC 	(%s)",yytext);
-
+{SIMBOLO}   	printf("\nSimbolo 	(%s)",yytext);
+{COMENTARIO}   	printf("\nComentario 	(%s)",yytext);
 
 "\n\t"      
 "\r\n"

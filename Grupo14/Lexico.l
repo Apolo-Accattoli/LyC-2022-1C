@@ -1,12 +1,20 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+
+#define MAX_INT 65535
+#define MAX_STRING 30
+#define MAX_ID 15
+
 
 FILE *yyin;
 char *yyltext;
 int yyval;
 int yyerror(void);
-
+void validarString(char[]);
+void validarFloat(double);
+void validarInt(int);
 %}
 
 %option noyywrap
@@ -36,70 +44,87 @@ OPDISTINTO 		"!="
 OPIDENTICO 		"=="
 LLAVEA   		"{"
 LLAVEC   		"}"
+CORCHETEA   	"["
+CORCHETEC   	"]"
 PARENTESISA		"("
 PARENTESISC		")"
 SIMBOLO       	[!|@|#|$|%|^|&|=|*|.|/|-|+|\"|" "|:|)|(|<|>]
 
 
 %%
-"DECVAR"    	printf("\nDECVAR  	(%s)",yytext);
-"ENDDEC"    	printf("\nENDDEC  	(%s)",yytext);
-"WRITE"     	printf("\nWRITE   	(%s)",yytext);
-"READ"     		printf("\nREAD   	(%s)",yytext);
-"INTEGER"   	printf("\nINTEGER 	(%s)",yytext);
-"FLOAT"     	printf("\nFLOAT   	(%s)",yytext);
-"STRING"   		printf("\nSTRING 	(%s)",yytext);
-"AND"     		printf("\nAND   	(%s)",yytext);
-"OR"     		printf("\nOR   		(%s)",yytext);
-"NOT"     		printf("\nNOT   	(%s)",yytext);	    
-"WHILE"     	printf("\nWHILE   	(%s)",yytext);
-"FOR"       	printf("\nFOR     	(%s)",yytext);
-"IF"        	printf("\nIF      	(%s)",yytext);
-"ELSE"      	printf("\nELSE    	(%s)",yytext);
-"ENDIF"      	printf("\nENDIF    	(%s)",yytext);
-		    
-{ID}    		printf("\nID 	    (%s)",yytext);
-{PUNTOCOMA}   	printf("\nPUNTOCOMA 	(%s)",yytext);
-{COMA}      	printf("\nCOMA    		(%s)",yytext);
-{OPASIG}   		printf("\nOPASIG 		(%s)",yytext);
-{DOSPUNTOS}    	printf("\nDOSPUNTOS 		(%s)",yytext);
-{OPSUMA}   		printf("\nOPSUMA 		(%s)",yytext);
-{OPRESTA}  		printf("\nOPRESTA  		(%s)",yytext);
-{OPMUL}  		printf("\nOPMULT  		(%s)",yytext);
-{OPDIV}    		printf("\nOPDIV 		(%s)",yytext);
-{CONS_STR}		printf("\nCONS_STR 		(%s)",yytext);
-{CONS_INT}		printf("\nCONS_INT 		(%s)",yytext);
-{CONS_FLOAT}	printf("\nCONS_FLOAT	(%s)",yytext);    
-{OPMAYOR}  		printf("\nOPMAYOR		(%s)",yytext);
-{OPMENOR}  		printf("\nOPMENOR 		(%s)",yytext);
-{OPMENORIGUAL}  printf("\nOPMENORIGUAL 	(%s)",yytext);
-{OPMAYORIGUAL}  printf("\nOPMAYORIGUAL 	(%s)",yytext);
-{OPDISTINTO} 	printf("\nOPDISTINTO 	(%s)",yytext);
-{OPIDENTICO}	printf("\nOPIDENTICO 	(%s)",yytext);
-{LLAVEA}   		printf("\nLLAVEA 		(%s)",yytext); 
-{LLAVEC}   		printf("\nLLAVEC 		(%s)",yytext);
-{PARENTESISA}   printf("\nPARENTESISA 	(%s)",yytext);
-{PARENTESISC}   printf("\nPARENTESISAC 	(%s)",yytext);
-{SIMBOLO}   	printf("\nSimbolo 	(%s)",yytext);
-{COMENTARIO}   	printf("\nComentario 	(%s)",yytext);
+"DECVAR"    	{return DECVAR;}
+"ENDDEC"    	{return ENDDEC;}
+"WRITE"     	{return WRITE;}
+"READ"     		{return READ;}
+"INTEGER"   	{return INTEGER;}
+"FLOAT"     	{return FLOAT;}
+"STRING"   		{return STRING;}
+"AND"     		{return AND;}
+"OR"     		{return OR;}
+"NOT"     		{return NOT;}	    
+"WHILE"     	{return WHILE;}
+"ENDWHILE"     	{return ENDWHILE;}
+"FOR"       	{return FOR;}
+"ENDFOR"       	{return ENDFOR;}
+"IF"        	{return IF;}
+"ELSE"      	{return ELSE;}
+"ENDIF"      	{return ENDIF;}
+"BETWEEN"		{return BETWEEN;}
+"INLIST"		{return INLIST;}
+				    
+{ID}    		{
+					return ID;
+				}
+{PUNTOCOMA}   	{return PUNTOCOMA;}
+{COMA}      	{return COMA;}
+{OPASIG}   		{return OPASIG;}
+{DOSPUNTOS}    	{return DOSPUNTOS;}
+{OPSUMA}   		{return OPSUMA;}
+{OPRESTA}  		{return OPRESTA;}
+{OPMUL}  		{return OPMUL;}
+{OPDIV}    		{return OPDIV;}
+{CONS_STR}		{
+					validarString(yytext);
+					return CONS_STR;
+				}
+{CONS_INT}		{
+					int entero = atoi(yytext);
+					validarInt(entero);
+					return CONS_INT;
+				}
+{CONS_FLOAT}	{
+					int real = atof(yytext);
+					validarFloat(real);
+					return CONS_FLOAT;
+				}    
+{OPMAYOR}  		{return OPMAYOR;}
+{OPMENOR}  		{return OPMENOR;}
+{OPMENORIGUAL}  {return OPMENORIGUAL;}
+{OPMAYORIGUAL}  {return OPMAYORIGUAL;}
+{OPDISTINTO} 	{return OPDISTINTO;}
+{OPIDENTICO}	{return OPIDENTICO;}
+{LLAVEA}   		{return LLAVEA;} 
+{LLAVEC}   		{return LLAVEC;}
+{PARENTESISA}   {return PARENTESISA;}
+{PARENTESISC}   {return PARENTESISC;}
+{CORCHETEA}   {return CORCHETEA;}
+{CORCHETEC}   {return CORCHETEC;}
 
+{COMENTARIO}
 "\n\t"      
 "\r\n"
 "\n"
 "\t"
 " "
-.				yyerror(); //Esta función está porque toma cualquier caracter que no se haya reconocido por una regla, y devuelve el error.
+.				yyerror();
 
 %%
-
-//TODO: REVISAR!!!!!!
-//CONST_STR Antes estaba así: \"([^\"\\\\]|\\\\.)*\"
 
 int main(int argc,char *argv[])
 {
 	if ((yyin = fopen(argv[1], "rt")) == NULL)
 	{
-		printf("\nNo se puede abrir el archivo: %s\n", argv[1]);
+		{returnNo se puede abrir el archivo: %s\n", argv[1]);
 	}
 	else
 	{
@@ -107,6 +132,31 @@ int main(int argc,char *argv[])
 	}
 	fclose(yyin);
 	return 0;
+}
+
+void validarString(char cadena[])
+{
+    int largo = strlen(cadena);
+    if(largo > MAX_STRING)
+    {
+        printf("Error: Rango de string excedido en linea %d. Se permite un maximo de %d caracteres", yylineno, MAX_STRING);
+    }
+}
+void validarFloat(double numero)
+{   
+    double max = 3.402823 * pow(10, 38);
+    double min = 1.175494 * pow(10, -38);
+    if(numero > max || (numero > 0 && numero < min))
+    {
+        yyerror("Error: Rango de float excedidom en linea %d. Se permite entre [1.175494*10^-38; 3.402823*10^38] o cero.\n", yylineno);
+    }
+}
+void validarInt(int numero)
+{
+    if(numero > 65535)
+    {
+        yyerror("Error: Valor de int excedido, el mayor posible es %d", yylineno, MAX_INT);
+    }
 }
 
 int yyerror(void)

@@ -1849,7 +1849,7 @@ int main()
 
 
 //TODO: REVISAR!!!!!!
-//CTE_STR Antes estaba así: \"([^\"\\\\]|\\\\.)*\"
+//CONST_STR Antes estaba así: \"([^\"\\\\]|\\\\.)*\"
 
 int main(int argc,char *argv[])
 {

@@ -112,12 +112,12 @@ char *tipo_str;
 %%
 
 PROGRAMA:
-        bloque_declaraciones algoritmo
+        bloque_declaraciones bloque
         { guardarTS(); printf("\nCompilacion OK.\n");}
         ;
 
 bloque_declaraciones:
-                    DEFVAR declaraciones ENDDEF {printf("\nTermina el bloque de declaraciones de variables.\n");}
+                    DECVAR declaraciones ENDDEC {printf("\nTermina el bloque de declaraciones de variables.\n");}
                     ;
 
 declaraciones:
@@ -126,7 +126,7 @@ declaraciones:
             ;
 
 declaracion:
-             INT DOSPUNTOS lista_variables  {
+             lista_variables DOSPUNTOS INTEGER {
                                                 for(i=0;i<cantid;i++) /*vamos agregando todos los ids que leyo*/
                                                 {
                                                     if(insertarTS(idvec[i], "INT", "", 0, 0) != 0) //no lo guarda porque ya existe
@@ -137,7 +137,7 @@ declaracion:
                                                 }
                                                 cantid=0;
                                             } 
-            | STRING DOSPUNTOS lista_variables  {
+            | lista_variables DOSPUNTOS STRING  {
                                                     for(i=0;i<cantid;i++)
                                                     {
                                                         if(insertarTS(idvec[i], "STRING", "", 0, 0) != 0)
@@ -147,7 +147,7 @@ declaracion:
                                                         }
                                                     } cantid=0;
                                                 }
-            | FLOAT DOSPUNTOS lista_variables   {
+            | lista_variables DOSPUNTOS FLOAT {
                                                     for(i=0;i<cantid;i++)
                                                     {
                                                         if(insertarTS(idvec[i], "FLOAT", "", 0, 0) != 0)
@@ -172,13 +172,11 @@ lista_variables:
                         strcpy(idvec[cantid], punt);
                         cantid++;
                     } 
-                PUNTOYCOMA lista_variables
+                COMA lista_variables
                 ;
-
-algoritmo:
-            BEGINP bloque ENDP
-            ;
-
+// lista_variables: ID
+// lista_variables: ID COMA lista_variables
+//
 bloque:
         sentencia
         | bloque sentencia
@@ -189,14 +187,20 @@ sentencia:
             | seleccion
             | iteracion
             | salida
+			| entrada
             ;
 
 salida:
-        WRITE factor PUNTOYCOMA {printf("WRITE>>>\n");}
+        WRITE ID {printf("WRITE>>>\n");}
+		| WRITE CONS_STR {printf("WRITE>>>\n");}
         ;
+		
+entrada:
+        READ ID {printf("READ>>>\n");}
+		;
 
 asignacion:
-            ID OP_ASIG expresion PUNTOYCOMA {
+            ID OPASIG expresion {
                                                 strcpy(vecAux, $1); /*en $1 esta el valor de ID*/
                                                 punt = strtok(vecAux," +-*/[](){}:=,\n"); /*porque puede venir de cualquier lado, pero ver si funciona solo con el =*/
                                                 if(!existeID(punt)) /*No existe: entonces no esta declarada*/
@@ -208,40 +212,44 @@ asignacion:
             ;
 
 seleccion:
-            IF PAR_A condicion PAR_C LL_A sentencia LL_C {printf("IF\n");}
-            | IF PAR_A condicion PAR_C LL_A sentencia LL_C ELSE LL_A sentencia LL_C {printf("IF-ELSE\n");}
+            IF PARENTESISA condicion PARENTESISC bloque ENDIF {printf("IF\n");}
+            | IF PARENTESISA condicion PARENTESISC  bloque ELSE bloque ENDIF {printf("IF-ELSE\n");}
             ;
 
 iteracion: 
-            WHILE PAR_A condicion PAR_C LL_A bloque LL_C {printf("WHILE\n");}
+            WHILE PARENTESISA condicion PARENTESISC bloque ENDWHILE {printf("WHILE\n");}
             ;
 
 condicion:
             comparacion
-            | comparacion OP_AND comparacion {printf("AND\n");}
-            | comparacion OP_OR comparacion {printf("OR\n");}
-            | OP_NOT comparacion {printf("NOT\n");}
-            | between
+            | comparacion AND comparacion {printf("AND\n");}
+            | comparacion OR comparacion {printf("OR\n");}
+            | NOT comparacion {printf("NOT\n");}
+			| PARENTESISA comparacion PARENTESISC AND PARENTESISA comparacion PARENTESISC
+			| PARENTESISA comparacion PARENTESISC OR PARENTESISA comparacion PARENTESISC
+			| NOT PARENTESISA comparacion PARENTESISC
             ;
 
 comparacion:
-            expresion COMP_BEQ expresion {printf("<expresion> == <expresion>\n");}
-            | expresion COMP_BLE expresion {printf("<expresion> <= <expresion>\n");}
-            | expresion COMP_BGE expresion {printf("<expresion> >= <expresion>\n");}
-            | expresion COMP_BGT expresion{printf("<expresion> > <expresion>\n");}
-            | expresion COMP_BLT expresion{printf("<expresion> < <expresion>\n");}
-            | expresion COMP_BNE expresion{printf("<expresion> != <expresion>\n");}
+            expresion OPIDENTICO expresion {printf("<expresion> == <expresion>\n");}
+            | expresion OPMENORIGUAL expresion {printf("<expresion> <= <expresion>\n");}
+            | expresion OPMAYORIGUAL expresion {printf("<expresion> >= <expresion>\n");}
+            | expresion OPMAYOR expresion{printf("<expresion> > <expresion>\n");}
+            | expresion OPMENOR expresion{printf("<expresion> < <expresion>\n");}
+            | expresion OPDISTINTO expresion{printf("<expresion> != <expresion>\n");}
+			| between
+			| inlist
             ;
 
 expresion:
-            expresion OP_SUMA termino {printf("Suma OK\n");}
-            | expresion OP_RESTA termino {printf("Resta OK\n");}
+            expresion OPSUMA termino {printf("Suma OK\n");}
+            | expresion OPRESTA termino {printf("Resta OK\n");}
             | termino
             ;
 
 termino:
-        termino OP_MULT factor {printf("Multiplicacion OK\n");}
-        | termino OP_DIV factor {printf("Division OK\n");}
+        termino OPMUL factor {printf("Multiplicacion OK\n");}
+        | termino OPDIV factor {printf("Division OK\n");}
         | factor
         ;
 
@@ -258,52 +266,22 @@ factor:/*verificando aca en este ID si existe o no, se cubre en todas las aparic
         | CONST_INT { $<tipo_int>$ = $1; printf("CTE entera: %d\n", $<tipo_int>$);}
         | CONST_REAL { $<tipo_double>$ = $1; printf("CTE real: %g\n", $<tipo_double>$);}
         | CONST_STR { $<tipo_str>$ = $1; printf("String: %s\n", $<tipo_str>$);}
-        | PAR_A expresion PAR_C
-        | combinatorio
-        | factorial
+        | PARENTESISA expresion PARENTESISC
         ;
 
-expresionNumerica:
-            expresionNumerica OP_SUMA terminoNumerico {printf("Suma OK\n");}
-            | expresionNumerica OP_RESTA terminoNumerico {printf("Resta OK\n");}
-            | terminoNumerico
-            ;
-
-terminoNumerico:
-        terminoNumerico OP_MULT factorNumerico {printf("Multiplicacion OK\n");}
-        | terminoNumerico OP_DIV factorNumerico {printf("Division OK\n");}
-        | factorNumerico
-        ;
-
-factorNumerico:
-        ID {
-                char error[50];
-                strcpy(vecAux, $1);
-                punt = strtok(vecAux," +-*/[](){}:=,\n"); /*porque puede venir de cualquier lado*/
-                if(!esNumero(punt,error)) /*No existe: entonces no esta declarada --> error*/
-                {
-                    sprintf(mensajes, "%s", error);
-                    yyerror(mensajes, @1.first_line, @1.first_column, @1.last_column);
-                }
-           }
-        | CONST_INT { $<tipo_int>$ = $1; printf("CTE entera: %d\n", $<tipo_int>$);}
-        | CONST_REAL { $<tipo_double>$ = $1; printf("CTE real: %f\n", $<tipo_double>$);}
-        | PAR_A expresionNumerica PAR_C
-        | combinatorio
-        | factorial
-        ;
-
-combinatorio:
-        COMB PAR_A expresionNumerica COMA expresionNumerica PAR_C {printf("Combinatorio OK\n");}
-        ;
-
-factorial:
-        FACT PAR_A expresionNumerica PAR_C {printf("Factorial OK\n");}
-        ;
 
 between:
-        BETWEEN PAR_A ID COMA COR_A expresionNumerica PUNTOYCOMA expresionNumerica COR_C PAR_C {printf("Between OK\n");}
+        BETWEEN PARENTESISA ID COMA CORCHETEA expresion PUNTOCOMA expresion CORCHETEC PARENTESISC {printf("Between OK\n");}
         ; 
+		
+inlist:
+        INLIST PARENTESISA ID COMA CORCHETEA lista_expresiones PARENTESISC {printf("Inlist OK\n");}
+        ; 
+
+lista_expresiones:
+					expresion PUNTOCOMA lista_expresiones
+					| expresion
+
 %%
 
 

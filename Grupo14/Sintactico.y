@@ -72,8 +72,6 @@ char *tipo_str;
 %token ENDIF "ENDIF"
 %token WHILE "WHILE"
 %token ENDWHILE "ENDWHILE"
-%token FOR "FOR"
-%token ENDFOR "ENDFOR"
 %token PUNTOCOMA ";"
 %token COMA ","
 %token DOSPUNTOS "."
@@ -209,7 +207,8 @@ asignacion:
                                                     yyerror(mensajes, @1.first_line, @1.first_column, @1.last_column);
                                                 }
                                             }
-            ;
+            | ID OPASIG CONS_STR
+			;
 
 seleccion:
             IF PARENTESISA condicion PARENTESISC bloque ENDIF {printf("IF\n");}
@@ -263,9 +262,9 @@ factor:/*verificando aca en este ID si existe o no, se cubre en todas las aparic
                     yyerror(mensajes, @1.first_line, @1.first_column, @1.last_column);
                 }
            }
-        | CONST_INT { $<tipo_int>$ = $1; printf("CTE entera: %d\n", $<tipo_int>$);}
-        | CONST_REAL { $<tipo_double>$ = $1; printf("CTE real: %g\n", $<tipo_double>$);}
-        | CONST_STR { $<tipo_str>$ = $1; printf("String: %s\n", $<tipo_str>$);}
+        | CONS_INT { $<tipo_int>$ = $1; printf("CTE entera: %d\n", $<tipo_int>$);}
+        | CONS_FLOAT { $<tipo_double>$ = $1; printf("CTE real: %g\n", $<tipo_double>$);}
+        | CONS_STR { $<tipo_str>$ = $1; printf("String: %s\n", $<tipo_str>$);}
         | PARENTESISA expresion PARENTESISC
         ;
 
@@ -312,9 +311,16 @@ int insertarTS(const char *nombre,const char *tipo, const char* valString, int v
     
     while(tabla)
     {
-        if(strcmp(tabla->data.nombre, nombre) == 0 || strcmp(tabla->data.nombre, nombreCTE) == 0)
-        {
+	if(strcmp(tabla->data.nombre, nombre) == 0 || strcmp(tabla->data.nombre, nombreCTE) == 0)
+    {
             return 1;
+    }
+        else if(strcmp(tabla->data.tipo, "CONS_STR") == 0)
+        {
+            if(strcmp(tabla->data.valor.valor_str, valString) == 0)
+            {
+                return 1;
+            }
         }
         
         if(tabla->next == NULL)
@@ -357,7 +363,7 @@ int insertarTS(const char *nombre,const char *tipo, const char* valString, int v
 
 t_data* crearDatos(const char *nombre, const char *tipo, const char* valString, int valInt, double valDouble)
 {
-    char full[32] = "_";
+    char full[50] = "_";
     char aux[20];
 
     t_data *data = (t_data*)calloc(1, sizeof(t_data));
@@ -379,7 +385,7 @@ t_data* crearDatos(const char *nombre, const char *tipo, const char* valString, 
     }
     else
     {      //Son constantes: tenemos que agregarlos a la tabla con "_" al comienzo del nombre, hay que agregarle el valor
-        if(strcmp(tipo, "CONST_STR") == 0)
+        if(strcmp(tipo, "CONS_STR") == 0)
         {
             data->valor.valor_str = (char*)malloc(sizeof(char) * strlen(valString) +1);
             data->nombre = (char*)malloc(sizeof(char) * (strlen(valString) + 1));
@@ -387,7 +393,7 @@ t_data* crearDatos(const char *nombre, const char *tipo, const char* valString, 
             strcpy(data->nombre, full);    
             strcpy(data->valor.valor_str, valString);
         }
-        if(strcmp(tipo, "CONST_REAL") == 0)
+        if(strcmp(tipo, "CONS_FLOAT") == 0)
         {
             sprintf(aux, "%g", valDouble);
             strcat(full, aux);
@@ -396,7 +402,7 @@ t_data* crearDatos(const char *nombre, const char *tipo, const char* valString, 
             strcpy(data->nombre, full);
             data->valor.valor_double = valDouble;
         }
-        if(strcmp(tipo, "CONST_INT") == 0)
+        if(strcmp(tipo, "CONS_INT") == 0)
         {
             sprintf(aux, "%d", valInt);
             strcat(full, aux);
@@ -435,7 +441,7 @@ void guardarTS()
         {
             sprintf(linea, "%-30s%-30s%-30s%-d\n", aux->data.nombre, aux->data.tipo, "--", strlen(aux->data.nombre));
         }
-        else if(strcmp(aux->data.tipo, "CONST_INT") == 0)
+        else if(strcmp(aux->data.tipo, "CONS_INT") == 0)
         {
             sprintf(linea, "%-30s%-30s%-30d%-d\n", aux->data.nombre, aux->data.tipo, aux->data.valor.valor_int, strlen(aux->data.nombre) -1);
         }
@@ -443,7 +449,7 @@ void guardarTS()
         {
             sprintf(linea, "%-30s%-30s%-30s%-d\n", aux->data.nombre, aux->data.tipo, "--", strlen(aux->data.nombre));
         }
-        else if(strcmp(aux->data.tipo, "CONST_REAL") == 0)
+        else if(strcmp(aux->data.tipo, "CONS_FLOAT") == 0)
         {
             sprintf(linea, "%-30s%-30s%-30g%-d\n", aux->data.nombre, aux->data.tipo, aux->data.valor.valor_double, strlen(aux->data.nombre) -1);
         }
@@ -451,7 +457,7 @@ void guardarTS()
         {
             sprintf(linea, "%-30s%-30s%-30s%-d\n", aux->data.nombre, aux->data.tipo, "--", strlen(aux->data.nombre));
         }
-        else if(strcmp(aux->data.tipo, "CONST_STR") == 0)
+        else if(strcmp(aux->data.tipo, "CONS_STR") == 0)
         {
             sprintf(linea, "%-30s%-30s%-30s%-d\n", aux->data.nombre, aux->data.tipo, aux->data.valor.valor_str, strlen(aux->data.nombre) -1);
         }
@@ -466,7 +472,7 @@ void crearTablaTS()
     tablaTS.primero = NULL;
 }
 
-int existeID(const char* id) //y hasta diria que es igual para existeCTE
+int existeID(const char* id) 
 {
     //tengo que ver el tema del _ en el nombre de las cte
     t_simbolo *tabla = tablaTS.primero;
@@ -504,8 +510,7 @@ int esNumero(const char* id,char* error)
             }
             else
             {
-                strcpy(error,"Tipo de dato incorrecto");
-                sprintf(error,"%s%s%s","Error: tipo de dato de la variable '",id,"' incorrecto. Tipos permitidos: int y float");
+                sprintf(error,"%s%s%s","Error: tipo de dato de la variable '",id,"' incorrecto. Los tipos permitidos son 'int' y 'float'");
                 return 0;
             }
         }
@@ -515,8 +520,3 @@ int esNumero(const char* id,char* error)
     return 0;
 }
 
-int yyerror(void)
-{
-	printf("Error Sintactico\n");
-	exit (1);
-}

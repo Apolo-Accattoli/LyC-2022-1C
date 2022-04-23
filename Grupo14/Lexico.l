@@ -64,8 +64,6 @@ SIMBOLO       	[!|@|#|$|%|^|&|=|*|.|/|-|+|\"|" "|:|)|(|<|>]
 "NOT"     		{return NOT;}	    
 "WHILE"     	{return WHILE;}
 "ENDWHILE"     	{return ENDWHILE;}
-"FOR"       	{return FOR;}
-"ENDFOR"       	{return ENDFOR;}
 "IF"        	{return IF;}
 "ELSE"      	{return ELSE;}
 "ENDIF"      	{return ENDIF;}
@@ -159,8 +157,13 @@ void validarInt(int numero)
     }
 }
 
-int yyerror(void)
+int yyerror(char *mensaje, int fila, int ci, int cf)
 {
-	printf("Error lexico: Caracter invalido: %s en linea: %d\n",yytext,yylineno);
-	exit(1);
+    if(fila == 0 || ci == 0 || cf == 0) /* || fila <= yylineno)*/
+        printf("\nLinea %d: %s.\n", yylineno, mensaje);
+    else
+        printf("\nLinea %d, %d-%d: %s.\n", fila, ci, cf, mensaje);
+    
+    system("Pause");
+    exit(1);
 }

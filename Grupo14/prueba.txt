@@ -1,19 +1,51 @@
-3333.333
-.333
-333.
-.
-"@sdADaSjfla%dfg"-/asdasdasd/-
-"solo un texto con espacios"
-"un texto con espacios y una comilla escapada \" debería funcionar"
-"un texto con todos los simbolos validos que se me ocurrieron deberia funcionar !~`@#$%^&*()_+=-[];',./|{}:<>?á"
-"un texto escapando algo inexistente, no debería funcionar \\\\\\ "
-"C:\\Users\\camil\\Documents\\GitHub\\LyC-2022-1C\\GrupoXX"
-"C:\Users\camil\Documents\GitHub\LyC-2022-1C\GrupoXX"
--//-
--/asdasdasd/-
--/sadasdas2342343asdasd/-
--/asdas asdasd asdasd/-
--/ 24234 234234 234234/-
--/ donde "ewr" debe ser un"@sdADaSjfla%dfg"-/a cte string /-
-:=
-2222
+DECVAR
+a, b, c, i, x : INTEGER
+cadena : STRING
+f1, f2, f3 : FLOAT
+ENDDEC
+
+IF (a > 5 AND c <= 10)
+	c:=5
+ELSE
+	IF (a <= 30 OR a == 31)
+		c:=10
+	ELSE
+		WRITE "Else"
+	ENDIF
+	i:=7
+ENDIF
+
+cadena := "correcto" -/ asignación string /-
+
+READ x
+WRITE x
+
+WHILE(a > 1 or b > 1)
+	WHILE(c > 1)
+		x := 1
+		IF(c<10)
+		
+			WRITE "menor"
+		
+		ELSE
+		
+			WRITE "mayor"
+		ENDIF
+	ENDWHILE
+ENDWHILE
+
+
+IF (BETWEEN (a, [2 ; a*(b+4)]))
+	WRITE "si BETWEEN"
+ELSE
+	WRITE "no BETWEEN"
+ENDIF
+
+IF (INLIST (a; [2*b+7 ; 12 ; a+b*(34+i) ; 48]))
+	WRITE "si INLIST"
+ELSE
+	WRITE "no INLIST"
+ENDIF
+
+WRITE "ewr" -/ donde "ewr" debe ser una cte string /-
+

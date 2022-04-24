@@ -70,9 +70,9 @@ SIMBOLO       	[!|@|#|$|%|^|&|=|*|.|/|-|+|\"|" "|:|)|(|<|>]
 "ELSE"      	{return ELSE;}
 "ENDIF"      	{return ENDIF;}
 "BETWEEN"		{return BETWEEN;}
-"INLIST"		{return INLIST;}
+"INLIST"		{printf("INLISTLex \n");return INLIST;}
 				    
-{ID}    		{
+{ID}    		{	printf("Id: %s \n", yytext);
 					yylval.tipo_str = yytext;
 					return ID;
 				}
@@ -112,7 +112,7 @@ SIMBOLO       	[!|@|#|$|%|^|&|=|*|.|/|-|+|\"|" "|:|)|(|<|>]
 {OPIDENTICO}	{return OPIDENTICO;}
 {LLAVEA}   		{return LLAVEA;} 
 {LLAVEC}   		{return LLAVEC;}
-{PARENTESISA}   {return PARENTESISA;}
+{PARENTESISA}   {printf("ParentesisLex\n"); return PARENTESISA;}
 {PARENTESISC}   {return PARENTESISC;}
 {CORCHETEA}   {return CORCHETEA;}
 {CORCHETEC}   {return CORCHETEC;}

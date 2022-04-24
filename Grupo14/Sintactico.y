@@ -295,7 +295,7 @@ inlist:
 
 lista_expresiones:
 					expresion PUNTOCOMA lista_expresiones
-					| expresion {printf("(expresion_I)\n");}
+					| expresion { printf("(expresion_I)\n"); }
 
 %%
 

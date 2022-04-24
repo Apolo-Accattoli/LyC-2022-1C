@@ -39,8 +39,7 @@ IF (BETWEEN (a, [2 ; 0]))
 ELSE
 	WRITE "no BETWEEN"
 ENDIF
-INLIST (a, [2*b ; 12; a ])
-INLIST (a, [2*b+7 ; 12 ; a+b*(34+i) ; 48])
+
 IF (INLIST (a, [2*b+7 ; 12 ; a+b*(34+i) ; 48]))
 	WRITE "si INLIST"
 ELSE

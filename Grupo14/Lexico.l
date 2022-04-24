@@ -28,7 +28,7 @@ LETRA     		[a-zA-Z]
 COMENTARIO		"-/"(.*?)"/-"
 CONS_STR  		\"([^\"\\]|\\\"|\\\\)*\"
 ID 		  		{LETRA}({LETRA}|{DIGITO})*
-CONS_FLOAT 		{DIGITO}*.{DIGITO}+|{DIGITO}+.{DIGITO}*
+CONS_FLOAT 		{DIGITO}*"."{DIGITO}+|{DIGITO}+"."{DIGITO}*
 CONS_INT  		{DIGITO}+
 PUNTOCOMA 		";"
 COMA  	  		","
@@ -91,12 +91,14 @@ SIMBOLO       	[!|@|#|$|%|^|&|=|*|.|/|-|+|\"|" "|:|)|(|<|>]
                     return CONS_STR;
 				}
 {CONS_INT}		{
+					
 					yylval.tipo_int = atoi(yytext);
                     validarInt(yylval.tipo_int);
                     insertarTS(yytext, "CONS_INT", "", yylval.tipo_int, 0);
                     return CONS_INT;
 				}
 {CONS_FLOAT}	{
+					
                     yylval.tipo_double = atof(yytext);
                     validarFloat(yylval.tipo_double);
                     insertarTS(yytext, "CONS_FLOAT", "", 0, yylval.tipo_double);

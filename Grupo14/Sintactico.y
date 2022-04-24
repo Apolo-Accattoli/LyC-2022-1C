@@ -269,7 +269,7 @@ termino:
 
 factor:/*verificando aca en este ID si existe o no, se cubre en todas las apariciones en el codigo fuente????*/
         ID {
-            printf("ID \n");
+            printf("ID %s \n", $1);
                 strcpy(vecAux, $1);
                 punt = strtok(vecAux," +-*/[](){}:=,\n"); /*porque puede venir de cualquier lado*/
                 if(!existeID(punt)) /*No existe: entonces no esta declarada --> error*/
@@ -279,7 +279,7 @@ factor:/*verificando aca en este ID si existe o no, se cubre en todas las aparic
                 }
            }
         | CONS_INT { $<tipo_int>$ = $1; printf("CTE entera: %d\n", $<tipo_int>$);}
-        | CONS_FLOAT { $<tipo_double>$ = $1; printf("CTE real: %g\n", $<tipo_double>$);}
+        | CONS_FLOAT { $<tipo_double>$ = $1; printf("CTE FLOAT: %g\n", $<tipo_double>$);}
         | CONS_STR { $<tipo_str>$ = $1; printf("String: %s\n", $<tipo_str>$);}
         | PARENTESISA expresion PARENTESISC {printf("(expresion)\n");}
         ;
@@ -290,12 +290,12 @@ between:
         ; 
 		
 inlist:
-        INLIST PARENTESISA ID COMA CORCHETEA lista_expresiones PARENTESISC {printf("Inlist OK\n");}
+        INLIST PARENTESISA ID COMA CORCHETEA lista_expresiones CORCHETEC PARENTESISC {printf("Inlist OK\n");}
         ; 
 
 lista_expresiones:
 					expresion PUNTOCOMA lista_expresiones
-					| expresion
+					| expresion {printf("(expresion_I)\n");}
 
 %%
 

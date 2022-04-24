@@ -3,8 +3,8 @@ a, b, c, i, x : INTEGER
 cadena : STRING
 f1, f2, f3 : FLOAT
 ENDDEC
-f1:=3.25
-IF (a > 5 AND c <= 10 OR c > 30 OR c > 30)
+
+IF (a > 5 AND c <= 10)
 	c:=5
 ELSE
 	IF (a <= 30 OR a == 31)
@@ -34,7 +34,6 @@ ENDWHILE
 a := a+b
 a := b+4
 a := a*(b+4)
-f2:=f1+a+3.33
 IF (BETWEEN (a, [2 ; 0]))
 	WRITE "si BETWEEN"
 ELSE

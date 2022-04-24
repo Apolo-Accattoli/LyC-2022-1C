@@ -186,7 +186,6 @@ lista_variables:
                     } 
 
                 COMA lista_variables
-                {printf("lista_variables OK\n");}
                 ;
 
 bloque:
@@ -213,7 +212,7 @@ entrada:
 
 asignacion:
             ID OPASIG expresion {
-                                                printf("Asignacion");
+                                                
                                                 strcpy(vecAux, $1); /*en $1 esta el valor de ID*/
                                                 punt = strtok(vecAux," +-*/[](){}:=,\n"); /*porque puede venir de cualquier lado, pero ver si funciona solo con el =*/
                                                 if(!existeID(punt)) /*No existe: entonces no esta declarada*/
@@ -236,13 +235,11 @@ iteracion:
 
 condicion:
             comparacion //a==B
-            | comparacion AND comparacion {printf("AND\n");} // a==b AND b==c
-            | comparacion OR comparacion {printf("OR\n");} // a==b OR b==c
+            | condicion AND comparacion {printf("AND\n");} // ... AND b==c
+            | condicion OR comparacion {printf("OR\n");} // .... OR b==c
             | NOT comparacion {printf("NOT\n");} //NOT a==b
-			| PARENTESISA comparacion PARENTESISC AND PARENTESISA comparacion PARENTESISC //(a==b) AND (b==c)
-			| PARENTESISA comparacion PARENTESISC OR PARENTESISA comparacion PARENTESISC // (a==b) OR (b==c)
-			| NOT PARENTESISA comparacion PARENTESISC //NOT (a==b)
-            ;
+			| NOT PARENTESISA condicion PARENTESISC // NOT (a==b AND b==c)
+			;
 
 comparacion:
             expresion OPIDENTICO expresion {printf("<expresion> == <expresion>\n");}
@@ -254,6 +251,7 @@ comparacion:
 			| between
 			| inlist
             ;
+
 
 expresion:
             expresion OPSUMA termino {printf("Suma OK\n");}
@@ -269,7 +267,7 @@ termino:
 
 factor:/*verificando aca en este ID si existe o no, se cubre en todas las apariciones en el codigo fuente????*/
         ID {
-            printf("ID %s \n", $1);
+            
                 strcpy(vecAux, $1);
                 punt = strtok(vecAux," +-*/[](){}:=,\n"); /*porque puede venir de cualquier lado*/
                 if(!existeID(punt)) /*No existe: entonces no esta declarada --> error*/
@@ -281,7 +279,7 @@ factor:/*verificando aca en este ID si existe o no, se cubre en todas las aparic
         | CONS_INT { $<tipo_int>$ = $1; printf("CTE entera: %d\n", $<tipo_int>$);}
         | CONS_FLOAT { $<tipo_double>$ = $1; printf("CTE FLOAT: %g\n", $<tipo_double>$);}
 
-        | PARENTESISA expresion PARENTESISC {printf("(expresion)\n");}
+        | PARENTESISA expresion PARENTESISC
         ;
 
 
@@ -295,7 +293,7 @@ inlist:
 
 lista_expresiones:
 					expresion PUNTOCOMA lista_expresiones
-					| expresion { printf("(expresion_I)\n"); }
+					| expresion
 
 %%
 

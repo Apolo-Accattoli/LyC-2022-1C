@@ -15,13 +15,15 @@ ELSE
 	i:=7
 ENDIF
 
+cadena := "correcto" -/ asignación string /-
+
 READ x
 WRITE x
 
-WHILE(a > 1 OR b > 1)
+WHILE(a > 1 or b > 1)
 	WHILE(c > 1)
 		x := 1
-		IF(c < 10)
+		IF(c<10)
 		
 			WRITE "menor"
 		
@@ -32,8 +34,8 @@ WHILE(a > 1 OR b > 1)
 	ENDWHILE
 ENDWHILE
 
-a := a*(b+4)
-IF (BETWEEN (a, [2 ; 0]))
+
+IF (BETWEEN (a, [2 ; a*(b+4)]))
 	WRITE "si BETWEEN"
 ELSE
 	WRITE "no BETWEEN"

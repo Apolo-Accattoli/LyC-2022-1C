@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "y.tab.h"
+#include <string.h>
 FILE  *yyin;
 
 int yyerror();
@@ -125,56 +126,69 @@ declaraciones:
 
 declaracion:
              lista_variables DOSPUNTOS INTEGER {
-                                                for(i=0;i<cantid;i++) /*vamos agregando todos los ids que leyo*/
+                                                    
+                                                for(i=0;i<cantid;i++) /*vamos agregando todos los ids que leyo */
                                                 {
-                                                    if(insertarTS(idvec[i], "INT", "", 0, 0) != 0) //no lo guarda porque ya existe
+                                                    
+                                                    if(insertarTS(idvec[i], "INTEGER", "", 0, 0) != 0) //no lo guarda porque ya existe
                                                     {
                                                         sprintf(mensajes, "%s%s%s", "Error: la variable '", idvec[i], "' ya fue declarada");
                                                         yyerror(mensajes, @3.first_line, @3.first_column, @3.last_column);
                                                     }
+                                                    
                                                 }
                                                 cantid=0;
+                                                
                                             } 
-            | lista_variables DOSPUNTOS STRING  {
+            | lista_variables DOSPUNTOS STRING  {                                                    
                                                     for(i=0;i<cantid;i++)
                                                     {
+                                                        
                                                         if(insertarTS(idvec[i], "STRING", "", 0, 0) != 0)
                                                         {
                                                             sprintf(mensajes, "%s%s%s", "Error: la variable '", idvec[i], "' ya fue declarada");
                                                             yyerror(mensajes, @3.first_line, @3.first_column, @3.last_column);
                                                         }
+                                                        
                                                     } cantid=0;
+                                                    
                                                 }
-            | lista_variables DOSPUNTOS FLOAT {
+            | lista_variables DOSPUNTOS FLOAT {                                                    
                                                     for(i=0;i<cantid;i++)
                                                     {
+                                                        
                                                         if(insertarTS(idvec[i], "FLOAT", "", 0, 0) != 0)
                                                         {
                                                             sprintf(mensajes, "%s%s%s", "Error: la variable '", idvec[i], "' ya fue declarada");
                                                             yyerror(mensajes, @3.first_line, @3.first_column, @3.last_column);
                                                         }
+                                                        
                                                     } cantid=0;
+                                                    
                                                 }
             ;
 
 lista_variables:
-                ID  {
-                        strcpy(vecAux, yylval.tipo_str); /*tomamos el nombre de la variable*/
-                        punt = strtok(vecAux, " ;\n"); /*eliminamos extras*/
-                        strcpy(idvec[cantid], punt); /*copiamos al array de ids*/
+                ID  {                        
+                        strcpy(vecAux, yylval.tipo_str); //tomamos el nombre de la variable
+                        punt = strtok(vecAux, " ,\n"); //eliminamos extras
+                        strcpy(idvec[cantid], punt); //copiamos al array de ids
                         cantid++;
+                        
                     }
-                |ID {
-                        strcpy(vecAux, yylval.tipo_str); /*se repite aca tambien, no lo toma de arriba*/
-                        punt = strtok(vecAux, " ;\n");
+                |ID {                        
+                        strcpy(vecAux, yylval.tipo_str); //se repite aca tambien, no lo toma de arriba
+                        punt = strtok(vecAux, " ,\n");
                         strcpy(idvec[cantid], punt);
                         cantid++;
+                        
+
                     } 
+
                 COMA lista_variables
+                {printf("lista_variables OK\n");}
                 ;
-// lista_variables: ID
-// lista_variables: ID COMA lista_variables
-//
+
 bloque:
         sentencia
         | bloque sentencia
@@ -199,6 +213,7 @@ entrada:
 
 asignacion:
             ID OPASIG expresion {
+                                                printf("Asignacion");
                                                 strcpy(vecAux, $1); /*en $1 esta el valor de ID*/
                                                 punt = strtok(vecAux," +-*/[](){}:=,\n"); /*porque puede venir de cualquier lado, pero ver si funciona solo con el =*/
                                                 if(!existeID(punt)) /*No existe: entonces no esta declarada*/
@@ -207,7 +222,7 @@ asignacion:
                                                     yyerror(mensajes, @1.first_line, @1.first_column, @1.last_column);
                                                 }
                                             }
-            | ID OPASIG CONS_STR
+
 			;
 
 seleccion:
@@ -220,13 +235,13 @@ iteracion:
             ;
 
 condicion:
-            comparacion
-            | comparacion AND comparacion {printf("AND\n");}
-            | comparacion OR comparacion {printf("OR\n");}
-            | NOT comparacion {printf("NOT\n");}
-			| PARENTESISA comparacion PARENTESISC AND PARENTESISA comparacion PARENTESISC
-			| PARENTESISA comparacion PARENTESISC OR PARENTESISA comparacion PARENTESISC
-			| NOT PARENTESISA comparacion PARENTESISC
+            comparacion //a==B
+            | comparacion AND comparacion {printf("AND\n");} // a==b AND b==c
+            | comparacion OR comparacion {printf("OR\n");} // a==b OR b==c
+            | NOT comparacion {printf("NOT\n");} //NOT a==b
+			| PARENTESISA comparacion PARENTESISC AND PARENTESISA comparacion PARENTESISC //(a==b) AND (b==c)
+			| PARENTESISA comparacion PARENTESISC OR PARENTESISA comparacion PARENTESISC // (a==b) OR (b==c)
+			| NOT PARENTESISA comparacion PARENTESISC //NOT (a==b)
             ;
 
 comparacion:
@@ -254,6 +269,7 @@ termino:
 
 factor:/*verificando aca en este ID si existe o no, se cubre en todas las apariciones en el codigo fuente????*/
         ID {
+            printf("ID \n");
                 strcpy(vecAux, $1);
                 punt = strtok(vecAux," +-*/[](){}:=,\n"); /*porque puede venir de cualquier lado*/
                 if(!existeID(punt)) /*No existe: entonces no esta declarada --> error*/
@@ -265,7 +281,7 @@ factor:/*verificando aca en este ID si existe o no, se cubre en todas las aparic
         | CONS_INT { $<tipo_int>$ = $1; printf("CTE entera: %d\n", $<tipo_int>$);}
         | CONS_FLOAT { $<tipo_double>$ = $1; printf("CTE real: %g\n", $<tipo_double>$);}
         | CONS_STR { $<tipo_str>$ = $1; printf("String: %s\n", $<tipo_str>$);}
-        | PARENTESISA expresion PARENTESISC
+        | PARENTESISA expresion PARENTESISC {printf("(expresion)\n");}
         ;
 
 
@@ -332,12 +348,12 @@ int insertarTS(const char *nombre,const char *tipo, const char* valString, int v
 
     t_data *data = (t_data*)malloc(sizeof(t_data));
     data = crearDatos(nombre, tipo, valString, valInt, valDouble);
-
+    
     if(data == NULL)
     {
         return 1;
     }
-
+   
     t_simbolo* nuevo = (t_simbolo*)malloc(sizeof(t_simbolo));
 
     if(nuevo == NULL)
@@ -376,7 +392,7 @@ t_data* crearDatos(const char *nombre, const char *tipo, const char* valString, 
     strcpy(data->tipo, tipo);
 
     //Es una variable
-    if(strcmp(tipo, "STRING")==0 || strcmp(tipo, "INT")==0 || strcmp(tipo, "FLOAT")==0)
+    if(strcmp(tipo, "STRING")==0 || strcmp(tipo, "INTEGER")==0 || strcmp(tipo, "FLOAT")==0)
     {
         //al nombre lo dejo aca porque no lleva _
         data->nombre = (char*)malloc(sizeof(char) * (strlen(nombre) + 1));
@@ -437,7 +453,7 @@ void guardarTS()
         aux = tabla;
         tabla = tabla->next;
         
-        if(strcmp(aux->data.tipo, "INT") == 0) //variable int
+        if(strcmp(aux->data.tipo, "INTEGER") == 0) //variable integer
         {
             sprintf(linea, "%-30s%-30s%-30s%-d\n", aux->data.nombre, aux->data.tipo, "--", strlen(aux->data.nombre));
         }
@@ -474,20 +490,19 @@ void crearTablaTS()
 
 int existeID(const char* id) 
 {
-    //tengo que ver el tema del _ en el nombre de las cte
     t_simbolo *tabla = tablaTS.primero;
     char nombreCTE[32] = "_";
     strcat(nombreCTE, id);
     int b1 = 0;
     int b2 = 0;
 
-    while(tabla)
+     while(tabla)
     {
         b1 = strcmp(tabla->data.nombre, id);
         b2 = strcmp(tabla->data.nombre, nombreCTE);
         if(b1 == 0 || b2 == 0)
         {
-                return 1;
+               return 1;
         }
         tabla = tabla->next;
     }
@@ -504,7 +519,7 @@ int esNumero(const char* id,char* error)
     {
         if(strcmp(tabla->data.nombre, id) == 0 || strcmp(tabla->data.nombre, nombreCTE) == 0)
         {
-            if(strcmp(tabla->data.tipo, "INT")==0 || strcmp(tabla->data.tipo, "FLOAT")==0)
+            if(strcmp(tabla->data.tipo, "INTEGER")==0 || strcmp(tabla->data.tipo, "FLOAT")==0)
             {
                 return 1;
             }

@@ -1,3 +1,4 @@
+del Primera.exe
 flex .\Lexico.l
 bison -dyv .\Sintactico.y
 gcc.exe lex.yy.c y.tab.c -o Primera.exe

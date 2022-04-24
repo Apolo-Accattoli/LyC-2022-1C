@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
+#include "y.tab.h"
 
 #define MAX_INT 65535
 #define MAX_STRING 30
@@ -11,7 +13,7 @@
 FILE *yyin;
 char *yyltext;
 int yyval;
-int yyerror(void);
+int yyerror(char *, int, int , int);
 void validarString(char[]);
 void validarFloat(double);
 void validarInt(int);
@@ -71,6 +73,7 @@ SIMBOLO       	[!|@|#|$|%|^|&|=|*|.|/|-|+|\"|" "|:|)|(|<|>]
 "INLIST"		{return INLIST;}
 				    
 {ID}    		{
+					yylval.tipo_str = yytext;
 					return ID;
 				}
 {PUNTOCOMA}   	{return PUNTOCOMA;}
@@ -82,17 +85,21 @@ SIMBOLO       	[!|@|#|$|%|^|&|=|*|.|/|-|+|\"|" "|:|)|(|<|>]
 {OPMUL}  		{return OPMUL;}
 {OPDIV}    		{return OPDIV;}
 {CONS_STR}		{
-					validarString(yytext);
-					return CONS_STR;
+					yylval.tipo_str = yytext;
+                    validarString(yylval.tipo_str);
+                    insertarTS(yylval.tipo_str, "CONS_STR", yylval.tipo_str, 0, 0);
+                    return CONS_STR;
 				}
 {CONS_INT}		{
-					int entero = atoi(yytext);
-					validarInt(entero);
-					return CONS_INT;
+					yylval.tipo_int = atoi(yytext);
+                    validarInt(yylval.tipo_int);
+                    insertarTS(yytext, "CONS_INT", "", yylval.tipo_int, 0);
+                    return CONS_INT;
 				}
 {CONS_FLOAT}	{
-					int real = atof(yytext);
-					validarFloat(real);
+                    yylval.tipo_double = atof(yytext);
+                    validarFloat(yylval.tipo_double);
+                    insertarTS(yytext, "CONS_FLOAT", "", 0, yylval.tipo_double);
 					return CONS_FLOAT;
 				}    
 {OPMAYOR}  		{return OPMAYOR;}
@@ -114,23 +121,9 @@ SIMBOLO       	[!|@|#|$|%|^|&|=|*|.|/|-|+|\"|" "|:|)|(|<|>]
 "\n"
 "\t"
 " "
-.				yyerror();
-
+.				yyerror("Error lexico, caracter no reconocido",0,0,0);
+ 
 %%
-
-int main(int argc,char *argv[])
-{
-	if ((yyin = fopen(argv[1], "rt")) == NULL)
-	{
-		{returnNo se puede abrir el archivo: %s\n", argv[1]);
-	}
-	else
-	{
-		yylex();
-	}
-	fclose(yyin);
-	return 0;
-}
 
 void validarString(char cadena[])
 {
@@ -146,14 +139,14 @@ void validarFloat(double numero)
     double min = 1.175494 * pow(10, -38);
     if(numero > max || (numero > 0 && numero < min))
     {
-        yyerror("Error: Rango de float excedidom en linea %d. Se permite entre [1.175494*10^-38; 3.402823*10^38] o cero.\n", yylineno);
+        yyerror("Error: Rango de float excedido. Se permite entre [1.175494*10^-38; 3.402823*10^38] o cero.\n",0,0,0);
     }
 }
 void validarInt(int numero)
 {
     if(numero > 65535)
     {
-        yyerror("Error: Valor de int excedido, el mayor posible es %d", yylineno, MAX_INT);
+        yyerror("Error: Valor de int excedido, el mayor posible es 65535", 0, 0, 0);
     }
 }
 

@@ -222,7 +222,7 @@ asignacion:
                                                     yyerror(mensajes, @1.first_line, @1.first_column, @1.last_column);
                                                 }
                                             }
-
+			| ID OPASIG CONS_STR
 			;
 
 seleccion:
@@ -280,7 +280,7 @@ factor:/*verificando aca en este ID si existe o no, se cubre en todas las aparic
            }
         | CONS_INT { $<tipo_int>$ = $1; printf("CTE entera: %d\n", $<tipo_int>$);}
         | CONS_FLOAT { $<tipo_double>$ = $1; printf("CTE FLOAT: %g\n", $<tipo_double>$);}
-        | CONS_STR { $<tipo_str>$ = $1; printf("String: %s\n", $<tipo_str>$);}
+
         | PARENTESISA expresion PARENTESISC {printf("(expresion)\n");}
         ;
 

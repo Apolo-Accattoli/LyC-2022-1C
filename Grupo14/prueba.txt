@@ -45,6 +45,6 @@ IF (INLIST (a, [2*b+7 ; 12 ; a+b*(34+i) ; 48]))
 ELSE
 	WRITE "no INLIST"
 ENDIF
-
+cadena := "una cadena"
 WRITE "ewr" -/ donde "ewr" debe ser una cte string /-
 

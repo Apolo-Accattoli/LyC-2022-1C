@@ -27,4 +27,5 @@ _34                           CONS_INT                      34                  
 _48                           CONS_INT                      48                            2
 _"si INLIST"                  CONS_STR                      "si INLIST"                   11
 _"no INLIST"                  CONS_STR                      "no INLIST"                   11
+_"una cadena"                 CONS_STR                      "una cadena"                  12
 _"ewr"                        CONS_STR                      "ewr"                         5

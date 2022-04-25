@@ -4,7 +4,7 @@ cadena : STRING
 f1, f2, f3 : FLOAT
 ENDDEC
 f1:=3.25
-IF (a > 5 AND c <= 10 OR c > 30 OR c > 30)
+IF (NOT((a > 5 OR c <= 10)AND(b<3)))
 	c:=5
 ELSE
 	IF (a <= 30 OR a == 31)

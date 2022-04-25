@@ -234,13 +234,15 @@ iteracion:
             ;
 
 condicion:
-            comparacion //a==B
-            | condicion AND comparacion {printf("AND\n");} // ... AND b==c
-            | condicion OR comparacion {printf("OR\n");} // .... OR b==c
-            | NOT comparacion {printf("NOT\n");} //NOT a==b
-			| NOT PARENTESISA condicion PARENTESISC // NOT (a==b AND b==c)
+            condicion OR termino_logico {printf("OR\n");} // .... OR b==c
+            | NOT termino_logico {printf("NOT\n");} //NOT a==b
+			| termino_logico //a==B
 			;
-
+			
+termino_logico:
+			comparacion
+			| termino_logico AND comparacion {printf("AND\n");}
+			;
 comparacion:
             expresion OPIDENTICO expresion {printf("<expresion> == <expresion>\n");}
             | expresion OPMENORIGUAL expresion {printf("<expresion> <= <expresion>\n");}
@@ -250,6 +252,7 @@ comparacion:
             | expresion OPDISTINTO expresion{printf("<expresion> != <expresion>\n");}
 			| between
 			| inlist
+			|PARENTESISA condicion PARENTESISC
             ;
 
 

@@ -11,6 +11,7 @@ f3                            FLOAT                         --                  
 _3.25                         CONS_FLOAT                    3.25                          4
 _5                            CONS_INT                      5                             1
 _10                           CONS_INT                      10                            2
+_3                            CONS_INT                      3                             1
 _30                           CONS_INT                      30                            2
 _31                           CONS_INT                      31                            2
 _"Else"                       CONS_STR                      "Else"                        6

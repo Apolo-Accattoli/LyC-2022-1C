@@ -16,6 +16,11 @@ ELSE
 ENDIF
 
 READ x
+
+IF (a <= 30 OR a == 31)
+	c:=10
+ENDIF
+
 WRITE x
 
 WHILE(a > 1 OR b > 1)

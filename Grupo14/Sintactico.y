@@ -49,7 +49,6 @@ char* punt;
 
 /* --- Validaciones --- */
 int existeID(const char*);
-int esNumero(const char*,char*);
 char mensajes[100];
 
 %}
@@ -112,35 +111,35 @@ char *tipo_str;
 
 PROGRAMA:
         bloque_declaraciones bloque
-        { guardarTS(); printf("\nCompilacion OK.\n");}
+        { 
+			guardarTS();
+			printf("\nCompilacion exitosa.\n");
+		}
         ;
 
 bloque_declaraciones:
-                    DECVAR declaraciones ENDDEC {printf("\nTermina el bloque de declaraciones de variables.\n");}
+                    DECVAR declaraciones ENDDEC { printf("Bloque declaraciones.\n"); }
                     ;
 
 declaraciones:
-            declaracion
-            | declaraciones declaracion
+            declaracion { printf("Declaraciones.\n"); }
+            | declaraciones declaracion { printf("Declaraciones.\n"); }
             ;
 
 declaracion:
-             lista_variables DOSPUNTOS INTEGER {
-                                                    
-                                                for(i=0;i<cantid;i++) /*vamos agregando todos los ids que leyo */
-                                                {
-                                                    
-                                                    if(insertarTS(idvec[i], "INTEGER", "", 0, 0) != 0) //no lo guarda porque ya existe
-                                                    {
-                                                        sprintf(mensajes, "%s%s%s", "Error: la variable '", idvec[i], "' ya fue declarada");
-                                                        yyerror(mensajes, @3.first_line, @3.first_column, @3.last_column);
-                                                    }
-                                                    
-                                                }
-                                                cantid=0;
-                                                
-                                            } 
-            | lista_variables DOSPUNTOS STRING  {                                                    
+             lista_variables DOSPUNTOS INTEGER  {
+													for(i=0;i<cantid;i++) //vamos agregando todos los ids que leyo
+													{
+														if(insertarTS(idvec[i], "INTEGER", "", 0, 0) != 0) //devuelve error porque ya existe, entonces no lo guarda
+														{
+															sprintf(mensajes, "%s%s%s", "Error: la variable '", idvec[i], "' ya fue declarada");
+															yyerror(mensajes, @3.first_line, @3.first_column, @3.last_column);
+														}
+													}
+													cantid=0;												
+												} 
+            { printf("Declaracion.\n"); }
+		    | lista_variables DOSPUNTOS STRING  {                                                    
                                                     for(i=0;i<cantid;i++)
                                                     {
                                                         
@@ -150,153 +149,168 @@ declaracion:
                                                             yyerror(mensajes, @3.first_line, @3.first_column, @3.last_column);
                                                         }
                                                         
-                                                    } cantid=0;
-                                                    
+                                                    } 
+													cantid=0;
                                                 }
-            | lista_variables DOSPUNTOS FLOAT {                                                    
+			{ printf("Declaracion.\n"); }
+            | lista_variables DOSPUNTOS FLOAT 	{                                                    
                                                     for(i=0;i<cantid;i++)
                                                     {
-                                                        
                                                         if(insertarTS(idvec[i], "FLOAT", "", 0, 0) != 0)
                                                         {
                                                             sprintf(mensajes, "%s%s%s", "Error: la variable '", idvec[i], "' ya fue declarada");
                                                             yyerror(mensajes, @3.first_line, @3.first_column, @3.last_column);
-                                                        }
-                                                        
-                                                    } cantid=0;
-                                                    
+                                                        }   
+                                                    }
+													cantid=0;                                                    
                                                 }
-            ;
+            { printf("Declaracion.\n"); }
+			;
 
 lista_variables:
                 ID  {                        
-                        strcpy(vecAux, yylval.tipo_str); //tomamos el nombre de la variable
-                        punt = strtok(vecAux, " ,\n"); //eliminamos extras
+                        strcpy(vecAux, yylval.tipo_str); //leemos el nombre de la variable
+                        punt = strtok(vecAux, " ,\n"); //eliminamos el caracter separador de la lista de variables
                         strcpy(idvec[cantid], punt); //copiamos al array de ids
                         cantid++;
-                        
                     }
+				{ printf("Lista de variables.\n"); }
                 |ID {                        
                         strcpy(vecAux, yylval.tipo_str); //se repite aca tambien, no lo toma de arriba
                         punt = strtok(vecAux, " ,\n");
                         strcpy(idvec[cantid], punt);
                         cantid++;
-                        
-
                     } 
-
                 COMA lista_variables
+				{ printf("Lista de variables.\n"); }
                 ;
 
 bloque:
         sentencia
+        { printf("Bloque.\n"); }
         | bloque sentencia
-        ;
+        { printf("Bloque.\n"); }
+		;
 
 sentencia:
             asignacion
+            { printf("Sentencia.\n"); }
             | seleccion
+            { printf("Sentencia.\n"); }
             | iteracion
+            { printf("Sentencia.\n"); }
             | salida
+            { printf("Sentencia.\n"); }
 			| entrada
-            ;
+            { printf("Sentencia.\n"); }
+			;
 
 salida:
-        WRITE ID {printf("WRITE>>>\n");}
-		| WRITE CONS_STR {printf("WRITE>>>\n");}
+        WRITE ID {printf("Salida >>>\n");}
+		| WRITE CONS_STR {printf("Salida >>>\n");}
         ;
 		
 entrada:
-        READ ID {printf("READ>>>\n");}
+        READ ID {printf("Entrada >>>\n");}
 		;
 
 asignacion:
             ID OPASIG expresion {
-                                                
-                                                strcpy(vecAux, $1); /*en $1 esta el valor de ID*/
-                                                punt = strtok(vecAux," +-*/[](){}:=,\n"); /*porque puede venir de cualquier lado, pero ver si funciona solo con el =*/
-                                                if(!existeID(punt)) /*No existe: entonces no esta declarada*/
-                                                {
-                                                    sprintf(mensajes, "%s%s%s", "Error: no se declaro la variable '", punt, "'");
-                                                    yyerror(mensajes, @1.first_line, @1.first_column, @1.last_column);
-                                                }
-                                            }
+									strcpy(vecAux, $1); //en $1 esta el valor de ID
+									punt = strtok(vecAux," +-*/[](){}:=,\n");
+									if(!existeID(punt)) //No existe: entonces no esta declarada
+									{
+										sprintf(mensajes, "%s%s%s", "Error: no se declaro la variable '", punt, "'");
+										yyerror(mensajes, @1.first_line, @1.first_column, @1.last_column);
+									}
+								}
+			{ printf("Asignacion.\n"); }
 			| ID OPASIG CONS_STR
+			{ printf("Asignacion.\n"); }
 			;
 
 seleccion:
-            IF PARENTESISA condicion PARENTESISC bloque ENDIF {printf("IF\n");}
-            | IF PARENTESISA condicion PARENTESISC  bloque ELSE bloque ENDIF {printf("IF-ELSE\n");}
-            ;
+            IF PARENTESISA condicion PARENTESISC bloque ENDIF
+			{ printf("Seleccion\n"); }
+            | IF PARENTESISA condicion PARENTESISC  bloque ELSE bloque ENDIF
+            { printf("Seleccion\n"); }
+			 ;
 
 iteracion: 
-            WHILE PARENTESISA condicion PARENTESISC bloque ENDWHILE {printf("WHILE\n");}
+            WHILE PARENTESISA condicion PARENTESISC bloque ENDWHILE { printf("Iteracion\n"); }
+
             ;
 
 condicion:
-            condicion OR termino_logico {printf("OR\n");} // .... OR b==c
-            | NOT termino_logico {printf("NOT\n");} //NOT a==b
-			| termino_logico //a==B
+            condicion OR termino_logico { printf("Condicion OR\n"); } // .... OR b==c
+            | NOT termino_logico { printf("Condicion NOT\n"); } //NOT a==b
+			| termino_logico { printf("Condicion\n"); }//a==B
 			;
 			
 termino_logico:
-			comparacion
-			| termino_logico AND comparacion {printf("AND\n");}
+			comparacion { printf("Termino logico\n"); }
+			| termino_logico AND comparacion { printf("Termino logico\n"); }
 			;
 comparacion:
-            expresion OPIDENTICO expresion {printf("<expresion> == <expresion>\n");}
-            | expresion OPMENORIGUAL expresion {printf("<expresion> <= <expresion>\n");}
-            | expresion OPMAYORIGUAL expresion {printf("<expresion> >= <expresion>\n");}
-            | expresion OPMAYOR expresion{printf("<expresion> > <expresion>\n");}
-            | expresion OPMENOR expresion{printf("<expresion> < <expresion>\n");}
-            | expresion OPDISTINTO expresion{printf("<expresion> != <expresion>\n");}
-			| between
-			| inlist
-			|PARENTESISA condicion PARENTESISC
+            expresion OPIDENTICO expresion { printf("Comparacion ==\n"); }
+            | expresion OPMENORIGUAL expresion { printf("Comparacion <=\n"); }
+            | expresion OPMAYORIGUAL expresion { printf("Comparacion >=\n"); }
+            | expresion OPMAYOR expresion { printf("Comparacion >\n"); }
+            | expresion OPMENOR expresion { printf("Comparacion <\n"); }
+            | expresion OPDISTINTO expresion { printf("Comparacion !=\n"); }
+			| between { printf("Coparacion Between\n"); }
+			| inlist { printf("Comparacion Inlist\n"); }
+			|PARENTESISA condicion PARENTESISC { printf("Comparacion ()\n"); }
             ;
 
 
 expresion:
-            expresion OPSUMA termino {printf("Suma OK\n");}
-            | expresion OPRESTA termino {printf("Resta OK\n");}
-            | termino
+            expresion OPSUMA termino { printf("Expresion suma\n"); }
+            | expresion OPRESTA termino { printf("Expresion resta\n"); }
+            | termino { printf("Expresion\n"); }
             ;
 
 termino:
-        termino OPMUL factor {printf("Multiplicacion OK\n");}
-        | termino OPDIV factor {printf("Division OK\n");}
-        | factor
+        termino OPMUL factor { printf("Termino multiplicacion\n"); }
+        | termino OPDIV factor { printf("Termino division\n"); }
+        | factor { printf("Termino\n"); }
         ;
 
-factor:/*verificando aca en este ID si existe o no, se cubre en todas las apariciones en el codigo fuente????*/
+factor:
         ID {
             
                 strcpy(vecAux, $1);
-                punt = strtok(vecAux," +-*/[](){}:=,\n"); /*porque puede venir de cualquier lado*/
-                if(!existeID(punt)) /*No existe: entonces no esta declarada --> error*/
+                punt = strtok(vecAux," +-*/[](){}:=,\n");
+                if(!existeID(punt)) //No existe: entonces no esta declarada --> error
                 {
                     sprintf(mensajes, "%s%s%s", "Error: no se declaro la variable '", punt, "'");
                     yyerror(mensajes, @1.first_line, @1.first_column, @1.last_column);
                 }
            }
-        | CONS_INT { $<tipo_int>$ = $1; printf("CTE entera: %d\n", $<tipo_int>$);}
-        | CONS_FLOAT { $<tipo_double>$ = $1; printf("CTE FLOAT: %g\n", $<tipo_double>$);}
-
+		{ printf("Factor ID\n"); }
+        | CONS_INT { $<tipo_int>$ = $1; printf("Constante entera: %d\n", $<tipo_int>$);}
+		{ printf("Factor cte entera\n"); }
+        | CONS_FLOAT { $<tipo_double>$ = $1; printf("Constante real: %g\n", $<tipo_double>$);}
+		{ printf("Factor cte real\n"); }
         | PARENTESISA expresion PARENTESISC
+		{ printf("Factor ()\n"); }
         ;
 
 
 between:
-        BETWEEN PARENTESISA ID COMA CORCHETEA expresion PUNTOCOMA expresion CORCHETEC PARENTESISC {printf("Between OK\n");}
+        BETWEEN PARENTESISA ID COMA CORCHETEA expresion PUNTOCOMA expresion CORCHETEC PARENTESISC {printf("Between\n");}
         ; 
 		
 inlist:
-        INLIST PARENTESISA ID COMA CORCHETEA lista_expresiones CORCHETEC PARENTESISC {printf("Inlist OK\n");}
+        INLIST PARENTESISA ID COMA CORCHETEA lista_expresiones CORCHETEC PARENTESISC {printf("Inlist\n");}
         ; 
 
 lista_expresiones:
 					expresion PUNTOCOMA lista_expresiones
+					{ printf("Lista de expresiones\n"); }
 					| expresion
+					{ printf("Lista de expresiones\n"); }
+
 
 %%
 
@@ -312,10 +326,10 @@ int main(int argc, char *argv[])
     }
     else
     { 
-        crearTablaTS();//tablaTS.primero = NULL;
+        crearTablaTS(); //tablaTS.primero = NULL;
         yyparse();
         fclose(yyin);
-        system("Pause"); /*Esta pausa la puse para ver lo que hace via mensajes*/
+        system("Pause");
         return 0;
     }
 }
@@ -509,30 +523,3 @@ int existeID(const char* id)
     }
     return 0;
 }
-
-int esNumero(const char* id,char* error)
-{
-    t_simbolo *tabla = tablaTS.primero;
-    char nombreCTE[32] = "_";
-    strcat(nombreCTE, id);
-
-    while(tabla)
-    {
-        if(strcmp(tabla->data.nombre, id) == 0 || strcmp(tabla->data.nombre, nombreCTE) == 0)
-        {
-            if(strcmp(tabla->data.tipo, "INTEGER")==0 || strcmp(tabla->data.tipo, "FLOAT")==0)
-            {
-                return 1;
-            }
-            else
-            {
-                sprintf(error,"%s%s%s","Error: tipo de dato de la variable '",id,"' incorrecto. Los tipos permitidos son 'int' y 'float'");
-                return 0;
-            }
-        }
-        tabla = tabla->next;
-    }
-    sprintf(error, "%s%s%s", "Error: no se declaro la variable '", id, "'");
-    return 0;
-}
-

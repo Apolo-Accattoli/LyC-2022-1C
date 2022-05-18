@@ -208,6 +208,8 @@ sentencia:
 salida:
         WRITE ID {printf("Salida >>>\n");}
 		| WRITE CONS_STR {printf("Salida >>>\n");}
+		| WRITE CONS_FLOAT {printf("Salida >>>\n");}
+		| WRITE CONS_INT {printf("Salida >>>\n");}
         ;
 		
 entrada:

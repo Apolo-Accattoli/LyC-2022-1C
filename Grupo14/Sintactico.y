@@ -50,6 +50,12 @@ char* punt;
 /* --- Validaciones --- */
 int existeID(const char*);
 char mensajes[100];
+int esNumero(const char*,char*);
+
+/* ---  Arbol   --- */
+
+/* ---  Pila   --- */
+
 
 %}
 
@@ -113,6 +119,7 @@ PROGRAMA:
         bloque_declaraciones bloque
         { 
 			guardarTS();
+			//Acá iría grabar arbol
 			printf("\nCompilacion exitosa.\n");
 		}
         ;
@@ -206,14 +213,26 @@ sentencia:
 			;
 
 salida:
-        WRITE ID {printf("Salida >>>\n");}
+        WRITE ID 
+			{
+				printf("Salida >>>\n"); //Acá se insertarían en el arbol las salidas
+			}
 		| WRITE CONS_STR {printf("Salida >>>\n");}
 		| WRITE CONS_FLOAT {printf("Salida >>>\n");}
 		| WRITE CONS_INT {printf("Salida >>>\n");}
         ;
 		
 entrada:
-        READ ID {printf("Entrada >>>\n");}
+        READ ID {
+					printf("Entrada >>>\n");
+					strcpy(vecAux, $2); // Comprueba que la variable esté declarada.
+                    punt = strtok(vecAux," ;\n");
+                    if(!existeID(punt)) {
+                        sprintf(mensajes, "%s%s%s", "Error: no se declaro la variable '", punt, "'");
+                        yyerror(mensajes, @1.first_line, @2.first_column, @2.last_column);
+                    }
+					//Acá tendríamos que insertar en el árbol la entrada
+				}
 		;
 
 asignacion:
@@ -225,21 +244,35 @@ asignacion:
 										sprintf(mensajes, "%s%s%s", "Error: no se declaro la variable '", punt, "'");
 										yyerror(mensajes, @1.first_line, @1.first_column, @1.last_column);
 									}
+
 								}
 			{ printf("Asignacion.\n"); }
-			| ID OPASIG CONS_STR
-			{ printf("Asignacion.\n"); }
+			| ID OPASIG CONS_STR {
+									printf("Asignacion.\n"); 
+									
+								}
 			;
 
 seleccion:
-            IF PARENTESISA condicion PARENTESISC bloque ENDIF
-			{ printf("Seleccion\n"); }
-            | IF PARENTESISA condicion PARENTESISC  bloque ELSE bloque ENDIF
-            { printf("Seleccion\n"); }
+            IF PARENTESISA condicion PARENTESISC bloque ENDIF 
+			{ 
+				printf("Seleccion\n");
+				//Acá va lo de IF				
+			}
+            | IF PARENTESISA condicion PARENTESISC  bloque ELSE {
+				//Aca va lo del ELSE
+			}bloque ENDIF
+            { //ACA VA LO DE ARBOL DE IF-ELSE
+			printf("Seleccion\n"); 
+			}
 			 ;
 
 iteracion: 
-            WHILE PARENTESISA condicion PARENTESISC bloque ENDWHILE { printf("Iteracion\n"); }
+            WHILE {/*ACA VA EL CUERPO*/} PARENTESISA condicion PARENTESISC bloque ENDWHILE 
+			{ 
+				//ARBOL WHILE
+				printf("Iteracion\n"); 
+			}
 
             ;
 
@@ -280,7 +313,7 @@ termino:
 
 factor:
         ID {
-            
+				char error[50];
                 strcpy(vecAux, $1);
                 punt = strtok(vecAux," +-*/[](){}:=,\n");
                 if(!existeID(punt)) //No existe: entonces no esta declarada --> error
@@ -288,6 +321,12 @@ factor:
                     sprintf(mensajes, "%s%s%s", "Error: no se declaro la variable '", punt, "'");
                     yyerror(mensajes, @1.first_line, @1.first_column, @1.last_column);
                 }
+				if(!esNumero(punt,error)) /*No es una variable numérica --> error*/
+                {
+                    sprintf(mensajes, "%s", error);
+                    yyerror(mensajes, @1.first_line, @1.first_column, @1.last_column);
+                }
+                //meter al arbol
            }
 		{ printf("Factor ID\n"); }
         | CONS_INT { $<tipo_int>$ = $1; printf("Constante entera: %d\n", $<tipo_int>$);}
@@ -300,12 +339,30 @@ factor:
 
 
 between:
-        BETWEEN PARENTESISA ID COMA CORCHETEA expresion PUNTOCOMA expresion CORCHETEC PARENTESISC {printf("Between\n");}
+        BETWEEN PARENTESISA ID {
+                            //ver que sea una variable numérica
+                            char error[50];
+                            strcpy(vecAux, $3);
+                            punt = strtok(vecAux," ;\n");
+                            if(!esNumero(punt, error))
+                            {
+                                sprintf(mensajes, "%s", error);
+                                yyerror(mensajes, @1.first_line, @1.first_column, @1.last_column);
+                            }
+                            //insertar en árbol
+                        } COMA CORCHETEA expresion 
+						{//Acá iría una comparacion por mayor
+						} 
+						PUNTOCOMA expresion{
+						//Aca iría una comparación por menor	
+						} CORCHETEC PARENTESISC {printf("Between\n");}
         ; 
 		
 inlist:
         INLIST PARENTESISA ID COMA CORCHETEA lista_expresiones CORCHETEC PARENTESISC {printf("Inlist\n");}
-        ; 
+        //guardar el ID y luego comparar con cada una de las expresiones.
+		//Podría haber una variable @true que indique si se encontró
+		; 
 
 lista_expresiones:
 					expresion PUNTOCOMA lista_expresiones
@@ -523,5 +580,33 @@ int existeID(const char* id)
         }
         tabla = tabla->next;
     }
+    return 0;
+}
+
+//Comprueba si un id es de tipo numérico
+int esNumero(const char* id,char* error)
+{
+    t_simbolo *tabla = tablaTS.primero;
+    char nombreCTE[32] = "_";
+    strcat(nombreCTE, id);
+
+    while(tabla)
+    {
+        if(strcmp(tabla->data.nombre, id) == 0 || strcmp(tabla->data.nombre, nombreCTE) == 0)
+        {
+            if(strcmp(tabla->data.tipo, "INTEGER")==0 || strcmp(tabla->data.tipo, "FLOAT")==0)
+            {
+				//Me parece que no toma en cuenta los tipos de las constantes, quizá podríamos quitar esta parte
+                return 1;
+            }
+            else
+            {
+                sprintf(error,"%s%s%s","Error: tipo de dato de la variable '",id,"' incorrecto. Los tipos permitidos son 'int' y 'float'");
+                return 0;
+            }
+        }
+        tabla = tabla->next;
+    }
+    sprintf(error, "%s%s%s", "Error: no se declaro la variable '", id, "'");
     return 0;
 }

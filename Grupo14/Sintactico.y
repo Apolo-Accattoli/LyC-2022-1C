@@ -417,7 +417,7 @@ inlist:
         //comparar ID con cada una de las expresiones.
 		//Podría haber una variable @found que indique si se encontró
 		
-		//
+		//inlistPTR = listaexpPTR
 		; 
 
 lista_expresiones:	//Se cambió la recursividad para que sea a izquierda
@@ -425,13 +425,14 @@ lista_expresiones:	//Se cambió la recursividad para que sea a izquierda
 					{ 
 					
 						printf("Lista de expresiones\n"); 
+						//listaexpPTR=Crearnodo(OR, listaexpPTR ; crearNodo(==, crearhoja (ID), expresionPTR)
 						
 					}
 					| expresion
 					{ 
 						printf("Lista de expresiones\n"); 
-						// IF ( ID = expresion OR ID = expresion 2, etc)
-						//
+						// ListaExprPTR=nodo(==, crearHoja (ID), expresionptr)
+						//IF ( ID = expresion OR ID = expresion 2, etc)
 						//		@found=true	
 						//
 					}

@@ -1,4 +1,4 @@
-/*---- 1. Declaraciones ----*/
+/*---- Declaraciones ----*/
 
 %{
 #include <stdio.h>
@@ -65,7 +65,7 @@ double tipo_double;
 char *tipo_str;
 }
 
-/*---- 2. Tokens - Start ----*/
+/*---- Tokens - Start ----*/
 
 %start PROGRAMA
 %token DECVAR "DECVAR"
@@ -110,7 +110,7 @@ char *tipo_str;
 %token BETWEEN "BETWEEN"
 %token INLIST "INLIST"
 
-/*---- 3. Definición de reglas gramaticales ----*/
+/*---- Reglas gramaticales ----*/
 %locations
 
 %%
@@ -196,7 +196,10 @@ bloque:
         sentencia
         { printf("Bloque.\n"); }
         | bloque sentencia
-        { printf("Bloque.\n"); }
+        { 
+			printf("Bloque.\n"); 
+			//creación de nodo para bloque con el puntero anterior a bloque y la sentencia
+		}
 		;
 
 sentencia:
@@ -210,12 +213,14 @@ sentencia:
             { printf("Sentencia.\n"); }
 			| entrada
             { printf("Sentencia.\n"); }
+			//Estos serían de igualación de punteros
 			;
 
 salida:
         WRITE ID 
 			{
-				printf("Salida >>>\n"); //Acá se insertarían en el arbol las salidas
+				printf("Salida >>>\n"); //Acá se insertarían en el arbol las salidas ¿Cómo se haría?
+				//Posiblemente un nodo con una sola hoja para el write, o solo la hoja
 			}
 		| WRITE CONS_STR {printf("Salida >>>\n");}
 		| WRITE CONS_FLOAT {printf("Salida >>>\n");}
@@ -231,7 +236,8 @@ entrada:
                         sprintf(mensajes, "%s%s%s", "Error: no se declaro la variable '", punt, "'");
                         yyerror(mensajes, @1.first_line, @2.first_column, @2.last_column);
                     }
-					//Acá tendríamos que insertar en el árbol la entrada
+					//Acá tendríamos que insertar en el árbol la entrada ¿Como se inserta?
+					//Posiblemente un nodo con una sola hoja o una hoja nomás.
 				}
 		;
 
@@ -246,45 +252,66 @@ asignacion:
 									}
 
 								}
-			{ printf("Asignacion.\n"); }
+			{ printf("Asignacion.\n"); 
+			
+			//ASIGPT=CrearNOdo(OPASIG, crearHoja (ID), EPTR)
+			}
 			| ID OPASIG CONS_STR {
 									printf("Asignacion.\n"); 
-									
+								//ASIGPT=CrearNOdo(OPASIG, crearHoja (ID), crearHoja (CONST_STR))	
 								}
 			;
 
 seleccion:
             IF PARENTESISA condicion PARENTESISC bloque ENDIF 
 			{ 
+			//¿Como se maneja los if anidados para no perder los punteros 
+			//a condiciones anteriores?
+			
 				printf("Seleccion\n");
-				//Acá va lo de IF				
+				//Acá va lo de l bloque de IF	
+				// EL profesor lo pone antes de reconocer toda la seleccion, apenas
+				//termina la accion, pero creo que podría ir acá
+				//sleeccionptr=(IF, CONDPTR, BLOQUEPTR)
 			}
-            | IF PARENTESISA condicion PARENTESISC  bloque ELSE {
-				//Aca va lo del ELSE
+            | IF PARENTESISA condicion PARENTESISC  bloque ELSE 
+			{
+				//acá leí el ELSE, probablemente debería guardar el
+				//sub-arbol del bloque para no perderlo y después guardar
+				//Aca va lo del bloque de IF con ELSE
 			}bloque ENDIF
-            { //ACA VA LO DE ARBOL DE IF-ELSE
+            { //ACA se crea el CUERPO (CUERPO; BLOQUETRUE, BLOQUE) y luego se crea el IF (IF, COND, CUERPO)
 			printf("Seleccion\n"); 
 			}
+			
+			
 			 ;
 
 iteracion: 
-            WHILE {/*ACA VA EL CUERPO*/} PARENTESISA condicion PARENTESISC bloque ENDWHILE 
+            WHILE {/*ACA VA EL CUERPO?*/} PARENTESISA condicion PARENTESISC bloque ENDWHILE 
 			{ 
-				//ARBOL WHILE
+				//ARBOL WHILE, por un lado la parte de condicion y por otro el bloque
+				//No sé cómo haría con la anidación de bloques (de nuevo)
 				printf("Iteracion\n"); 
 			}
 
             ;
 
 condicion:
-            condicion OR termino_logico { printf("Condicion OR\n"); } // .... OR b==c
-            | NOT termino_logico { printf("Condicion NOT\n"); } //NOT a==b
-			| termino_logico { printf("Condicion\n"); }//a==B
+            condicion OR termino_logico {
+				printf("Condicion OR\n"); 
+				//Se crea un nodo COND=(OR, COND, TELOGPT)
+				} // .... OR b==c
+            | NOT termino_logico { printf("Condicion NOT\n"); } //NOT a==b Se igualan punteros
+			| termino_logico { printf("Condicion\n"); }//a==B Se igualan punteros
 			;
 			
 termino_logico:
-			comparacion { printf("Termino logico\n"); }
-			| termino_logico AND comparacion { printf("Termino logico\n"); }
+			comparacion { printf("Termino logico\n"); } //Se iguala puntero 
+			| termino_logico AND comparacion { 
+				printf("Termino logico\n"); 
+				//Se crea un nodo ( TELOGPT=(AND,TELOGPT, COMPPT)
+			}
 			;
 comparacion:
             expresion OPIDENTICO expresion { printf("Comparacion ==\n"); }
@@ -296,45 +323,72 @@ comparacion:
 			| between { printf("Coparacion Between\n"); }
 			| inlist { printf("Comparacion Inlist\n"); }
 			|PARENTESISA condicion PARENTESISC { printf("Comparacion ()\n"); }
+			
+			//A ver cómo saco dos expresiones (¿Dos punteros asignados al reconocer cada expresion?
+			//para luego crear el nodo de la comparación
+			//expresion { exp1=EXPT } OPIDENTICO expresion {ComparacionPT=CrearNodo(OPERADORLOGICO, exp1, EXPT)}
             ;
 
 
 expresion:
-            expresion OPSUMA termino { printf("Expresion suma\n"); }
-            | expresion OPRESTA termino { printf("Expresion resta\n"); }
-            | termino { printf("Expresion\n"); }
+            expresion OPSUMA termino 
+			{ 
+				printf("Expresion suma\n"); 
+				//Puntero de Expresion (EXPT) = Crear nodo(+, EXPT, TEPT)
+			}
+            | expresion OPRESTA termino { 
+				printf("Expresion resta\n"); 
+					//Puntero de Expresion (EXPT) = Crear nodo(-, EXPT, TEPT)
+				}
+            | termino { printf("Expresion\n"); //copiado de punteros 
+				}
             ;
 
 termino:
-        termino OPMUL factor { printf("Termino multiplicacion\n"); }
-        | termino OPDIV factor { printf("Termino division\n"); }
-        | factor { printf("Termino\n"); }
+        termino OPMUL factor { printf("Termino multiplicacion\n"); 
+			//Crear nodo con TEPT=crearnodo(*,TEPT, FAPT)
+		}
+        | termino OPDIV factor { printf("Termino division\n");
+			//Crear nodo con TEPT=crearnodo(/,TEPT, FAPT)
+		}
+        | factor { printf("Termino\n"); //copiado de punteros TEPT=FAPT
+			}
         ;
 
 factor:
         ID {
-				char error[50];
-                strcpy(vecAux, $1);
-                punt = strtok(vecAux," +-*/[](){}:=,\n");
-                if(!existeID(punt)) //No existe: entonces no esta declarada --> error
-                {
-                    sprintf(mensajes, "%s%s%s", "Error: no se declaro la variable '", punt, "'");
-                    yyerror(mensajes, @1.first_line, @1.first_column, @1.last_column);
-                }
-				if(!esNumero(punt,error)) /*No es una variable numérica --> error*/
-                {
-                    sprintf(mensajes, "%s", error);
-                    yyerror(mensajes, @1.first_line, @1.first_column, @1.last_column);
-                }
-                //meter al arbol
-           }
-		{ printf("Factor ID\n"); }
+			char error[50];
+			strcpy(vecAux, $1);
+			punt = strtok(vecAux," +-*/[](){}:=,\n");
+			if(!existeID(punt)) //No existe: entonces no esta declarada --> error
+			{
+				sprintf(mensajes, "%s%s%s", "Error: no se declaro la variable '", punt, "'");
+				yyerror(mensajes, @1.first_line, @1.first_column, @1.last_column);
+			}
+			if(!esNumero(punt,error)) /*No es una variable numérica --> error*/
+			{
+				sprintf(mensajes, "%s", error);
+				yyerror(mensajes, @1.first_line, @1.first_column, @1.last_column);
+			}
+                
+        }
+		{ printf("Factor ID\n");
+		//Crear una hoja con ID a FAPT (Puntero a Factor)
+		}
         | CONS_INT { $<tipo_int>$ = $1; printf("Constante entera: %d\n", $<tipo_int>$);}
-		{ printf("Factor cte entera\n"); }
+		{ printf("Factor cte entera\n"); 
+		//Crear una hoja con Constante Entera a FAPT (Puntero a Factor)
+		}
         | CONS_FLOAT { $<tipo_double>$ = $1; printf("Constante real: %g\n", $<tipo_double>$);}
-		{ printf("Factor cte real\n"); }
+		{ printf("Factor cte real\n"); 
+		//Crear una hoja con Constante Real a FAPT (Puntero a Factor)
+		}
         | PARENTESISA expresion PARENTESISC
-		{ printf("Factor ()\n"); }
+		{ printf("Factor ()\n"); 
+		//Ver cómo se crea un nodo de expresión entre paréntesis a FAPT (Puntero a Factor)
+		//Posiblemente se pueda reconocer la expresión, el cierre de paréntesis e igualar ese
+		//así FAPT = EXPT, capaz que antes del paréntesis.
+		}
         ;
 
 
@@ -360,15 +414,27 @@ between:
 		
 inlist:
         INLIST PARENTESISA ID COMA CORCHETEA lista_expresiones CORCHETEC PARENTESISC {printf("Inlist\n");}
-        //guardar el ID y luego comparar con cada una de las expresiones.
-		//Podría haber una variable @true que indique si se encontró
+        //comparar ID con cada una de las expresiones.
+		//Podría haber una variable @found que indique si se encontró
+		
+		//
 		; 
 
-lista_expresiones:
-					expresion PUNTOCOMA lista_expresiones
-					{ printf("Lista de expresiones\n"); }
+lista_expresiones:	//Se cambió la recursividad para que sea a izquierda
+					lista_expresiones PUNTOCOMA expresion
+					{ 
+					
+						printf("Lista de expresiones\n"); 
+						
+					}
 					| expresion
-					{ printf("Lista de expresiones\n"); }
+					{ 
+						printf("Lista de expresiones\n"); 
+						// IF ( ID = expresion OR ID = expresion 2, etc)
+						//
+						//		@found=true	
+						//
+					}
 
 
 %%

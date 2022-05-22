@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include "y.tab.h"
 #include <string.h>
+#include "arbol_sintactico.h"
+#include "pila.h"
 FILE  *yyin;
 
 int yyerror();
@@ -55,6 +57,48 @@ int esNumero(const char*,char*);
 /* ---  Arbol   --- */
 
 /* ---  Pila   --- */
+
+
+//Declaración de punteros árbol sintáctico
+
+tArbol 	asigPtr,			//Puntero de asignaciones
+		exprPtr,			//Puntero de expresiones
+		exprCadPtr,			//Puntero de expresiones de cadenas
+		exprAritPtr,		//Puntero de expresiones aritmeticas
+		terminoPtr,			//Puntero de terminos
+		factorPtr,			//Puntero de factores
+		bloquePtr,			//Puntero de bloque
+		sentenciaPtr,		//Puntero de sentencia	
+		bloqueWhPtr,		//Puntero de bloque de While	
+		listaExpComaPtr,	//Puntero de lista expresion coma
+		elseBloquePtr,		//Puntero para el bloque del else
+		thenBloquePtr,		//Puntero para el bloque del then
+		expreLogAuxPtr,
+		auxBloquePtr,
+		auxAritPtr,
+		auxPtr,
+		auxIfPtr,
+		escrituraPtr,
+		declConstantePtr,	//Puntero decl_constante
+		auxMaximoHojaPtr,	//Puntero del Maximo
+		auxMaxSelNodo,		//Puntero del Maximo
+		auxMaxAsigNodo,		//Puntero del Maximo
+		auxMaxIFNodo,		//Puntero del Maximo
+		auxMaxNodoAnterior,	//Puntero del Maximo
+		exprCMPPtr,
+		seleccionPtr,
+		seleccionIFPtr,
+		seleccionIFElsePtr,
+		comparadorPtr,
+		comparacionPtr,
+		comparacionAuxPtr,
+		condicionPtr,
+		auxCondicionPtr,
+		auxMaxNodo,
+		exprMaximoPtr,
+		auxEtiqPtr,
+		auxWhilePtr,
+		auxMaxCond;
 
 
 %}
@@ -365,23 +409,25 @@ factor:
 				sprintf(mensajes, "%s%s%s", "Error: no se declaro la variable '", punt, "'");
 				yyerror(mensajes, @1.first_line, @1.first_column, @1.last_column);
 			}
+            else{
+                factorPtr = crearHoja(punt,getTipoId(punt));
+            }
 			if(!esNumero(punt,error)) /*No es una variable numérica --> error*/
 			{
 				sprintf(mensajes, "%s", error);
 				yyerror(mensajes, @1.first_line, @1.first_column, @1.last_column);
 			}
-                
-        }
-		{ printf("Factor ID\n");
-		//Crear una hoja con ID a FAPT (Puntero a Factor)
+            printf("Factor ID\n");
 		}
-        | CONS_INT { $<tipo_int>$ = $1; printf("Constante entera: %d\n", $<tipo_int>$);}
-		{ printf("Factor cte entera\n"); 
-		//Crear una hoja con Constante Entera a FAPT (Puntero a Factor)
+        | CONS_INT { 
+            $<tipo_int>$ = $1; 
+		    printf("Factor cte entera\n"); 
+            factorPtr = crearHoja($1,"CONS_INT");
 		}
-        | CONS_FLOAT { $<tipo_double>$ = $1; printf("Constante real: %g\n", $<tipo_double>$);}
-		{ printf("Factor cte real\n"); 
-		//Crear una hoja con Constante Real a FAPT (Puntero a Factor)
+        | CONS_FLOAT { 
+        $<tipo_double>$ = $1; 
+		printf("Factor cte real\n"); 
+        factorPtr = crearHoja($1,"CONST_FLOAT");
 		}
         | PARENTESISA expresion PARENTESISC
 		{ printf("Factor ()\n"); 
@@ -676,4 +722,25 @@ int esNumero(const char* id,char* error)
     }
     sprintf(error, "%s%s%s", "Error: no se declaro la variable '", id, "'");
     return 0;
+}
+
+char* getTipoId(const char* id) 
+{
+    t_simbolo *tabla = tablaTS.primero;
+    char nombreCTE[32] = "_";
+    strcat(nombreCTE, id);
+    int b1 = 0;
+    int b2 = 0;
+
+     while(tabla)
+    {
+        b1 = strcmp(tabla->data.nombre, id);
+        b2 = strcmp(tabla->data.nombre, nombreCTE);
+        if(b1 == 0 || b2 == 0)
+        {
+               return tabla->data.tipo;
+        }
+        tabla = tabla->next;
+    }
+    return NULL;
 }

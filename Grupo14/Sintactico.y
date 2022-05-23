@@ -84,7 +84,8 @@ tArbol 	asigPtr,			//Puntero de asignaciones
 		auxAritPtr,
 		auxPtr,
 		auxIfPtr,
-		escrituraPtr,
+		salidaPtr,
+		entradaPtr,
 		declConstantePtr,	//Puntero decl_constante
 		auxMaximoHojaPtr,	//Puntero del Maximo
 		auxMaxSelNodo,		//Puntero del Maximo
@@ -244,37 +245,82 @@ lista_variables:
 
 bloque:
         sentencia
-        { printf("Bloque.\n"); }
+        { 
+			printf("Bloque.\n"); 
+			 
+			if(bloquePtr != NULL){
+				bloquePtr = crearNodo("BLOQUE", sentenciaPtr, NULL);
+			} else {
+				bloquePtr = sentenciaPtr;
+			}
+		}
         | bloque sentencia
         { 
 			printf("Bloque.\n"); 
-			//creación de nodo para bloque con el puntero anterior a bloque y la sentencia
+			if(bloquePtr != NULL){
+				bloquePtr = crearNodo("BLOQUE", bloquePtr, sentenciaPtr);
+			} else {
+				bloquePtr = crearNodo("BLOQUE", sentenciaPtr,NULL);
+			}
 		}
 		;
 
 sentencia:
             asignacion
-            { printf("Sentencia.\n"); }
+            { 
+				printf("Sentencia.\n"); 
+				sentenciaPtr=asigPtr
+			}
             | seleccion
-            { printf("Sentencia.\n"); }
+            { 
+				printf("Sentencia.\n"); 
+				sentenciaPtr=seleccionPtr
+			}
             | iteracion
-            { printf("Sentencia.\n"); }
+            { 
+				printf("Sentencia.\n"); 
+				sentenciaPtr=iteracionPtr
+			}
             | salida
-            { printf("Sentencia.\n"); }
+            { 
+				printf("Sentencia.\n"); 
+				sentenciaPtr=salidaPtr
+			}
 			| entrada
-            { printf("Sentencia.\n"); }
-			//Estos serían de igualación de punteros
+            { 
+				printf("Sentencia.\n"); 
+				sentenciaPtr=entradaPtr
+			}
+			
 			;
 
 salida:
         WRITE ID 
 			{
-				printf("Salida >>>\n"); //Acá se insertarían en el arbol las salidas ¿Cómo se haría?
-				//Posiblemente un nodo con una sola hoja para el write, o solo la hoja
+			strcpy(vecAux, $2); // Comprueba que la variable esté declarada.
+			punt = strtok(vecAux," ;\n");
+			if(!existeID(punt)) {
+				sprintf(mensajes, "%s%s%s", "Error: no se declaro la variable '", punt, "'");
+				yyerror(mensajes, @1.first_line, @2.first_column, @2.last_column);
 			}
-		| WRITE CONS_STR {printf("Salida >>>\n");}
-		| WRITE CONS_FLOAT {printf("Salida >>>\n");}
-		| WRITE CONS_INT {printf("Salida >>>\n");}
+			else {
+				salidaPtr=crearNodo("WRITE", crearHoja(punt, getTipoId(punt), NULL);
+			}
+			printf("Salida >>>\n"); //Acá se insertarían en el arbol las salidas ¿Cómo se haría?
+				//Posiblemente un nodo con una sola hoja para el write, o solo la hoja
+		}
+		| WRITE CONS_STR {
+			salidaPtr=crearNodo("WRITE", crearHoja($2, "CONS_STR"), NULL);
+			printf("Salida >>>\n");
+		}
+		| WRITE CONS_FLOAT {
+			salidaPtr=crearNodo("WRITE", crearHoja($2, "CONS_FLOAT"), NULL);
+			printf("Salida >>>\n");
+		}
+		| WRITE CONS_INT {
+			salidaPtr=crearNodo("WRITE", crearHoja($2, "CONS_INT"), NULL);
+			printf("Salida >>>\n");
+		}
         ;
 		
 entrada:
@@ -286,8 +332,9 @@ entrada:
                         sprintf(mensajes, "%s%s%s", "Error: no se declaro la variable '", punt, "'");
                         yyerror(mensajes, @1.first_line, @2.first_column, @2.last_column);
                     }
-					//Acá tendríamos que insertar en el árbol la entrada ¿Como se inserta?
-					//Posiblemente un nodo con una sola hoja o una hoja nomás.
+					else {
+						entradaPtr=crearNodo("READ", crearHoja(punt, getTipoId(punt), NULL);
+					}
 				}
 		;
 

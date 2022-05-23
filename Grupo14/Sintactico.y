@@ -54,10 +54,16 @@ int existeID(const char*);
 char mensajes[100];
 int esNumero(const char*,char*);
 
-/* ---  Arbol   --- */
+/* ---  Funciones auxiliares   --- */
+void crearNodoCMP(char * comp);
 
-/* ---  Pila   --- */
-
+/* ---  Pilas   --- */
+tPila* pilaExpresion;
+tPila* pilaBloque;
+tPila* pilaCondicion;
+tPila* pilaCondiciones;
+tPila* pilaEtiq;
+tPila* pilaEtiqExpMax;
 
 //Declaración de punteros árbol sintáctico
 
@@ -69,7 +75,7 @@ tArbol 	asigPtr,			//Puntero de asignaciones
 		factorPtr,			//Puntero de factores
 		bloquePtr,			//Puntero de bloque
 		sentenciaPtr,		//Puntero de sentencia	
-		bloqueWhPtr,		//Puntero de bloque de While	
+		iteracionPtr,		//Puntero de bloque de While	
 		listaExpComaPtr,	//Puntero de lista expresion coma
 		elseBloquePtr,		//Puntero para el bloque del else
 		thenBloquePtr,		//Puntero para el bloque del then
@@ -89,7 +95,7 @@ tArbol 	asigPtr,			//Puntero de asignaciones
 		seleccionPtr,
 		seleccionIFPtr,
 		seleccionIFElsePtr,
-		comparadorPtr,
+		terminoLogicoPtr,
 		comparacionPtr,
 		comparacionAuxPtr,
 		condicionPtr,
@@ -294,48 +300,119 @@ asignacion:
 										sprintf(mensajes, "%s%s%s", "Error: no se declaro la variable '", punt, "'");
 										yyerror(mensajes, @1.first_line, @1.first_column, @1.last_column);
 									}
-
+									else{
+										asigPtr=crearHoja(punt,getTipoId(punt));
+										asigPtr=crearNodo("OPASIG", asigPtr, exprAritPtr);
+									}
+									printf("Asignacion.\n");
 								}
-			{ printf("Asignacion.\n"); 
-			
-			//ASIGPT=CrearNOdo(OPASIG, crearHoja (ID), EPTR)
-			}
 			| ID OPASIG CONS_STR {
-									printf("Asignacion.\n"); 
-								//ASIGPT=CrearNOdo(OPASIG, crearHoja (ID), crearHoja (CONST_STR))	
+									strcpy(vecAux, $1); //en $1 esta el valor de ID
+									punt = strtok(vecAux," +-*/[](){}:=,\n");
+									if(!existeID(punt)) //No existe: entonces no esta declarada
+									{
+										sprintf(mensajes, "%s%s%s", "Error: no se declaro la variable '", punt, "'");
+										yyerror(mensajes, @1.first_line, @1.first_column, @1.last_column);
+									}
+									else{
+										
+										asigPtr=crearNodo("OPASIG", crearHoja(punt,getTipoId(punt)), crearHoja($3,"CONS_STR"));
+									}
+									printf("Asignacion.\n");
 								}
 			;
 
 seleccion:
-            IF PARENTESISA condicion PARENTESISC bloque ENDIF 
-			{ 
-			//¿Como se maneja los if anidados para no perder los punteros 
-			//a condiciones anteriores?
-			
-				printf("Seleccion\n");
-				//Acá va lo de l bloque de IF	
-				// EL profesor lo pone antes de reconocer toda la seleccion, apenas
-				//termina la accion, pero creo que podría ir acá
-				//sleeccionptr=(IF, CONDPTR, BLOQUEPTR)
-			}
-            | IF PARENTESISA condicion PARENTESISC  bloque ELSE 
+            IF PARENTESISA {
+				if(condicionPtr){
+						ponerenPila(pilaCondiciones,condicionPtr);
+						condicionPtr=NULL;
+					}
+			}condicion PARENTESISC
 			{
-				//acá leí el ELSE, probablemente debería guardar el
-				//sub-arbol del bloque para no perderlo y después guardar
-				//Aca va lo del bloque de IF con ELSE
-			}bloque ENDIF
-            { //ACA se crea el CUERPO (CUERPO; BLOQUETRUE, BLOQUE) y luego se crea el IF (IF, COND, CUERPO)
-			printf("Seleccion\n"); 
+				if(bloquePtr){
+					ponerenPila(pilaBloque,bloquePtr);
+					bloquePtr=NULL;
+				}
+				else{
+					if(sentenciaPtr) {
+						  ponerenPila(pilaBloque,sentenciaPtr);
+					}
+			} bloque ENDIF 
+			{ 
+				seleccionPtr=crearNodo("IF", condicionPtr, bloquePtr);
+				
+				if (topedePila(pilaCondiciones)){
+					condicionPtr = topedePila(pilaCondiciones);
+					sacardePila(condicionPtr);
+				}
+				if (topedePila(pilaBloque)){
+					  bloquePtr = topedePila(pilaBloque);
+					  sacardePila(pilaBloque);
+				}
+				printf("Seleccion\n");
 			}
-			
-			
-			 ;
+            | IF PARENTESISA {
+				if(condicionPtr){
+						ponerenPila(pilaCondiciones,condicionPtr);
+						condicionPtr=NULL;
+					}
+			condicion PARENTESISC {
+				if(bloquePtr){
+					ponerenPila(pilaBloque,bloquePtr);
+					bloquePtr=NULL;
+				}
+				else{
+					if(sentenciaPtr) {
+						  ponerenPila(pilaBloque,sentenciaPtr);
+					}
+			} bloque {auxBloquePtr=bloquePtr;} 
+			ELSE bloque ENDIF
+            { 
+				seleccionPtr = crearNodo("IF-ELSE", condicionPtr, crearNodo("cuerpo",auxBloquePtr,bloquePtr));
+				if (topedePila(pilaCondiciones)){
+					condicionPtr = topedePila(pilaCondiciones);
+					sacardePila(condicionPtr);
+				}
+				if (topedePila(pilaBloque)){
+					  bloquePtr = topedePila(pilaBloque);
+					  sacardePila(pilaBloque);
+				}
+				printf("Seleccion con ELSE\n"); 
+			}
+			;
 
 iteracion: 
-            WHILE {/*ACA VA EL CUERPO?*/} PARENTESISA condicion PARENTESISC bloque ENDWHILE 
+            WHILE PARENTESISA {
+					if(condicionPtr){
+						ponerenPila(pilaCondiciones,condicionPtr);
+						condicionPtr=NULL;
+					}
+				}		
+			} condicion PARENTESISC 
+			{
+				if(bloquePtr){
+					ponerenPila(pilaBloque,bloquePtr);
+					bloquePtr=NULL;
+				}
+				else{
+					if(sentenciaPtr) {
+						ponerenPila(pilaBloque,sentenciaPtr);
+					}
+				}		
+			} 
+			bloque ENDWHILE 
 			{ 
-				//ARBOL WHILE, por un lado la parte de condicion y por otro el bloque
-				//No sé cómo haría con la anidación de bloques (de nuevo)
+				
+				iteracionPtr=crearNodo("WHILE", condicionPtr, bloquePtr);
+				if (topedePila(pilaBloque)){
+					bloquePtr = topedePila(pilaBloque);
+					sacardePila(pilaBloque);
+				}
+				if (topedePila(pilaCondiciones)){
+					condicionPtr = topedePila(pilaCondiciones);
+					sacardePila(condicionPtr);
+				}
 				printf("Iteracion\n"); 
 			}
 
@@ -344,33 +421,77 @@ iteracion:
 condicion:
             condicion OR termino_logico {
 				printf("Condicion OR\n"); 
-				//Se crea un nodo COND=(OR, COND, TELOGPT)
-				} // .... OR b==c
-            | NOT termino_logico { printf("Condicion NOT\n"); } //NOT a==b Se igualan punteros
-			| termino_logico { printf("Condicion\n"); }//a==B Se igualan punteros
+				condicionPtr=crearNodo("OR", condicionPtr, terminoLogicoPtr);
+				} 
+            | NOT termino_logico { 
+				printf("Condicion NOT\n"); 
+				condicionPtr = crearNodo("NOT",terminoLogicoPtr,NULL);
+			} 
+			| termino_logico { 
+				printf("Condicion\n");
+				condicionPtr=terminoLogicoPtr;
+				}
 			;
 			
 termino_logico:
-			comparacion { printf("Termino logico\n"); } //Se iguala puntero 
-			| termino_logico AND comparacion { 
+			comparacion { 
+				terminoLogicoPtr=comparacionPtr;
 				printf("Termino logico\n"); 
-				//Se crea un nodo ( TELOGPT=(AND,TELOGPT, COMPPT)
+			} 
+			| termino_logico AND comparacion { 
+				terminoLogicoPtr=crearNodo("AND", terminoLogicoPtr, comparacionPtr);
+				printf("Termino logico\n"); 
+				
 			}
 			;
 comparacion:
-            expresion OPIDENTICO expresion { printf("Comparacion ==\n"); }
-            | expresion OPMENORIGUAL expresion { printf("Comparacion <=\n"); }
-            | expresion OPMAYORIGUAL expresion { printf("Comparacion >=\n"); }
-            | expresion OPMAYOR expresion { printf("Comparacion >\n"); }
-            | expresion OPMENOR expresion { printf("Comparacion <\n"); }
-            | expresion OPDISTINTO expresion { printf("Comparacion !=\n"); }
-			| between { printf("Coparacion Between\n"); }
-			| inlist { printf("Comparacion Inlist\n"); }
-			|PARENTESISA condicion PARENTESISC { printf("Comparacion ()\n"); }
+            expresion  {exprCMPPtr = exprPtr; } OPIDENTICO expresion { 
+				comparacionPtr = crearNodo("OPIDENTICO",exprCMPPtr,exprPtr);
+				printf("Comparacion ==\n"); 
+			}
+            | expresion {exprCMPPtr = exprPtr; } OPMENORIGUAL expresion { 
+				comparacionPtr = crearNodo("OPMENORIGUAL",exprCMPPtr,exprPtr);
+				printf("Comparacion <=\n"); 
+			}
+            | expresion {exprCMPPtr = exprPtr; } OPMAYORIGUAL expresion { 
+				comparacionPtr = crearNodo("OPMAYORIGUAL",exprCMPPtr,exprPtr);
+				printf("Comparacion >=\n"); 
+			}
+            | expresion {exprCMPPtr = exprPtr; } OPMAYOR expresion { 
+				comparacionPtr = crearNodo("OPMAYOR",exprCMPPtr,exprPtr);
+				printf("Comparacion >\n"); 
+			}
+            | expresion {exprCMPPtr = exprPtr; } OPMENOR expresion { 
+				comparacionPtr = crearNodo("OPMENOR",exprCMPPtr,exprPtr);
+				printf("Comparacion <\n"); 
+			}
+            | expresion {exprCMPPtr = exprPtr; } OPDISTINTO expresion { 
+				comparacionPtr = crearNodo("OPDISTINTO",exprCMPPtr,exprPtr);
+				printf("Comparacion !=\n"); 
+			}
+			| between { 
+			//TAREA
+				printf("Coparacion Between\n"); 
+			}
+			| inlist { 
+			//TAREA
+			printf("Comparacion Inlist\n"); 
+			}
+			|PARENTESISA {
+				if(condicionPtr){
+					ponerenPila(pilaCondicion, condicionPtr);
+				}
+					
+			}condicion PARENTESISC { 
+				printf("Comparacion ()\n"); 
+				comparacionPtr=condicionPtr;
+				if(topedePila(pilaCondicion)){
+					condicionPtr = topedePila(pilaCondicion);
+					sacardePila(pilaCondicion);
+				}
+			}
 			
-			//A ver cómo saco dos expresiones (¿Dos punteros asignados al reconocer cada expresion?
-			//para luego crear el nodo de la comparación
-			//expresion { exp1=EXPT } OPIDENTICO expresion {ComparacionPT=CrearNodo(OPERADORLOGICO, exp1, EXPT)}
+			
             ;
 
 
@@ -378,24 +499,37 @@ expresion:
             expresion OPSUMA termino 
 			{ 
 				printf("Expresion suma\n"); 
+				exprAritPtr=crearNodo("OPSUMA", exprPtr, terminoPtr);
+				//exprAritPtr->info.tipoDato= terminoPtr->info.tipoDato;
 				//Puntero de Expresion (EXPT) = Crear nodo(+, EXPT, TEPT)
 			}
             | expresion OPRESTA termino { 
 				printf("Expresion resta\n"); 
-					//Puntero de Expresion (EXPT) = Crear nodo(-, EXPT, TEPT)
+				exprAritPtr=crearNodo("OPRESTA", exprPtr, terminoPtr);
+				//exprAritPtr->info.tipoDato= terminoPtr->info.tipoDato;
+				//Puntero de Expresion (EXPT) = Crear nodo(-, EXPT, TEPT)
 				}
-            | termino { printf("Expresion\n"); //copiado de punteros 
-				}
+            | termino { 
+				printf("Expresion\n"); //copiado de punteros 
+				exprAritPtr = terminoPtr; 
+				//exprAritPtr->info.tipoDato= terminoPtr->info.tipoDato;
+			}
             ;
 
 termino:
-        termino OPMUL factor { printf("Termino multiplicacion\n"); 
-			//Crear nodo con TEPT=crearnodo(*,TEPT, FAPT)
+        termino OPMUL factor { 
+			printf("Termino multiplicacion\n");
+			terminoPtr=crearNodo("OPMUL", terminoPtr, factorPtr);
+			//terminoPtr->info.tipoDato= factorPtr->info.tipoDato;
 		}
         | termino OPDIV factor { printf("Termino division\n");
-			//Crear nodo con TEPT=crearnodo(/,TEPT, FAPT)
+			terminoPtr=crearNodo("OPDIV", terminoPtr, factorPtr);
+			//terminoPtr->info.tipoDato= factorPtr->info.tipoDato;
 		}
-        | factor { printf("Termino\n"); //copiado de punteros TEPT=FAPT
+        | factor { 
+			terminoPtr = factorPtr;
+			//terminoPtr->info.tipoDato= factorPtr->info.tipoDato; Parece innecesario
+			printf("Termino\n"); //copiado de punteros TEPT=FAPT
 			}
         ;
 
@@ -429,11 +563,20 @@ factor:
 		printf("Factor cte real\n"); 
         factorPtr = crearHoja($1,"CONST_FLOAT");
 		}
-        | PARENTESISA expresion PARENTESISC
-		{ printf("Factor ()\n"); 
-		//Ver cómo se crea un nodo de expresión entre paréntesis a FAPT (Puntero a Factor)
-		//Posiblemente se pueda reconocer la expresión, el cierre de paréntesis e igualar ese
-		//así FAPT = EXPT, capaz que antes del paréntesis.
+        | PARENTESISA {
+			if(exprAritPtr){
+				ponerenPila(pilaExpresion,exprAritPtr);
+			}
+		}
+
+		expresion PARENTESISC
+		{ 
+			factorPtr = exprAritPtr;
+			if(topedePila(pilaExpresion)){
+            exprAritPtr = topedePila(pilaExpresion);
+            sacardePila(pilaExpresion);
+            }
+			printf("Factor ()\n"); 
 		}
         ;
 
@@ -491,6 +634,7 @@ lista_expresiones:	//Se cambió la recursividad para que sea a izquierda
 
 int main(int argc, char *argv[])
 {
+
     if((yyin = fopen(argv[1], "rt"))==NULL)
     {
         printf("\nNo se puede abrir el archivo de prueba: %s\r\n", argv[1]);
@@ -498,6 +642,11 @@ int main(int argc, char *argv[])
     }
     else
     { 
+		pilaExpresion = crearPila();      
+		pilaBloque = crearPila();
+		pilaCondicion = crearPila();
+		pilaEtiq = crearPila();
+		pilaEtiqExpMax = crearPila();
         crearTablaTS(); //tablaTS.primero = NULL;
         yyparse();
         fclose(yyin);
@@ -743,4 +892,9 @@ char* getTipoId(const char* id)
         tabla = tabla->next;
     }
     return NULL;
+}
+
+void crearNodoCMP(char * comp){
+	comparacionPtr = crearNodo("CMP",exprCMPPtr,exprPtr);
+	comparacionPtr = crearNodo(comp,comparacionPtr,NULL);
 }

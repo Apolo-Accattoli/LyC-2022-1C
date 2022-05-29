@@ -107,7 +107,10 @@ tArbol 	asigPtr,			//Puntero de asignaciones
 		auxWhilePtr,
 		auxMaxCond,
 		listaExpPtr,
-		inlistPtr;
+		inlistPtr,
+		betweenPtr,
+		condicionIfPtr,
+		accionPtr;
 
 %}
 
@@ -171,7 +174,7 @@ PROGRAMA:
         bloque_declaraciones bloque
         { 
 			guardarTS();
-			postOrden(&bloquePtr);
+			postOrden(&bloquePtr); //Agregamos funciones
 			tree_print_dot(&bloquePtr,graph);
 			printf("\nCompilacion exitosa.\n");
 		}
@@ -519,11 +522,11 @@ comparacion:
 				printf("Comparacion !=\n"); 
 			}
 			| between { 
-			//TAREA
-				printf("Coparacion Between\n"); 
+			//VER POR LAS DUDAS
+				printf("Comparacion Between\n"); 
 			}
 			| inlist { 
-			//TAREA
+			//VER POR LAS DUDAS
 			printf("Comparacion Inlist\n"); 
 			}
 			|PARENTESISA {
@@ -644,10 +647,15 @@ between:
                             //insertar en árbol
                         } COMA CORCHETEA expresion 
 						{//Acá iría una comparacion por mayor
+						//condicionIfPtr=crearNodo(">", crearHoja (ID), exprPtr);
 						} 
 						PUNTOCOMA expresion{
 						//Aca iría una comparación por menor	
+						//condicionIfPtr=crearNodo("AND", condicionIfPtr , crearNodo("<", crearHoja (ID), exprPtr));
+						//accionPtr=crearNodo("Cuerpo",crearNodo(":=","@between","1"),crearNodo(":=","@between","0"));
+						//listaExpPtr=crearNodo("IF",condicionIfPtr,accionPtr);
 						} CORCHETEC PARENTESISC {printf("Between\n");}
+						//betweenPtr = listaExpPtr;
         ; 
 		
 inlist:
@@ -663,7 +671,7 @@ lista_expresiones:	//Se cambió la recursividad para que sea a izquierda
 					{ 
 					
 						printf("Lista de expresiones\n"); 
-						listaExpPtr=crearNodo("OR", listaExpPtr , crearNodo(==, crearHoja (ID), exprPtr));
+						listaExpPtr=crearNodo("OR", listaExpPtr , crearNodo("==", crearHoja (ID), exprPtr));
 						
 					}
 					| expresion

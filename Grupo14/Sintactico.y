@@ -5,14 +5,79 @@
 #include <stdlib.h>
 #include "y.tab.h"
 #include <string.h>
-#include "arbol_sintactico.h"
-#include "pila.h"
+
 FILE  *yyin;
 FILE *graph;
 int yyerror();
 int yylex();
 
 
+/* --- MOVER --- */
+enum tipoError
+{
+    ErrorSintactico,
+    ErrorLexico
+};
+/* Tipos de datos para la tabla de simbolos */
+#define Integer 1
+#define Float 2
+#define String 3
+#define CteInt 4
+#define CteFloat 5
+#define CteString 6
+#define SinTipo 7
+#define SIN_MEM -4
+#define NODO_OK -3
+#define TRUE 1
+#define FALSE 0
+
+#define TAMANIO_TABLA 300
+#define TAM_NOMBRE 32
+#define ES_CTE_CON_NOMBRE 1
+
+/* Defino estructura de informacion para el arbol*/
+typedef struct {
+	char* dato;
+	char* tipoDato;		
+}tInfo;
+
+/* Defino estructura de nodo de arbol*/
+typedef struct sNodo{
+	tInfo info;
+	struct sNodo *izq, *der;
+}tNodo;
+
+/* Defino estructura de arbol*/
+typedef tNodo* tArbol;
+
+tNodo* crearNodo(const char* dato, tNodo *pIzq, tNodo *pDer);
+tNodo* crearHoja(char* dato,char* tipo);
+tArbol * hijoMasIzq(tArbol *p);
+void enOrden(tArbol *p);
+void verNodo(const char *p);
+void postOrden(tArbol *p);
+void _tree_print_dot_subtree(int nro_padre, tNodo *padre, int nro, tArbol *nodo, FILE* stream);
+void tree_print_dot(tArbol *p,FILE* stream);
+
+typedef struct sNodoPila {
+  tNodo *dato;
+  struct sNodoPila *next;
+}tNodoPila;
+
+typedef struct 
+{
+  tNodoPila *tope;
+  size_t tam; 
+}tPila;
+
+tPila *crearPila(void);
+tNodo *copiarDato(tNodo *);
+void ponerenPila( tPila *, tNodo *value);
+tNodo *topedePila( tPila *);
+void sacardePila(tPila *);
+void vaciarPila( tPila *);
+void borrarPila( tPila **);
+	
 /* --- Tabla de simbolos --- */
 typedef struct
 {
@@ -43,6 +108,8 @@ int insertarTS(const char*, const char*, const char*, int, double);
 t_data* crearDatos(const char*, const char*, const char*, int, double);
 void guardarTS();
 t_tabla tablaTS;
+
+char* getTipoId(const char* id); 
 
 char idvec[32][50];
 int cantid = 0, i=0;
@@ -254,7 +321,7 @@ bloque:
 			printf("Bloque.\n"); 
 			 
 			if(bloquePtr != NULL){
-				bloquePtr = crearNodo("BLOQUE", sentenciaPtr, NULL);
+				bloquePtr = (tNodo *)crearNodo("BLOQUE", sentenciaPtr, NULL);
 			} else {
 				bloquePtr = sentenciaPtr;
 			}
@@ -263,9 +330,9 @@ bloque:
         { 
 			printf("Bloque.\n"); 
 			if(bloquePtr != NULL){
-				bloquePtr = crearNodo("BLOQUE", bloquePtr, sentenciaPtr);
+				bloquePtr = (tNodo *)crearNodo("BLOQUE", bloquePtr, sentenciaPtr);
 			} else {
-				bloquePtr = crearNodo("BLOQUE", sentenciaPtr,NULL);
+				bloquePtr = (tNodo *)crearNodo("BLOQUE", sentenciaPtr,NULL);
 			}
 		}
 		;
@@ -274,27 +341,27 @@ sentencia:
             asignacion
             { 
 				printf("Sentencia.\n"); 
-				sentenciaPtr=asigPtr
+				sentenciaPtr=asigPtr;
 			}
             | seleccion
             { 
 				printf("Sentencia.\n"); 
-				sentenciaPtr=seleccionPtr
+				sentenciaPtr=seleccionPtr;
 			}
             | iteracion
             { 
 				printf("Sentencia.\n"); 
-				sentenciaPtr=iteracionPtr
+				sentenciaPtr=iteracionPtr;
 			}
             | salida
             { 
 				printf("Sentencia.\n"); 
-				sentenciaPtr=salidaPtr
+				sentenciaPtr=salidaPtr;
 			}
 			| entrada
             { 
 				printf("Sentencia.\n"); 
-				sentenciaPtr=entradaPtr
+				sentenciaPtr=entradaPtr;
 			}
 			
 			;
@@ -309,21 +376,25 @@ salida:
 				yyerror(mensajes, @1.first_line, @2.first_column, @2.last_column);
 			}
 			else {
-				salidaPtr=crearNodo("WRITE", crearHoja(punt, getTipoId(punt), NULL);
+				salidaPtr=(tNodo *)crearNodo("WRITE", crearHoja(punt, getTipoId(punt)), NULL);
 			}
 			printf("Salida >>>\n"); //Acá se insertarían en el arbol las salidas ¿Cómo se haría?
 				//Posiblemente un nodo con una sola hoja para el write, o solo la hoja
 		}
 		| WRITE CONS_STR {
-			salidaPtr=crearNodo("WRITE", crearHoja($2, "CONS_STR"), NULL);
+			salidaPtr=(tNodo *)crearNodo("WRITE", crearHoja($2, "CONS_STR"), NULL);
 			printf("Salida >>>\n");
 		}
 		| WRITE CONS_FLOAT {
-			salidaPtr=crearNodo("WRITE", crearHoja($2, "CONS_FLOAT"), NULL);
+			char* name;
+			sprintf(name, "%s", $2);
+			salidaPtr=(tNodo *)crearNodo("WRITE", crearHoja(name,"CONS_FLOAT"), NULL);
 			printf("Salida >>>\n");
 		}
 		| WRITE CONS_INT {
-			salidaPtr=crearNodo("WRITE", crearHoja($2, "CONS_INT"), NULL);
+			char* name;
+			sprintf(name, "%s", $2);
+			salidaPtr=(tNodo *)crearNodo("WRITE", crearHoja(name,"CONS_INT"), NULL);
 			printf("Salida >>>\n");
 		}
         ;
@@ -338,7 +409,7 @@ entrada:
                         yyerror(mensajes, @1.first_line, @2.first_column, @2.last_column);
                     }
 					else {
-						entradaPtr=crearNodo("READ", crearHoja(punt, getTipoId(punt), NULL);
+						entradaPtr=(tNodo *)crearNodo("READ", crearHoja(punt, getTipoId(punt)), NULL);
 					}
 				}
 		;
@@ -353,8 +424,8 @@ asignacion:
 										yyerror(mensajes, @1.first_line, @1.first_column, @1.last_column);
 									}
 									else{
-										asigPtr=crearHoja(punt,getTipoId(punt));
-										asigPtr=crearNodo("OPASIG", asigPtr, exprAritPtr);
+										asigPtr=(tNodo *)crearHoja(punt,getTipoId(punt));
+										asigPtr=(tNodo *)crearNodo("OPASIG", asigPtr, exprAritPtr);
 									}
 									printf("Asignacion.\n");
 								}
@@ -368,7 +439,7 @@ asignacion:
 									}
 									else{
 										
-										asigPtr=crearNodo("OPASIG", crearHoja(punt,getTipoId(punt)), crearHoja($3,"CONS_STR"));
+										asigPtr=(tNodo *)crearNodo("OPASIG", crearHoja(punt,getTipoId(punt)), crearHoja($3,"CONS_STR"));
 									}
 									printf("Asignacion.\n");
 								}
@@ -390,13 +461,14 @@ seleccion:
 					if(sentenciaPtr) {
 						  ponerenPila(pilaBloque,sentenciaPtr);
 					}
+				}
 			} bloque ENDIF 
 			{ 
-				seleccionPtr=crearNodo("IF", condicionPtr, bloquePtr);
+				seleccionPtr=(tNodo *)crearNodo("IF", condicionPtr, bloquePtr);
 				
 				if (topedePila(pilaCondiciones)){
 					condicionPtr = topedePila(pilaCondiciones);
-					sacardePila(condicionPtr);
+					sacardePila(pilaCondiciones);
 				}
 				if (topedePila(pilaBloque)){
 					  bloquePtr = topedePila(pilaBloque);
@@ -409,6 +481,7 @@ seleccion:
 						ponerenPila(pilaCondiciones,condicionPtr);
 						condicionPtr=NULL;
 					}
+				}
 			condicion PARENTESISC {
 				if(bloquePtr){
 					ponerenPila(pilaBloque,bloquePtr);
@@ -418,13 +491,14 @@ seleccion:
 					if(sentenciaPtr) {
 						  ponerenPila(pilaBloque,sentenciaPtr);
 					}
+				}
 			} bloque {auxBloquePtr=bloquePtr;} 
 			ELSE bloque ENDIF
             { 
-				seleccionPtr = crearNodo("IF-ELSE", condicionPtr, crearNodo("cuerpo",auxBloquePtr,bloquePtr));
+				seleccionPtr =(tNodo *) crearNodo("IF-ELSE", condicionPtr, crearNodo("cuerpo",auxBloquePtr,bloquePtr));
 				if (topedePila(pilaCondiciones)){
 					condicionPtr = topedePila(pilaCondiciones);
-					sacardePila(condicionPtr);
+					sacardePila(pilaCondiciones);
 				}
 				if (topedePila(pilaBloque)){
 					  bloquePtr = topedePila(pilaBloque);
@@ -440,7 +514,7 @@ iteracion:
 						ponerenPila(pilaCondiciones,condicionPtr);
 						condicionPtr=NULL;
 					}
-				}		
+						
 			} condicion PARENTESISC 
 			{
 				if(bloquePtr){
@@ -456,14 +530,14 @@ iteracion:
 			bloque ENDWHILE 
 			{ 
 				
-				iteracionPtr=crearNodo("WHILE", condicionPtr, bloquePtr);
+				iteracionPtr=(tNodo *)crearNodo("WHILE", condicionPtr, bloquePtr);
 				if (topedePila(pilaBloque)){
 					bloquePtr = topedePila(pilaBloque);
 					sacardePila(pilaBloque);
 				}
 				if (topedePila(pilaCondiciones)){
 					condicionPtr = topedePila(pilaCondiciones);
-					sacardePila(condicionPtr);
+					sacardePila(pilaCondiciones);
 				}
 				printf("Iteracion\n"); 
 			}
@@ -473,11 +547,11 @@ iteracion:
 condicion:
             condicion OR termino_logico {
 				printf("Condicion OR\n"); 
-				condicionPtr=crearNodo("OR", condicionPtr, terminoLogicoPtr);
+				condicionPtr=(tNodo *)crearNodo("OR", condicionPtr, terminoLogicoPtr);
 				} 
             | NOT termino_logico { 
 				printf("Condicion NOT\n"); 
-				condicionPtr = crearNodo("NOT",terminoLogicoPtr,NULL);
+				condicionPtr = (tNodo *)crearNodo("NOT",terminoLogicoPtr,NULL);
 			} 
 			| termino_logico { 
 				printf("Condicion\n");
@@ -491,34 +565,34 @@ termino_logico:
 				printf("Termino logico\n"); 
 			} 
 			| termino_logico AND comparacion { 
-				terminoLogicoPtr=crearNodo("AND", terminoLogicoPtr, comparacionPtr);
+				terminoLogicoPtr=(tNodo *)crearNodo("AND", terminoLogicoPtr, comparacionPtr);
 				printf("Termino logico\n"); 
 				
 			}
 			;
 comparacion:
             expresion  {exprCMPPtr = exprPtr; } OPIDENTICO expresion { 
-				comparacionPtr = crearNodo("OPIDENTICO",exprCMPPtr,exprPtr);
+				comparacionPtr = (tNodo *)crearNodo("OPIDENTICO",exprCMPPtr,exprPtr);
 				printf("Comparacion ==\n"); 
 			}
             | expresion {exprCMPPtr = exprPtr; } OPMENORIGUAL expresion { 
-				comparacionPtr = crearNodo("OPMENORIGUAL",exprCMPPtr,exprPtr);
+				comparacionPtr = (tNodo *)crearNodo("OPMENORIGUAL",exprCMPPtr,exprPtr);
 				printf("Comparacion <=\n"); 
 			}
             | expresion {exprCMPPtr = exprPtr; } OPMAYORIGUAL expresion { 
-				comparacionPtr = crearNodo("OPMAYORIGUAL",exprCMPPtr,exprPtr);
+				comparacionPtr = (tNodo *)crearNodo("OPMAYORIGUAL",exprCMPPtr,exprPtr);
 				printf("Comparacion >=\n"); 
 			}
             | expresion {exprCMPPtr = exprPtr; } OPMAYOR expresion { 
-				comparacionPtr = crearNodo("OPMAYOR",exprCMPPtr,exprPtr);
+				comparacionPtr = (tNodo *)crearNodo("OPMAYOR",exprCMPPtr,exprPtr);
 				printf("Comparacion >\n"); 
 			}
             | expresion {exprCMPPtr = exprPtr; } OPMENOR expresion { 
-				comparacionPtr = crearNodo("OPMENOR",exprCMPPtr,exprPtr);
+				comparacionPtr = (tNodo *)crearNodo("OPMENOR",exprCMPPtr,exprPtr);
 				printf("Comparacion <\n"); 
 			}
             | expresion {exprCMPPtr = exprPtr; } OPDISTINTO expresion { 
-				comparacionPtr = crearNodo("OPDISTINTO",exprCMPPtr,exprPtr);
+				comparacionPtr = (tNodo *)crearNodo("OPDISTINTO",exprCMPPtr,exprPtr);
 				printf("Comparacion !=\n"); 
 			}
 			| between { 
@@ -551,13 +625,13 @@ expresion:
             expresion OPSUMA termino 
 			{ 
 				printf("Expresion suma\n"); 
-				exprAritPtr=crearNodo("OPSUMA", exprPtr, terminoPtr);
+				exprAritPtr=(tNodo *)crearNodo("OPSUMA", exprPtr, terminoPtr);
 				//exprAritPtr->info.tipoDato= terminoPtr->info.tipoDato;
 				//Puntero de Expresion (EXPT) = Crear nodo(+, EXPT, TEPT)
 			}
             | expresion OPRESTA termino { 
 				printf("Expresion resta\n"); 
-				exprAritPtr=crearNodo("OPRESTA", exprPtr, terminoPtr);
+				exprAritPtr=(tNodo *)crearNodo("OPRESTA", exprPtr, terminoPtr);
 				//exprAritPtr->info.tipoDato= terminoPtr->info.tipoDato;
 				//Puntero de Expresion (EXPT) = Crear nodo(-, EXPT, TEPT)
 				}
@@ -571,11 +645,11 @@ expresion:
 termino:
         termino OPMUL factor { 
 			printf("Termino multiplicacion\n");
-			terminoPtr=crearNodo("OPMUL", terminoPtr, factorPtr);
+			terminoPtr=(tNodo *)crearNodo("OPMUL", terminoPtr, factorPtr);
 			//terminoPtr->info.tipoDato= factorPtr->info.tipoDato;
 		}
         | termino OPDIV factor { printf("Termino division\n");
-			terminoPtr=crearNodo("OPDIV", terminoPtr, factorPtr);
+			terminoPtr=(tNodo *)crearNodo("OPDIV", terminoPtr, factorPtr);
 			//terminoPtr->info.tipoDato= factorPtr->info.tipoDato;
 		}
         | factor { 
@@ -596,7 +670,7 @@ factor:
 				yyerror(mensajes, @1.first_line, @1.first_column, @1.last_column);
 			}
             else{
-                factorPtr = crearHoja(punt,getTipoId(punt));
+                factorPtr = (tNodo *)crearHoja(punt,getTipoId(punt));
             }
 			if(!esNumero(punt,error)) /*No es una variable numérica --> error*/
 			{
@@ -607,13 +681,17 @@ factor:
 		}
         | CONS_INT { 
             $<tipo_int>$ = $1; 
+			char* name;
+			sprintf(name, "%s", $1);
 		    printf("Factor cte entera\n"); 
-            factorPtr = crearHoja($1,"CONS_INT");
+            factorPtr = (tNodo *)crearHoja(name,"CONS_INT");
 		}
         | CONS_FLOAT { 
         $<tipo_double>$ = $1; 
+		char* name;
+		sprintf(name, "%s", $1);
 		printf("Factor cte real\n"); 
-        factorPtr = crearHoja($1,"CONST_FLOAT");
+        factorPtr = (tNodo *)crearHoja(name,"CONST_FLOAT");
 		}
         | PARENTESISA {
 			if(exprAritPtr){
@@ -647,11 +725,11 @@ between:
                             //insertar en árbol
                         } COMA CORCHETEA expresion 
 						{//Acá iría una comparacion por mayor
-						//condicionIfPtr=crearNodo(">", crearHoja (ID), exprPtr);
+						//condicionIfPtr=crearNodo(">", crearHoja (printf("%s",$3), getTipoId(printf("%s",$3))), exprPtr);
 						} 
 						PUNTOCOMA expresion{
 						//Aca iría una comparación por menor	
-						//condicionIfPtr=crearNodo("AND", condicionIfPtr , crearNodo("<", crearHoja (ID), exprPtr));
+						//condicionIfPtr=crearNodo("AND", condicionIfPtr , crearNodo("<", crearHoja (printf("%s",$3), getTipoId(printf("%s",$3))), exprPtr));
 						//accionPtr=crearNodo("Cuerpo",crearNodo(":=","@between","1"),crearNodo(":=","@between","0"));
 						//listaExpPtr=crearNodo("IF",condicionIfPtr,accionPtr);
 						} CORCHETEC PARENTESISC {printf("Between\n");}
@@ -659,25 +737,25 @@ between:
         ; 
 		
 inlist:
-        INLIST PARENTESISA ID COMA CORCHETEA lista_expresiones CORCHETEC PARENTESISC {printf("Inlist\n");}
-        lista
-		//comparar ID con cada una de las expresiones.
-		//Podría haber una variable @found que indique si se encontró
-		inlistPtr = listaExpPtr;
-		; 
+        INLIST PARENTESISA ID COMA CORCHETEA lista_expresiones CORCHETEC PARENTESISC {
+			printf("Inlist\n");
+			//comparar ID con cada una de las expresiones.
+			//Podría haber una variable @found que indique si se encontró
+			inlistPtr = listaExpPtr;
+		}; 
 
 lista_expresiones:	//Se cambió la recursividad para que sea a izquierda
 					lista_expresiones PUNTOCOMA expresion
 					{ 
 					
 						printf("Lista de expresiones\n"); 
-						listaExpPtr=crearNodo("OR", listaExpPtr , crearNodo("==", crearHoja (ID), exprPtr));
+						//listaExpPtr=(tNodo *)crearNodo("OR", listaExpPtr , crearNodo("==", crearHoja (ID, getTipoId(ID)), exprPtr));
 						
 					}
 					| expresion
 					{ 
 						printf("Lista de expresiones\n"); 
-						listaExpPtr=crearNodo("==", crearHoja (ID), exprPtr);
+						//listaExpPtr=(tNodo *)crearNodo("==", crearHoja (ID, getTipoId(ID)), exprPtr);
 						//IF ( ID = expresion OR ID = expresion 2, etc)
 						//		@found=true	
 						//
@@ -952,6 +1030,149 @@ char* getTipoId(const char* id)
 }
 
 void crearNodoCMP(char * comp){
-	comparacionPtr = crearNodo("CMP",exprCMPPtr,exprPtr);
-	comparacionPtr = crearNodo(comp,comparacionPtr,NULL);
+	comparacionPtr = (tNodo *)crearNodo("CMP",exprCMPPtr,exprPtr);
+	comparacionPtr = (tNodo *)crearNodo(comp,comparacionPtr,NULL);
+}
+
+/* --- MOVER --- */
+tNodo* crearNodo(const char* dato, tNodo *pIzq, tNodo *pDer){
+    tNodo* nodo = malloc(sizeof(tNodo));   
+    tInfo info;
+
+    info.dato = (char*)malloc(sizeof(char) * (strlen(dato) + 1));
+	strcpy(info.dato, dato);
+    
+    nodo->info = info;
+    nodo->izq = pIzq;
+    nodo->der = pDer;
+
+    return nodo;
+}
+
+tNodo* crearHoja(char* dato,char* tipo){	
+    tNodo* nodoNuevo = (tNodo*)malloc(sizeof(tNodo));
+
+    nodoNuevo->info.dato = (char*)malloc(sizeof(char) * (strlen(dato) + 1));
+	strcpy(nodoNuevo->info.dato, dato);
+	
+    nodoNuevo->info.tipoDato = (char*)malloc(sizeof(char) * (strlen(tipo) + 1));
+    strcpy(nodoNuevo->info.tipoDato, dato);
+    
+    nodoNuevo->izq = NULL;
+    nodoNuevo->der = NULL;
+    
+    return nodoNuevo;
+}
+
+tArbol * hijoMasIzq(tArbol *p){
+    if(*p){
+        if((*p)->izq)
+            return hijoMasIzq(&(*p)->izq);
+        else
+            return p;
+    }
+    return NULL;
+}
+
+void enOrden(tArbol *p){
+    if (*p)
+    {
+        enOrden(&(*p)->izq);
+        verNodo((*p)->info.dato);
+        enOrden(&(*p)->der);
+    }
+}
+
+void postOrden(tArbol *p){
+    if (*p){
+        postOrden(&(*p)->izq);
+        postOrden(&(*p)->der);
+		verNodo((*p)->info.dato);
+    }
+}
+
+void verNodo(const char *p){
+    printf("%s ", p);
+}
+
+
+tPila *crearPila(void)
+{
+  tPila *stack = malloc(sizeof *stack);
+  if (stack)
+  {
+    stack->tope = NULL;
+    stack->tam = 0;
+  }
+  return stack;
+};
+
+tNodo *copiarDato(tNodo *str)
+{
+  tNodo *tmp =(tNodo*) malloc(sizeof(tNodo));
+  if (tmp)
+    memcpy(tmp, str,sizeof(tNodo));
+  return tmp;
+}
+
+void ponerenPila(tPila *theStack, tNodo *value)
+{
+  tNodoPila *entry = malloc(sizeof *entry); 
+  if (entry)
+  {
+    entry->dato = copiarDato(value);
+    entry->next = theStack->tope;
+    theStack->tope = entry;
+    theStack->tam++;
+  }
+}
+
+tNodo *topedePila( tPila *theStack)
+{
+  if (theStack && theStack->tope)
+    return theStack->tope->dato;
+  else
+    return NULL;
+}
+
+void sacardePila(tPila *theStack)
+{
+  if (theStack->tope != NULL)
+  {
+    theStack->tope = theStack->tope->next;
+    theStack->tam--;
+  }
+}
+
+void vaciarPila( tPila *theStack)
+{
+  while (theStack->tope != NULL)
+    sacardePila(theStack);
+}
+
+void borrarPila( tPila **theStack)
+{
+  vaciarPila(*theStack);
+  free(*theStack);
+  *theStack = NULL;
+}
+void _tree_print_dot_subtree(int nro_padre, tNodo *padre, int nro, tArbol *nodo, FILE* stream)
+{
+    if (*nodo != NULL)
+    {    
+        fprintf(stream, "x%d [label=<%s>];\n",nro,(*nodo)->info.dato);
+        if (padre != NULL){
+            fprintf(stream, "x%d -> x%d;\n",nro_padre,nro);
+        }   
+        _tree_print_dot_subtree(nro, *nodo, 2 * nro + 1, &(*nodo)->izq, stream);
+        _tree_print_dot_subtree(nro, *nodo, 2 * nro + 2, &(*nodo)->der, stream);
+        
+    }
+}
+void tree_print_dot(tArbol *p,FILE* stream)
+{
+	fprintf(stream, "digraph BST {\n");
+	if (*p)
+		_tree_print_dot_subtree(-1, NULL, 0, &(*p), stream);
+	fprintf(stream, "}");
 }

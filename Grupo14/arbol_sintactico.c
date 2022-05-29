@@ -4,7 +4,6 @@
 #include "arbol_sintactico.h"
 
 tNodo* crearNodo(const char* dato, tNodo *pIzq, tNodo *pDer){
-    
     tNodo* nodo = malloc(sizeof(tNodo));   
     tInfo info;
 

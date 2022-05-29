@@ -6,10 +6,10 @@
 #include <string.h>
 
 /* Defino estructura de informacion para el arbol*/
-	typedef struct {
-		char* dato;
-		char* tipoDato;		
-	}tInfo;
+typedef struct {
+	char* dato;
+	char* tipoDato;		
+}tInfo;
 
 /* Defino estructura de nodo de arbol*/
 typedef struct sNodo{
@@ -19,6 +19,13 @@ typedef struct sNodo{
 
 /* Defino estructura de arbol*/
 typedef tNodo* tArbol;
-tInfo infoArbol;
+
+tNodo* crearNodo(const char* dato, tNodo *pIzq, tNodo *pDer);
+tNodo* crearHoja(char* dato,char* tipo);
+tArbol * hijoMasIzq(tArbol *p);
+void enOrden(tArbol *p);
+void verNodo(const char *p);
+void postOrden(tArbol *p);
+
 
 #endif

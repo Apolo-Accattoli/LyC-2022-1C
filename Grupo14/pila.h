@@ -1,24 +1,23 @@
 #ifndef PILA_H
 #define PILA_H
 
-struct tNodoPila {
+typedef struct sNodoPila {
   tNodo *dato;
-  struct tNodoPila *next;
-};
+  struct sNodoPila *next;
+}tNodoPila;
 
-struct tPila
+typedef struct 
 {
-  struct tNodoPila *tope;
+  tNodoPila *tope;
   size_t tam; 
-};
+}tPila;
 
-struct tPila *crearPila(void);
+tPila *crearPila(void);
 tNodo *copiarDato(tNodo *);
-void ponerenPila(struct tPila *, tNodo *value);
-tNodo *topedePila(struct tPila *);
-void sacardePila(struct tPila *);
-void vaciarPila(struct tPila *);
-void borrarPila(struct tPila **);
-typedef struct tPila tPila;
+void ponerenPila( tPila *, tNodo *value);
+tNodo *topedePila( tPila *);
+void sacardePila(tPila *);
+void vaciarPila( tPila *);
+void borrarPila( tPila **);
 
 #endif

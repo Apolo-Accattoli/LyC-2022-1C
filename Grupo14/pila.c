@@ -2,9 +2,9 @@
 #include <string.h>
 #include "pila.h"
 
-struct tPila *crearPila(void)
+tPila *crearPila(void)
 {
-  struct tPila *stack = malloc(sizeof *stack);
+  tPila *stack = malloc(sizeof *stack);
   if (stack)
   {
     stack->tope = NULL;
@@ -21,9 +21,9 @@ tNodo *copiarDato(tNodo *str)
   return tmp;
 }
 
-void ponerenPila(struct tPila *theStack, tNodo *value)
+void ponerenPila(tPila *theStack, tNodo *value)
 {
-  struct tNodoPila *entry = malloc(sizeof *entry); 
+  tNodoPila *entry = malloc(sizeof *entry); 
   if (entry)
   {
     entry->dato = copiarDato(value);
@@ -33,7 +33,7 @@ void ponerenPila(struct tPila *theStack, tNodo *value)
   }
 }
 
-tNodo *topedePila(struct tPila *theStack)
+tNodo *topedePila( tPila *theStack)
 {
   if (theStack && theStack->tope)
     return theStack->tope->dato;
@@ -41,7 +41,7 @@ tNodo *topedePila(struct tPila *theStack)
     return NULL;
 }
 
-void sacardePila(struct tPila *theStack)
+void sacardePila(tPila *theStack)
 {
   if (theStack->tope != NULL)
   {
@@ -50,13 +50,13 @@ void sacardePila(struct tPila *theStack)
   }
 }
 
-void vaciarPila(struct tPila *theStack)
+void vaciarPila( tPila *theStack)
 {
   while (theStack->tope != NULL)
     sacardePila(theStack);
 }
 
-void borrarPila(struct tPila **theStack)
+void borrarPila( tPila **theStack)
 {
   vaciarPila(*theStack);
   free(*theStack);

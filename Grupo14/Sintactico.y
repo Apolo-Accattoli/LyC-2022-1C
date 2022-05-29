@@ -8,7 +8,7 @@
 #include "arbol_sintactico.h"
 #include "pila.h"
 FILE  *yyin;
-
+FILE *graph;
 int yyerror();
 int yylex();
 
@@ -105,8 +105,9 @@ tArbol 	asigPtr,			//Puntero de asignaciones
 		exprMaximoPtr,
 		auxEtiqPtr,
 		auxWhilePtr,
-		auxMaxCond;
-
+		auxMaxCond,
+		listaExpPtr,
+		inlistPtr;
 
 %}
 
@@ -170,7 +171,8 @@ PROGRAMA:
         bloque_declaraciones bloque
         { 
 			guardarTS();
-			//Acá iría grabar arbol
+			postOrden(&bloquePtr);
+			tree_print_dot(&bloquePtr,graph);
 			printf("\nCompilacion exitosa.\n");
 		}
         ;
@@ -650,10 +652,10 @@ between:
 		
 inlist:
         INLIST PARENTESISA ID COMA CORCHETEA lista_expresiones CORCHETEC PARENTESISC {printf("Inlist\n");}
-        //comparar ID con cada una de las expresiones.
+        lista
+		//comparar ID con cada una de las expresiones.
 		//Podría haber una variable @found que indique si se encontró
-		
-		//inlistPTR = listaexpPTR
+		inlistPtr = listaExpPtr;
 		; 
 
 lista_expresiones:	//Se cambió la recursividad para que sea a izquierda
@@ -661,13 +663,13 @@ lista_expresiones:	//Se cambió la recursividad para que sea a izquierda
 					{ 
 					
 						printf("Lista de expresiones\n"); 
-						//listaexpPTR=Crearnodo(OR, listaexpPTR ; crearNodo(==, crearhoja (ID), expresionPTR)
+						listaExpPtr=crearNodo("OR", listaExpPtr , crearNodo(==, crearHoja (ID), exprPtr));
 						
 					}
 					| expresion
 					{ 
 						printf("Lista de expresiones\n"); 
-						// ListaExprPTR=nodo(==, crearHoja (ID), expresionptr)
+						listaExpPtr=crearNodo("==", crearHoja (ID), exprPtr);
 						//IF ( ID = expresion OR ID = expresion 2, etc)
 						//		@found=true	
 						//

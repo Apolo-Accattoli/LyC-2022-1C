@@ -388,14 +388,14 @@ salida:
 			printf("Salida >>>\n");
 		}
 		| WRITE CONS_FLOAT {
-			char* name;
-			sprintf(name, "%s", $2);
+			char* name = (char*) malloc(sizeof($2));
+			sprintf(name, "%g", $2);
 			salidaPtr=(tNodo *)crearNodo("WRITE", crearHoja(name,"CONS_FLOAT"), NULL);
 			printf("Salida >>>\n");
 		}
 		| WRITE CONS_INT {
-			char* name;
-			sprintf(name, "%s", $2);
+			char* name = (char*) malloc(sizeof($2));
+			sprintf(name, "%d", $2);
 			salidaPtr=(tNodo *)crearNodo("WRITE", crearHoja(name,"CONS_INT"), NULL);
 			printf("Salida >>>\n");
 		}
@@ -683,18 +683,18 @@ factor:
 		}
         | CONS_INT { 
             $<tipo_int>$ = $1; 
-			char* name;
-			sprintf(name, "%s", $1);
+			char* name = (char*) malloc(sizeof($1));
+			sprintf(name, "%d", $1);
 		    printf("Factor cte entera\n"); 
             factorPtr = (tNodo *)crearHoja(name,"CONS_INT");
 		}
         | CONS_FLOAT { 
-        $<tipo_double>$ = $1; 
-		char* name;
-		sprintf(name, "%g", $<tipo_double>$);
-		printf("Factor cte real\n"); 
-		printf("%g \n",name); 
-        //factorPtr = (tNodo *)crearHoja(name,"CONS_FLOAT");
+			$<tipo_double>$ = $1; 
+			char* name = (char*) malloc(sizeof($1));
+			sprintf(name, "%g", $<tipo_double>$);
+			printf("Factor cte real\n"); 
+			printf("name: %s \n",name); 
+			factorPtr = (tNodo *)crearHoja(name,"CONS_FLOAT");
 		}
         | PARENTESISA {
 			if(exprAritPtr){

@@ -1,4 +1,0 @@
-digraph G {
-	"nodo_0 \nOPASIG|(null)" -> "nodo_1 \nf1|f1"
-	"nodo_0 \nOPASIG|(null)" -> "nodo_2 \n3.25|3.25"
-}

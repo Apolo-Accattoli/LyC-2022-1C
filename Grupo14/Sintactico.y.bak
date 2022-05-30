@@ -448,37 +448,7 @@ asignacion:
 			;
 
 seleccion:
-            condicionif bloque ENDIF 
-			{ 
-				seleccionPtr=(tNodo *)crearNodo("IF", condicionPtr, bloquePtr);
-				
-				if (topedePila(pilaCondiciones)){
-					condicionPtr = topedePila(pilaCondiciones);
-					sacardePila(pilaCondiciones);
-				}
-				if (topedePila(pilaBloque)){
-					  bloquePtr = topedePila(pilaBloque);
-					  sacardePila(pilaBloque);
-				}
-				printf("Seleccion\n");
-			}
-            | condicionif bloque {auxBloquePtr=bloquePtr;} 
-			ELSE bloque ENDIF
-            { 
-				seleccionPtr =(tNodo *) crearNodo("IF-ELSE", condicionPtr, crearNodo("cuerpo",auxBloquePtr,bloquePtr));
-				if (topedePila(pilaCondiciones)){
-					condicionPtr = topedePila(pilaCondiciones);
-					sacardePila(pilaCondiciones);
-				}
-				if (topedePila(pilaBloque)){
-					  bloquePtr = topedePila(pilaBloque);
-					  sacardePila(pilaBloque);
-				}
-				printf("Seleccion con ELSE\n"); 
-			}
-			;
-
-condicionif: IF PARENTESISA {
+            IF PARENTESISA {
 				if(condicionPtr){
 						ponerenPila(pilaCondiciones,condicionPtr);
 						condicionPtr=NULL;
@@ -494,8 +464,52 @@ condicionif: IF PARENTESISA {
 						  ponerenPila(pilaBloque,sentenciaPtr);
 					}
 				}
-			};
-			
+			} bloque ENDIF 
+			{ 
+				seleccionPtr=(tNodo *)crearNodo("IF", condicionPtr, bloquePtr);
+				
+				if (topedePila(pilaCondiciones)){
+					condicionPtr = topedePila(pilaCondiciones);
+					sacardePila(pilaCondiciones);
+				}
+				if (topedePila(pilaBloque)){
+					  bloquePtr = topedePila(pilaBloque);
+					  sacardePila(pilaBloque);
+				}
+				printf("Seleccion\n");
+			}
+            | IF PARENTESISA {
+				if(condicionPtr){
+						ponerenPila(pilaCondiciones,condicionPtr);
+						condicionPtr=NULL;
+					}
+				}
+			condicion PARENTESISC {
+				if(bloquePtr){
+					ponerenPila(pilaBloque,bloquePtr);
+					bloquePtr=NULL;
+				}
+				else{
+					if(sentenciaPtr) {
+						  ponerenPila(pilaBloque,sentenciaPtr);
+					}
+				}
+			} bloque {auxBloquePtr=bloquePtr;} 
+			ELSE bloque ENDIF
+            { 
+				seleccionPtr =(tNodo *) crearNodo("IF-ELSE", condicionPtr, crearNodo("cuerpo",auxBloquePtr,bloquePtr));
+				if (topedePila(pilaCondiciones)){
+					condicionPtr = topedePila(pilaCondiciones);
+					sacardePila(pilaCondiciones);
+				}
+				if (topedePila(pilaBloque)){
+					  bloquePtr = topedePila(pilaBloque);
+					  sacardePila(pilaBloque);
+				}
+				printf("Seleccion con ELSE\n"); 
+			}
+			;
+
 iteracion: 
             WHILE PARENTESISA {
 					if(condicionPtr){

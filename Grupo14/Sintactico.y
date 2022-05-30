@@ -244,7 +244,7 @@ PROGRAMA:
         { 
 			guardarTS();
 			postOrden(&bloquePtr); //Agregamos funciones
-			escribirGragh(bloquePtr);
+			//tree_print_dot(&bloquePtr, graph);
 			printf("\nCompilacion exitosa.\n");
 		}
         ;
@@ -781,20 +781,22 @@ int main(int argc, char *argv[])
     else
     { 
 
-	/*graph = fopen("gragh.dot", "wt");
+	graph = fopen("gragh.dot", "w");
 	if (graph == NULL) 
 	{
 		printf("\nNo se pudo crear el archivo del grafico de generacion de codigo intermedia: %s\r\n", argv[1]);
 		return -1;
-	}*/
+	}
 	pilaExpresion = crearPila();      
 	pilaBloque = crearPila();
 	pilaCondicion = crearPila();
+	pilaCondiciones = crearPila();
 	pilaEtiq = crearPila();
 	pilaEtiqExpMax = crearPila();
         crearTablaTS(); //tablaTS.primero = NULL;
         yyparse();
         fclose(yyin);
+		fclose(graph);
         system("Pause");
         return 0;
     }

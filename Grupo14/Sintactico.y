@@ -58,6 +58,8 @@ void verNodo(const char *p);
 void postOrden(tArbol *p);
 void _tree_print_dot_subtree(int nro_padre, tNodo *padre, int nro, tArbol *nodo, FILE* stream);
 void tree_print_dot(tArbol *p,FILE* stream);
+void llenarGragh(tNodo* padre, FILE *arch, int numNodo);
+void escribirGragh(tNodo* padre);
 
 typedef struct sNodoPila {
   tNodo *dato;
@@ -242,7 +244,7 @@ PROGRAMA:
         { 
 			guardarTS();
 			postOrden(&bloquePtr); //Agregamos funciones
-			tree_print_dot(&bloquePtr,graph);
+			escribirGragh(bloquePtr);
 			printf("\nCompilacion exitosa.\n");
 		}
         ;
@@ -689,9 +691,10 @@ factor:
         | CONS_FLOAT { 
         $<tipo_double>$ = $1; 
 		char* name;
-		sprintf(name, "%s", $1);
+		sprintf(name, "%g", $<tipo_double>$);
 		printf("Factor cte real\n"); 
-        factorPtr = (tNodo *)crearHoja(name,"CONST_FLOAT");
+		printf("%g \n",name); 
+        //factorPtr = (tNodo *)crearHoja(name,"CONS_FLOAT");
 		}
         | PARENTESISA {
 			if(exprAritPtr){
@@ -777,11 +780,18 @@ int main(int argc, char *argv[])
     }
     else
     { 
-		pilaExpresion = crearPila();      
-		pilaBloque = crearPila();
-		pilaCondicion = crearPila();
-		pilaEtiq = crearPila();
-		pilaEtiqExpMax = crearPila();
+
+	/*graph = fopen("gragh.dot", "wt");
+	if (graph == NULL) 
+	{
+		printf("\nNo se pudo crear el archivo del grafico de generacion de codigo intermedia: %s\r\n", argv[1]);
+		return -1;
+	}*/
+	pilaExpresion = crearPila();      
+	pilaBloque = crearPila();
+	pilaCondicion = crearPila();
+	pilaEtiq = crearPila();
+	pilaEtiqExpMax = crearPila();
         crearTablaTS(); //tablaTS.primero = NULL;
         yyparse();
         fclose(yyin);
@@ -1175,4 +1185,44 @@ void tree_print_dot(tArbol *p,FILE* stream)
 	if (*p)
 		_tree_print_dot_subtree(-1, NULL, 0, &(*p), stream);
 	fprintf(stream, "}");
+}
+void llenarGragh(tNodo* padre, FILE *arch, int numNodo) {
+    char* string1 = (char*) malloc(sizeof(char) *50);
+    char* string2 = (char*) malloc(sizeof(char) *50);
+    if(padre == NULL) {
+        return;
+    }
+    int numHI = numNodo*2+1;
+    int numHD = numNodo*2+2;
+    
+    if(padre->izq) {
+        sprintf(string1, "%s|%s", padre->info.dato, padre->info.tipoDato);
+        sprintf(string2, "%s|%s", padre->izq->info.dato, padre->izq->info.tipoDato);
+        fprintf(arch, "\t\"nodo_%d \\n%s\" -> \"nodo_%d \\n%s\"\n", numNodo, string1, numHI, string2);
+    }
+    if(padre->der) {
+        sprintf(string1, "%s|%s", padre->info.dato, padre->info.tipoDato);
+        sprintf(string2, "%s|%s", padre->der->info.dato, padre->der->info.tipoDato);
+        fprintf(arch, "\t\"nodo_%d \\n%s\" -> \"nodo_%d \\n%s\"\n", numNodo, string1 ,numHD ,string2);
+    }
+    llenarGragh(padre->izq, arch, numHI);
+    llenarGragh(padre->der, arch, numHD);
+    return;
+}
+
+void escribirGragh(tNodo* padre) {
+    FILE *archivo;
+
+	archivo = fopen("gragh.dot", "w");
+	if (archivo == NULL) {
+		printf("ERROR");
+		return;
+	}
+    //Escribir plantilla para poder dibujar el grafo
+    fprintf(archivo, "%s\n", "digraph G {");
+    llenarGragh(padre, archivo, 0);
+    fprintf(archivo, "%s", "}");
+    
+    fclose(archivo);
+    return;
 }

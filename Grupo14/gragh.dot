@@ -1,0 +1,3 @@
+digraph G {
+	"nodo_0 \nOPASIG|(null)" -> "nodo_1 \nf1|f1"
+}

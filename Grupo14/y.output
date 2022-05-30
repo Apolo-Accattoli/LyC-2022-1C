@@ -6,14 +6,14 @@ Terminals unused in grammar
 
 Rules useless in parser due to conflicts
 
-   32 $@8: /* empty */
+   32 $@8: /* vacío */
 
 
-State 26 conflicts: 7 reduce/reduce
-State 54 conflicts: 4 reduce/reduce
+Estado 26 conflictos: 7 reducción(ones)/reducción(ones)
+Estado 54 conflictos: 4 reducción(ones)/reducción(ones)
 
 
-Grammar
+Gramática
 
     0 $accept: PROGRAMA $end
 
@@ -24,23 +24,23 @@ Grammar
     3 declaraciones: declaracion
     4              | declaraciones declaracion
 
-    5 $@1: /* empty */
+    5 $@1: /* vacío */
 
     6 declaracion: lista_variables "." "INTEGER" $@1
 
-    7 $@2: /* empty */
+    7 $@2: /* vacío */
 
     8 declaracion: lista_variables "." "STRING" $@2
 
-    9 $@3: /* empty */
+    9 $@3: /* vacío */
 
    10 declaracion: lista_variables "." "FLOAT" $@3
 
-   11 $@4: /* empty */
+   11 $@4: /* vacío */
 
    12 lista_variables: "identificador" $@4
 
-   13 $@5: /* empty */
+   13 $@5: /* vacío */
 
    14 lista_variables: "identificador" $@5 "," lista_variables
 
@@ -63,23 +63,23 @@ Grammar
    27 asignacion: "identificador" ":=" expresion
    28           | "identificador" ":=" "constante string"
 
-   29 $@6: /* empty */
+   29 $@6: /* vacío */
 
-   30 $@7: /* empty */
+   30 $@7: /* vacío */
 
    31 seleccion: "IF" "(" $@6 condicion ")" $@7 bloque "ENDIF"
 
-   32 $@8: /* empty */
+   32 $@8: /* vacío */
 
-   33 $@9: /* empty */
+   33 $@9: /* vacío */
 
-   34 $@10: /* empty */
+   34 $@10: /* vacío */
 
    35 seleccion: "IF" "(" $@8 condicion ")" $@9 bloque $@10 "ELSE" bloque "ENDIF"
 
-   36 $@11: /* empty */
+   36 $@11: /* vacío */
 
-   37 $@12: /* empty */
+   37 $@12: /* vacío */
 
    38 iteracion: "WHILE" "(" $@11 condicion ")" $@12 bloque "ENDWHILE"
 
@@ -90,33 +90,33 @@ Grammar
    42 termino_logico: comparacion
    43               | termino_logico "AND" comparacion
 
-   44 $@13: /* empty */
+   44 $@13: /* vacío */
 
    45 comparacion: expresion $@13 "==" expresion
 
-   46 $@14: /* empty */
+   46 $@14: /* vacío */
 
    47 comparacion: expresion $@14 "<=" expresion
 
-   48 $@15: /* empty */
+   48 $@15: /* vacío */
 
    49 comparacion: expresion $@15 ">=" expresion
 
-   50 $@16: /* empty */
+   50 $@16: /* vacío */
 
    51 comparacion: expresion $@16 ">" expresion
 
-   52 $@17: /* empty */
+   52 $@17: /* vacío */
 
    53 comparacion: expresion $@17 "<" expresion
 
-   54 $@18: /* empty */
+   54 $@18: /* vacío */
 
    55 comparacion: expresion $@18 "!=" expresion
    56            | between
    57            | inlist
 
-   58 $@19: /* empty */
+   58 $@19: /* vacío */
 
    59 comparacion: "(" $@19 condicion ")"
 
@@ -132,15 +132,15 @@ Grammar
    67       | "constante entera"
    68       | "constante real"
 
-   69 $@20: /* empty */
+   69 $@20: /* vacío */
 
    70 factor: "(" $@20 expresion ")"
 
-   71 $@21: /* empty */
+   71 $@21: /* vacío */
 
-   72 $@22: /* empty */
+   72 $@22: /* vacío */
 
-   73 $@23: /* empty */
+   73 $@23: /* vacío */
 
    74 between: "BETWEEN" "(" "identificador" $@21 "," "[" expresion $@22 ";" expresion $@23 "]" ")"
 
@@ -150,7 +150,7 @@ Grammar
    77                  | expresion
 
 
-Terminals, with rules where they appear
+Terminales con las reglas donde aparecen
 
 $end (0) 0
 error (256)
@@ -197,710 +197,711 @@ error (256)
 "INLIST" (298) 75
 
 
-Nonterminals, with rules where they appear
+No terminales con las reglas donde aparecen
 
 $accept (44)
-    on left: 0
+    en la izquierda: 0
 PROGRAMA (45)
-    on left: 1, on right: 0
+    en la izquierda: 1, en la derecha: 0
 bloque_declaraciones (46)
-    on left: 2, on right: 1
+    en la izquierda: 2, en la derecha: 1
 declaraciones (47)
-    on left: 3 4, on right: 2 4
+    en la izquierda: 3 4, en la derecha: 2 4
 declaracion (48)
-    on left: 6 8 10, on right: 3 4
+    en la izquierda: 6 8 10, en la derecha: 3 4
 $@1 (49)
-    on left: 5, on right: 6
+    en la izquierda: 5, en la derecha: 6
 $@2 (50)
-    on left: 7, on right: 8
+    en la izquierda: 7, en la derecha: 8
 $@3 (51)
-    on left: 9, on right: 10
+    en la izquierda: 9, en la derecha: 10
 lista_variables (52)
-    on left: 12 14, on right: 6 8 10 14
+    en la izquierda: 12 14, en la derecha: 6 8 10 14
 $@4 (53)
-    on left: 11, on right: 12
+    en la izquierda: 11, en la derecha: 12
 $@5 (54)
-    on left: 13, on right: 14
+    en la izquierda: 13, en la derecha: 14
 bloque (55)
-    on left: 15 16, on right: 1 16 31 35 38
+    en la izquierda: 15 16, en la derecha: 1 16 31 35 38
 sentencia (56)
-    on left: 17 18 19 20 21, on right: 15 16
+    en la izquierda: 17 18 19 20 21, en la derecha: 15 16
 salida (57)
-    on left: 22 23 24 25, on right: 20
+    en la izquierda: 22 23 24 25, en la derecha: 20
 entrada (58)
-    on left: 26, on right: 21
+    en la izquierda: 26, en la derecha: 21
 asignacion (59)
-    on left: 27 28, on right: 17
+    en la izquierda: 27 28, en la derecha: 17
 seleccion (60)
-    on left: 31 35, on right: 18
+    en la izquierda: 31 35, en la derecha: 18
 $@6 (61)
-    on left: 29, on right: 31
+    en la izquierda: 29, en la derecha: 31
 $@7 (62)
-    on left: 30, on right: 31
+    en la izquierda: 30, en la derecha: 31
 $@8 (63)
-    on left: 32, on right: 35
+    en la izquierda: 32, en la derecha: 35
 $@9 (64)
-    on left: 33, on right: 35
+    en la izquierda: 33, en la derecha: 35
 $@10 (65)
-    on left: 34, on right: 35
+    en la izquierda: 34, en la derecha: 35
 iteracion (66)
-    on left: 38, on right: 19
+    en la izquierda: 38, en la derecha: 19
 $@11 (67)
-    on left: 36, on right: 38
+    en la izquierda: 36, en la derecha: 38
 $@12 (68)
-    on left: 37, on right: 38
+    en la izquierda: 37, en la derecha: 38
 condicion (69)
-    on left: 39 40 41, on right: 31 35 38 39 59
+    en la izquierda: 39 40 41, en la derecha: 31 35 38 39 59
 termino_logico (70)
-    on left: 42 43, on right: 39 40 41 43
+    en la izquierda: 42 43, en la derecha: 39 40 41 43
 comparacion (71)
-    on left: 45 47 49 51 53 55 56 57 59, on right: 42 43
+    en la izquierda: 45 47 49 51 53 55 56 57 59, en la derecha: 42
+    43
 $@13 (72)
-    on left: 44, on right: 45
+    en la izquierda: 44, en la derecha: 45
 $@14 (73)
-    on left: 46, on right: 47
+    en la izquierda: 46, en la derecha: 47
 $@15 (74)
-    on left: 48, on right: 49
+    en la izquierda: 48, en la derecha: 49
 $@16 (75)
-    on left: 50, on right: 51
+    en la izquierda: 50, en la derecha: 51
 $@17 (76)
-    on left: 52, on right: 53
+    en la izquierda: 52, en la derecha: 53
 $@18 (77)
-    on left: 54, on right: 55
+    en la izquierda: 54, en la derecha: 55
 $@19 (78)
-    on left: 58, on right: 59
+    en la izquierda: 58, en la derecha: 59
 expresion (79)
-    on left: 60 61 62, on right: 27 45 47 49 51 53 55 60 61 70 74 76
-    77
+    en la izquierda: 60 61 62, en la derecha: 27 45 47 49 51 53 55
+    60 61 70 74 76 77
 termino (80)
-    on left: 63 64 65, on right: 60 61 62 63 64
+    en la izquierda: 63 64 65, en la derecha: 60 61 62 63 64
 factor (81)
-    on left: 66 67 68 70, on right: 63 64 65
+    en la izquierda: 66 67 68 70, en la derecha: 63 64 65
 $@20 (82)
-    on left: 69, on right: 70
+    en la izquierda: 69, en la derecha: 70
 between (83)
-    on left: 74, on right: 56
+    en la izquierda: 74, en la derecha: 56
 $@21 (84)
-    on left: 71, on right: 74
+    en la izquierda: 71, en la derecha: 74
 $@22 (85)
-    on left: 72, on right: 74
+    en la izquierda: 72, en la derecha: 74
 $@23 (86)
-    on left: 73, on right: 74
+    en la izquierda: 73, en la derecha: 74
 inlist (87)
-    on left: 75, on right: 57
+    en la izquierda: 75, en la derecha: 57
 lista_expresiones (88)
-    on left: 76 77, on right: 75 76
+    en la izquierda: 76 77, en la derecha: 75 76
 
 
-state 0
+estado 0
 
     0 $accept: . PROGRAMA $end
 
-    "DECVAR"  shift, and go to state 1
+    "DECVAR"  desplazar e ir al estado 1
 
-    PROGRAMA              go to state 2
-    bloque_declaraciones  go to state 3
+    PROGRAMA              ir al estado 2
+    bloque_declaraciones  ir al estado 3
 
 
-state 1
+estado 1
 
     2 bloque_declaraciones: "DECVAR" . declaraciones "ENDDEC"
 
-    "identificador"  shift, and go to state 4
+    "identificador"  desplazar e ir al estado 4
 
-    declaraciones    go to state 5
-    declaracion      go to state 6
-    lista_variables  go to state 7
+    declaraciones    ir al estado 5
+    declaracion      ir al estado 6
+    lista_variables  ir al estado 7
 
 
-state 2
+estado 2
 
     0 $accept: PROGRAMA . $end
 
-    $end  shift, and go to state 8
+    $end  desplazar e ir al estado 8
 
 
-state 3
+estado 3
 
     1 PROGRAMA: bloque_declaraciones . bloque
 
-    "IF"             shift, and go to state 9
-    "WHILE"          shift, and go to state 10
-    "WRITE"          shift, and go to state 11
-    "READ"           shift, and go to state 12
-    "identificador"  shift, and go to state 13
+    "IF"             desplazar e ir al estado 9
+    "WHILE"          desplazar e ir al estado 10
+    "WRITE"          desplazar e ir al estado 11
+    "READ"           desplazar e ir al estado 12
+    "identificador"  desplazar e ir al estado 13
 
-    bloque      go to state 14
-    sentencia   go to state 15
-    salida      go to state 16
-    entrada     go to state 17
-    asignacion  go to state 18
-    seleccion   go to state 19
-    iteracion   go to state 20
+    bloque      ir al estado 14
+    sentencia   ir al estado 15
+    salida      ir al estado 16
+    entrada     ir al estado 17
+    asignacion  ir al estado 18
+    seleccion   ir al estado 19
+    iteracion   ir al estado 20
 
 
-state 4
+estado 4
 
    12 lista_variables: "identificador" . $@4
    14                | "identificador" . $@5 "," lista_variables
 
-    ","       reduce using rule 13 ($@5)
-    $default  reduce using rule 11 ($@4)
+    ","       reduce usando la regla 13 ($@5)
+    $default  reduce usando la regla 11 ($@4)
 
-    $@4  go to state 21
-    $@5  go to state 22
+    $@4  ir al estado 21
+    $@5  ir al estado 22
 
 
-state 5
+estado 5
 
     2 bloque_declaraciones: "DECVAR" declaraciones . "ENDDEC"
     4 declaraciones: declaraciones . declaracion
 
-    "ENDDEC"         shift, and go to state 23
-    "identificador"  shift, and go to state 4
+    "ENDDEC"         desplazar e ir al estado 23
+    "identificador"  desplazar e ir al estado 4
 
-    declaracion      go to state 24
-    lista_variables  go to state 7
+    declaracion      ir al estado 24
+    lista_variables  ir al estado 7
 
 
-state 6
+estado 6
 
     3 declaraciones: declaracion .
 
-    $default  reduce using rule 3 (declaraciones)
+    $default  reduce usando la regla 3 (declaraciones)
 
 
-state 7
+estado 7
 
     6 declaracion: lista_variables . "." "INTEGER" $@1
     8            | lista_variables . "." "STRING" $@2
    10            | lista_variables . "." "FLOAT" $@3
 
-    "."  shift, and go to state 25
+    "."  desplazar e ir al estado 25
 
 
-state 8
+estado 8
 
     0 $accept: PROGRAMA $end .
 
-    $default  accept
+    $default  aceptar
 
 
-state 9
+estado 9
 
    31 seleccion: "IF" . "(" $@6 condicion ")" $@7 bloque "ENDIF"
    35          | "IF" . "(" $@8 condicion ")" $@9 bloque $@10 "ELSE" bloque "ENDIF"
 
-    "("  shift, and go to state 26
+    "("  desplazar e ir al estado 26
 
 
-state 10
+estado 10
 
    38 iteracion: "WHILE" . "(" $@11 condicion ")" $@12 bloque "ENDWHILE"
 
-    "("  shift, and go to state 27
+    "("  desplazar e ir al estado 27
 
 
-state 11
+estado 11
 
    22 salida: "WRITE" . "identificador"
    23       | "WRITE" . "constante string"
    24       | "WRITE" . "constante real"
    25       | "WRITE" . "constante entera"
 
-    "identificador"     shift, and go to state 28
-    "constante entera"  shift, and go to state 29
-    "constante real"    shift, and go to state 30
-    "constante string"  shift, and go to state 31
+    "identificador"     desplazar e ir al estado 28
+    "constante entera"  desplazar e ir al estado 29
+    "constante real"    desplazar e ir al estado 30
+    "constante string"  desplazar e ir al estado 31
 
 
-state 12
+estado 12
 
    26 entrada: "READ" . "identificador"
 
-    "identificador"  shift, and go to state 32
+    "identificador"  desplazar e ir al estado 32
 
 
-state 13
+estado 13
 
    27 asignacion: "identificador" . ":=" expresion
    28           | "identificador" . ":=" "constante string"
 
-    ":="  shift, and go to state 33
+    ":="  desplazar e ir al estado 33
 
 
-state 14
+estado 14
 
     1 PROGRAMA: bloque_declaraciones bloque .
    16 bloque: bloque . sentencia
 
-    "IF"             shift, and go to state 9
-    "WHILE"          shift, and go to state 10
-    "WRITE"          shift, and go to state 11
-    "READ"           shift, and go to state 12
-    "identificador"  shift, and go to state 13
+    "IF"             desplazar e ir al estado 9
+    "WHILE"          desplazar e ir al estado 10
+    "WRITE"          desplazar e ir al estado 11
+    "READ"           desplazar e ir al estado 12
+    "identificador"  desplazar e ir al estado 13
 
-    $default  reduce using rule 1 (PROGRAMA)
+    $default  reduce usando la regla 1 (PROGRAMA)
 
-    sentencia   go to state 34
-    salida      go to state 16
-    entrada     go to state 17
-    asignacion  go to state 18
-    seleccion   go to state 19
-    iteracion   go to state 20
+    sentencia   ir al estado 34
+    salida      ir al estado 16
+    entrada     ir al estado 17
+    asignacion  ir al estado 18
+    seleccion   ir al estado 19
+    iteracion   ir al estado 20
 
 
-state 15
+estado 15
 
    15 bloque: sentencia .
 
-    $default  reduce using rule 15 (bloque)
+    $default  reduce usando la regla 15 (bloque)
 
 
-state 16
+estado 16
 
    20 sentencia: salida .
 
-    $default  reduce using rule 20 (sentencia)
+    $default  reduce usando la regla 20 (sentencia)
 
 
-state 17
+estado 17
 
    21 sentencia: entrada .
 
-    $default  reduce using rule 21 (sentencia)
+    $default  reduce usando la regla 21 (sentencia)
 
 
-state 18
+estado 18
 
    17 sentencia: asignacion .
 
-    $default  reduce using rule 17 (sentencia)
+    $default  reduce usando la regla 17 (sentencia)
 
 
-state 19
+estado 19
 
    18 sentencia: seleccion .
 
-    $default  reduce using rule 18 (sentencia)
+    $default  reduce usando la regla 18 (sentencia)
 
 
-state 20
+estado 20
 
    19 sentencia: iteracion .
 
-    $default  reduce using rule 19 (sentencia)
+    $default  reduce usando la regla 19 (sentencia)
 
 
-state 21
+estado 21
 
    12 lista_variables: "identificador" $@4 .
 
-    $default  reduce using rule 12 (lista_variables)
+    $default  reduce usando la regla 12 (lista_variables)
 
 
-state 22
+estado 22
 
    14 lista_variables: "identificador" $@5 . "," lista_variables
 
-    ","  shift, and go to state 35
+    ","  desplazar e ir al estado 35
 
 
-state 23
+estado 23
 
     2 bloque_declaraciones: "DECVAR" declaraciones "ENDDEC" .
 
-    $default  reduce using rule 2 (bloque_declaraciones)
+    $default  reduce usando la regla 2 (bloque_declaraciones)
 
 
-state 24
+estado 24
 
     4 declaraciones: declaraciones declaracion .
 
-    $default  reduce using rule 4 (declaraciones)
+    $default  reduce usando la regla 4 (declaraciones)
 
 
-state 25
+estado 25
 
     6 declaracion: lista_variables "." . "INTEGER" $@1
     8            | lista_variables "." . "STRING" $@2
    10            | lista_variables "." . "FLOAT" $@3
 
-    "INTEGER"  shift, and go to state 36
-    "FLOAT"    shift, and go to state 37
-    "STRING"   shift, and go to state 38
+    "INTEGER"  desplazar e ir al estado 36
+    "FLOAT"    desplazar e ir al estado 37
+    "STRING"   desplazar e ir al estado 38
 
 
-state 26
+estado 26
 
    31 seleccion: "IF" "(" . $@6 condicion ")" $@7 bloque "ENDIF"
    35          | "IF" "(" . $@8 condicion ")" $@9 bloque $@10 "ELSE" bloque "ENDIF"
 
-    "("                 reduce using rule 29 ($@6)
-    "("                 [reduce using rule 32 ($@8)]
-    "NOT"               reduce using rule 29 ($@6)
-    "NOT"               [reduce using rule 32 ($@8)]
-    "identificador"     reduce using rule 29 ($@6)
-    "identificador"     [reduce using rule 32 ($@8)]
-    "constante entera"  reduce using rule 29 ($@6)
-    "constante entera"  [reduce using rule 32 ($@8)]
-    "constante real"    reduce using rule 29 ($@6)
-    "constante real"    [reduce using rule 32 ($@8)]
-    "BETWEEN"           reduce using rule 29 ($@6)
-    "BETWEEN"           [reduce using rule 32 ($@8)]
-    "INLIST"            reduce using rule 29 ($@6)
-    "INLIST"            [reduce using rule 32 ($@8)]
-    $default            reduce using rule 29 ($@6)
+    "("                 reduce usando la regla 29 ($@6)
+    "("                 [reduce usando la regla 32 ($@8)]
+    "NOT"               reduce usando la regla 29 ($@6)
+    "NOT"               [reduce usando la regla 32 ($@8)]
+    "identificador"     reduce usando la regla 29 ($@6)
+    "identificador"     [reduce usando la regla 32 ($@8)]
+    "constante entera"  reduce usando la regla 29 ($@6)
+    "constante entera"  [reduce usando la regla 32 ($@8)]
+    "constante real"    reduce usando la regla 29 ($@6)
+    "constante real"    [reduce usando la regla 32 ($@8)]
+    "BETWEEN"           reduce usando la regla 29 ($@6)
+    "BETWEEN"           [reduce usando la regla 32 ($@8)]
+    "INLIST"            reduce usando la regla 29 ($@6)
+    "INLIST"            [reduce usando la regla 32 ($@8)]
+    $default            reduce usando la regla 29 ($@6)
 
-    $@6  go to state 39
-    $@8  go to state 40
+    $@6  ir al estado 39
+    $@8  ir al estado 40
 
 
-state 27
+estado 27
 
    38 iteracion: "WHILE" "(" . $@11 condicion ")" $@12 bloque "ENDWHILE"
 
-    $default  reduce using rule 36 ($@11)
+    $default  reduce usando la regla 36 ($@11)
 
-    $@11  go to state 41
+    $@11  ir al estado 41
 
 
-state 28
+estado 28
 
    22 salida: "WRITE" "identificador" .
 
-    $default  reduce using rule 22 (salida)
+    $default  reduce usando la regla 22 (salida)
 
 
-state 29
+estado 29
 
    25 salida: "WRITE" "constante entera" .
 
-    $default  reduce using rule 25 (salida)
+    $default  reduce usando la regla 25 (salida)
 
 
-state 30
+estado 30
 
    24 salida: "WRITE" "constante real" .
 
-    $default  reduce using rule 24 (salida)
+    $default  reduce usando la regla 24 (salida)
 
 
-state 31
+estado 31
 
    23 salida: "WRITE" "constante string" .
 
-    $default  reduce using rule 23 (salida)
+    $default  reduce usando la regla 23 (salida)
 
 
-state 32
+estado 32
 
    26 entrada: "READ" "identificador" .
 
-    $default  reduce using rule 26 (entrada)
+    $default  reduce usando la regla 26 (entrada)
 
 
-state 33
+estado 33
 
    27 asignacion: "identificador" ":=" . expresion
    28           | "identificador" ":=" . "constante string"
 
-    "("                 shift, and go to state 42
-    "identificador"     shift, and go to state 43
-    "constante entera"  shift, and go to state 44
-    "constante real"    shift, and go to state 45
-    "constante string"  shift, and go to state 46
+    "("                 desplazar e ir al estado 42
+    "identificador"     desplazar e ir al estado 43
+    "constante entera"  desplazar e ir al estado 44
+    "constante real"    desplazar e ir al estado 45
+    "constante string"  desplazar e ir al estado 46
 
-    expresion  go to state 47
-    termino    go to state 48
-    factor     go to state 49
+    expresion  ir al estado 47
+    termino    ir al estado 48
+    factor     ir al estado 49
 
 
-state 34
+estado 34
 
    16 bloque: bloque sentencia .
 
-    $default  reduce using rule 16 (bloque)
+    $default  reduce usando la regla 16 (bloque)
 
 
-state 35
+estado 35
 
    14 lista_variables: "identificador" $@5 "," . lista_variables
 
-    "identificador"  shift, and go to state 4
+    "identificador"  desplazar e ir al estado 4
 
-    lista_variables  go to state 50
+    lista_variables  ir al estado 50
 
 
-state 36
+estado 36
 
     6 declaracion: lista_variables "." "INTEGER" . $@1
 
-    $default  reduce using rule 5 ($@1)
+    $default  reduce usando la regla 5 ($@1)
 
-    $@1  go to state 51
+    $@1  ir al estado 51
 
 
-state 37
+estado 37
 
    10 declaracion: lista_variables "." "FLOAT" . $@3
 
-    $default  reduce using rule 9 ($@3)
+    $default  reduce usando la regla 9 ($@3)
 
-    $@3  go to state 52
+    $@3  ir al estado 52
 
 
-state 38
+estado 38
 
     8 declaracion: lista_variables "." "STRING" . $@2
 
-    $default  reduce using rule 7 ($@2)
+    $default  reduce usando la regla 7 ($@2)
 
-    $@2  go to state 53
+    $@2  ir al estado 53
 
 
-state 39
+estado 39
 
    31 seleccion: "IF" "(" $@6 . condicion ")" $@7 bloque "ENDIF"
 
-    "("                 shift, and go to state 54
-    "NOT"               shift, and go to state 55
-    "identificador"     shift, and go to state 43
-    "constante entera"  shift, and go to state 44
-    "constante real"    shift, and go to state 45
-    "BETWEEN"           shift, and go to state 56
-    "INLIST"            shift, and go to state 57
+    "("                 desplazar e ir al estado 54
+    "NOT"               desplazar e ir al estado 55
+    "identificador"     desplazar e ir al estado 43
+    "constante entera"  desplazar e ir al estado 44
+    "constante real"    desplazar e ir al estado 45
+    "BETWEEN"           desplazar e ir al estado 56
+    "INLIST"            desplazar e ir al estado 57
 
-    condicion       go to state 58
-    termino_logico  go to state 59
-    comparacion     go to state 60
-    expresion       go to state 61
-    termino         go to state 48
-    factor          go to state 49
-    between         go to state 62
-    inlist          go to state 63
+    condicion       ir al estado 58
+    termino_logico  ir al estado 59
+    comparacion     ir al estado 60
+    expresion       ir al estado 61
+    termino         ir al estado 48
+    factor          ir al estado 49
+    between         ir al estado 62
+    inlist          ir al estado 63
 
 
-state 40
+estado 40
 
    35 seleccion: "IF" "(" $@8 . condicion ")" $@9 bloque $@10 "ELSE" bloque "ENDIF"
 
-    "("                 shift, and go to state 54
-    "NOT"               shift, and go to state 55
-    "identificador"     shift, and go to state 43
-    "constante entera"  shift, and go to state 44
-    "constante real"    shift, and go to state 45
-    "BETWEEN"           shift, and go to state 56
-    "INLIST"            shift, and go to state 57
+    "("                 desplazar e ir al estado 54
+    "NOT"               desplazar e ir al estado 55
+    "identificador"     desplazar e ir al estado 43
+    "constante entera"  desplazar e ir al estado 44
+    "constante real"    desplazar e ir al estado 45
+    "BETWEEN"           desplazar e ir al estado 56
+    "INLIST"            desplazar e ir al estado 57
 
-    condicion       go to state 64
-    termino_logico  go to state 59
-    comparacion     go to state 60
-    expresion       go to state 61
-    termino         go to state 48
-    factor          go to state 49
-    between         go to state 62
-    inlist          go to state 63
+    condicion       ir al estado 64
+    termino_logico  ir al estado 59
+    comparacion     ir al estado 60
+    expresion       ir al estado 61
+    termino         ir al estado 48
+    factor          ir al estado 49
+    between         ir al estado 62
+    inlist          ir al estado 63
 
 
-state 41
+estado 41
 
    38 iteracion: "WHILE" "(" $@11 . condicion ")" $@12 bloque "ENDWHILE"
 
-    "("                 shift, and go to state 54
-    "NOT"               shift, and go to state 55
-    "identificador"     shift, and go to state 43
-    "constante entera"  shift, and go to state 44
-    "constante real"    shift, and go to state 45
-    "BETWEEN"           shift, and go to state 56
-    "INLIST"            shift, and go to state 57
+    "("                 desplazar e ir al estado 54
+    "NOT"               desplazar e ir al estado 55
+    "identificador"     desplazar e ir al estado 43
+    "constante entera"  desplazar e ir al estado 44
+    "constante real"    desplazar e ir al estado 45
+    "BETWEEN"           desplazar e ir al estado 56
+    "INLIST"            desplazar e ir al estado 57
 
-    condicion       go to state 65
-    termino_logico  go to state 59
-    comparacion     go to state 60
-    expresion       go to state 61
-    termino         go to state 48
-    factor          go to state 49
-    between         go to state 62
-    inlist          go to state 63
+    condicion       ir al estado 65
+    termino_logico  ir al estado 59
+    comparacion     ir al estado 60
+    expresion       ir al estado 61
+    termino         ir al estado 48
+    factor          ir al estado 49
+    between         ir al estado 62
+    inlist          ir al estado 63
 
 
-state 42
+estado 42
 
    70 factor: "(" . $@20 expresion ")"
 
-    $default  reduce using rule 69 ($@20)
+    $default  reduce usando la regla 69 ($@20)
 
-    $@20  go to state 66
+    $@20  ir al estado 66
 
 
-state 43
+estado 43
 
    66 factor: "identificador" .
 
-    $default  reduce using rule 66 (factor)
+    $default  reduce usando la regla 66 (factor)
 
 
-state 44
+estado 44
 
    67 factor: "constante entera" .
 
-    $default  reduce using rule 67 (factor)
+    $default  reduce usando la regla 67 (factor)
 
 
-state 45
+estado 45
 
    68 factor: "constante real" .
 
-    $default  reduce using rule 68 (factor)
+    $default  reduce usando la regla 68 (factor)
 
 
-state 46
+estado 46
 
    28 asignacion: "identificador" ":=" "constante string" .
 
-    $default  reduce using rule 28 (asignacion)
+    $default  reduce usando la regla 28 (asignacion)
 
 
-state 47
+estado 47
 
    27 asignacion: "identificador" ":=" expresion .
    60 expresion: expresion . "+" termino
    61          | expresion . "-" termino
 
-    "+"  shift, and go to state 67
-    "-"  shift, and go to state 68
+    "+"  desplazar e ir al estado 67
+    "-"  desplazar e ir al estado 68
 
-    $default  reduce using rule 27 (asignacion)
+    $default  reduce usando la regla 27 (asignacion)
 
 
-state 48
+estado 48
 
    62 expresion: termino .
    63 termino: termino . "*" factor
    64        | termino . "/" factor
 
-    "*"  shift, and go to state 69
-    "/"  shift, and go to state 70
+    "*"  desplazar e ir al estado 69
+    "/"  desplazar e ir al estado 70
 
-    $default  reduce using rule 62 (expresion)
+    $default  reduce usando la regla 62 (expresion)
 
 
-state 49
+estado 49
 
    65 termino: factor .
 
-    $default  reduce using rule 65 (termino)
+    $default  reduce usando la regla 65 (termino)
 
 
-state 50
+estado 50
 
    14 lista_variables: "identificador" $@5 "," lista_variables .
 
-    $default  reduce using rule 14 (lista_variables)
+    $default  reduce usando la regla 14 (lista_variables)
 
 
-state 51
+estado 51
 
     6 declaracion: lista_variables "." "INTEGER" $@1 .
 
-    $default  reduce using rule 6 (declaracion)
+    $default  reduce usando la regla 6 (declaracion)
 
 
-state 52
+estado 52
 
    10 declaracion: lista_variables "." "FLOAT" $@3 .
 
-    $default  reduce using rule 10 (declaracion)
+    $default  reduce usando la regla 10 (declaracion)
 
 
-state 53
+estado 53
 
     8 declaracion: lista_variables "." "STRING" $@2 .
 
-    $default  reduce using rule 8 (declaracion)
+    $default  reduce usando la regla 8 (declaracion)
 
 
-state 54
+estado 54
 
    59 comparacion: "(" . $@19 condicion ")"
    70 factor: "(" . $@20 expresion ")"
 
-    "("                 reduce using rule 58 ($@19)
-    "("                 [reduce using rule 69 ($@20)]
-    "identificador"     reduce using rule 58 ($@19)
-    "identificador"     [reduce using rule 69 ($@20)]
-    "constante entera"  reduce using rule 58 ($@19)
-    "constante entera"  [reduce using rule 69 ($@20)]
-    "constante real"    reduce using rule 58 ($@19)
-    "constante real"    [reduce using rule 69 ($@20)]
-    $default            reduce using rule 58 ($@19)
+    "("                 reduce usando la regla 58 ($@19)
+    "("                 [reduce usando la regla 69 ($@20)]
+    "identificador"     reduce usando la regla 58 ($@19)
+    "identificador"     [reduce usando la regla 69 ($@20)]
+    "constante entera"  reduce usando la regla 58 ($@19)
+    "constante entera"  [reduce usando la regla 69 ($@20)]
+    "constante real"    reduce usando la regla 58 ($@19)
+    "constante real"    [reduce usando la regla 69 ($@20)]
+    $default            reduce usando la regla 58 ($@19)
 
-    $@19  go to state 71
-    $@20  go to state 66
+    $@19  ir al estado 71
+    $@20  ir al estado 66
 
 
-state 55
+estado 55
 
    40 condicion: "NOT" . termino_logico
 
-    "("                 shift, and go to state 54
-    "identificador"     shift, and go to state 43
-    "constante entera"  shift, and go to state 44
-    "constante real"    shift, and go to state 45
-    "BETWEEN"           shift, and go to state 56
-    "INLIST"            shift, and go to state 57
+    "("                 desplazar e ir al estado 54
+    "identificador"     desplazar e ir al estado 43
+    "constante entera"  desplazar e ir al estado 44
+    "constante real"    desplazar e ir al estado 45
+    "BETWEEN"           desplazar e ir al estado 56
+    "INLIST"            desplazar e ir al estado 57
 
-    termino_logico  go to state 72
-    comparacion     go to state 60
-    expresion       go to state 61
-    termino         go to state 48
-    factor          go to state 49
-    between         go to state 62
-    inlist          go to state 63
+    termino_logico  ir al estado 72
+    comparacion     ir al estado 60
+    expresion       ir al estado 61
+    termino         ir al estado 48
+    factor          ir al estado 49
+    between         ir al estado 62
+    inlist          ir al estado 63
 
 
-state 56
+estado 56
 
    74 between: "BETWEEN" . "(" "identificador" $@21 "," "[" expresion $@22 ";" expresion $@23 "]" ")"
 
-    "("  shift, and go to state 73
+    "("  desplazar e ir al estado 73
 
 
-state 57
+estado 57
 
    75 inlist: "INLIST" . "(" "identificador" "," "[" lista_expresiones "]" ")"
 
-    "("  shift, and go to state 74
+    "("  desplazar e ir al estado 74
 
 
-state 58
+estado 58
 
    31 seleccion: "IF" "(" $@6 condicion . ")" $@7 bloque "ENDIF"
    39 condicion: condicion . "OR" termino_logico
 
-    ")"   shift, and go to state 75
-    "OR"  shift, and go to state 76
+    ")"   desplazar e ir al estado 75
+    "OR"  desplazar e ir al estado 76
 
 
-state 59
+estado 59
 
    41 condicion: termino_logico .
    43 termino_logico: termino_logico . "AND" comparacion
 
-    "AND"  shift, and go to state 77
+    "AND"  desplazar e ir al estado 77
 
-    $default  reduce using rule 41 (condicion)
+    $default  reduce usando la regla 41 (condicion)
 
 
-state 60
+estado 60
 
    42 termino_logico: comparacion .
 
-    $default  reduce using rule 42 (termino_logico)
+    $default  reduce usando la regla 42 (termino_logico)
 
 
-state 61
+estado 61
 
    45 comparacion: expresion . $@13 "==" expresion
    47            | expresion . $@14 "<=" expresion
@@ -911,897 +912,897 @@ state 61
    60 expresion: expresion . "+" termino
    61          | expresion . "-" termino
 
-    "+"  shift, and go to state 67
-    "-"  shift, and go to state 68
+    "+"  desplazar e ir al estado 67
+    "-"  desplazar e ir al estado 68
 
-    "!="      reduce using rule 54 ($@18)
-    "<"       reduce using rule 52 ($@17)
-    "<="      reduce using rule 46 ($@14)
-    ">"       reduce using rule 50 ($@16)
-    ">="      reduce using rule 48 ($@15)
-    $default  reduce using rule 44 ($@13)
+    "!="      reduce usando la regla 54 ($@18)
+    "<"       reduce usando la regla 52 ($@17)
+    "<="      reduce usando la regla 46 ($@14)
+    ">"       reduce usando la regla 50 ($@16)
+    ">="      reduce usando la regla 48 ($@15)
+    $default  reduce usando la regla 44 ($@13)
 
-    $@13  go to state 78
-    $@14  go to state 79
-    $@15  go to state 80
-    $@16  go to state 81
-    $@17  go to state 82
-    $@18  go to state 83
+    $@13  ir al estado 78
+    $@14  ir al estado 79
+    $@15  ir al estado 80
+    $@16  ir al estado 81
+    $@17  ir al estado 82
+    $@18  ir al estado 83
 
 
-state 62
+estado 62
 
    56 comparacion: between .
 
-    $default  reduce using rule 56 (comparacion)
+    $default  reduce usando la regla 56 (comparacion)
 
 
-state 63
+estado 63
 
    57 comparacion: inlist .
 
-    $default  reduce using rule 57 (comparacion)
+    $default  reduce usando la regla 57 (comparacion)
 
 
-state 64
+estado 64
 
    35 seleccion: "IF" "(" $@8 condicion . ")" $@9 bloque $@10 "ELSE" bloque "ENDIF"
    39 condicion: condicion . "OR" termino_logico
 
-    ")"   shift, and go to state 84
-    "OR"  shift, and go to state 76
+    ")"   desplazar e ir al estado 84
+    "OR"  desplazar e ir al estado 76
 
 
-state 65
+estado 65
 
    38 iteracion: "WHILE" "(" $@11 condicion . ")" $@12 bloque "ENDWHILE"
    39 condicion: condicion . "OR" termino_logico
 
-    ")"   shift, and go to state 85
-    "OR"  shift, and go to state 76
+    ")"   desplazar e ir al estado 85
+    "OR"  desplazar e ir al estado 76
 
 
-state 66
+estado 66
 
    70 factor: "(" $@20 . expresion ")"
 
-    "("                 shift, and go to state 42
-    "identificador"     shift, and go to state 43
-    "constante entera"  shift, and go to state 44
-    "constante real"    shift, and go to state 45
+    "("                 desplazar e ir al estado 42
+    "identificador"     desplazar e ir al estado 43
+    "constante entera"  desplazar e ir al estado 44
+    "constante real"    desplazar e ir al estado 45
 
-    expresion  go to state 86
-    termino    go to state 48
-    factor     go to state 49
+    expresion  ir al estado 86
+    termino    ir al estado 48
+    factor     ir al estado 49
 
 
-state 67
+estado 67
 
    60 expresion: expresion "+" . termino
 
-    "("                 shift, and go to state 42
-    "identificador"     shift, and go to state 43
-    "constante entera"  shift, and go to state 44
-    "constante real"    shift, and go to state 45
+    "("                 desplazar e ir al estado 42
+    "identificador"     desplazar e ir al estado 43
+    "constante entera"  desplazar e ir al estado 44
+    "constante real"    desplazar e ir al estado 45
 
-    termino  go to state 87
-    factor   go to state 49
+    termino  ir al estado 87
+    factor   ir al estado 49
 
 
-state 68
+estado 68
 
    61 expresion: expresion "-" . termino
 
-    "("                 shift, and go to state 42
-    "identificador"     shift, and go to state 43
-    "constante entera"  shift, and go to state 44
-    "constante real"    shift, and go to state 45
+    "("                 desplazar e ir al estado 42
+    "identificador"     desplazar e ir al estado 43
+    "constante entera"  desplazar e ir al estado 44
+    "constante real"    desplazar e ir al estado 45
 
-    termino  go to state 88
-    factor   go to state 49
+    termino  ir al estado 88
+    factor   ir al estado 49
 
 
-state 69
+estado 69
 
    63 termino: termino "*" . factor
 
-    "("                 shift, and go to state 42
-    "identificador"     shift, and go to state 43
-    "constante entera"  shift, and go to state 44
-    "constante real"    shift, and go to state 45
+    "("                 desplazar e ir al estado 42
+    "identificador"     desplazar e ir al estado 43
+    "constante entera"  desplazar e ir al estado 44
+    "constante real"    desplazar e ir al estado 45
 
-    factor  go to state 89
+    factor  ir al estado 89
 
 
-state 70
+estado 70
 
    64 termino: termino "/" . factor
 
-    "("                 shift, and go to state 42
-    "identificador"     shift, and go to state 43
-    "constante entera"  shift, and go to state 44
-    "constante real"    shift, and go to state 45
+    "("                 desplazar e ir al estado 42
+    "identificador"     desplazar e ir al estado 43
+    "constante entera"  desplazar e ir al estado 44
+    "constante real"    desplazar e ir al estado 45
 
-    factor  go to state 90
+    factor  ir al estado 90
 
 
-state 71
+estado 71
 
    59 comparacion: "(" $@19 . condicion ")"
 
-    "("                 shift, and go to state 54
-    "NOT"               shift, and go to state 55
-    "identificador"     shift, and go to state 43
-    "constante entera"  shift, and go to state 44
-    "constante real"    shift, and go to state 45
-    "BETWEEN"           shift, and go to state 56
-    "INLIST"            shift, and go to state 57
+    "("                 desplazar e ir al estado 54
+    "NOT"               desplazar e ir al estado 55
+    "identificador"     desplazar e ir al estado 43
+    "constante entera"  desplazar e ir al estado 44
+    "constante real"    desplazar e ir al estado 45
+    "BETWEEN"           desplazar e ir al estado 56
+    "INLIST"            desplazar e ir al estado 57
 
-    condicion       go to state 91
-    termino_logico  go to state 59
-    comparacion     go to state 60
-    expresion       go to state 61
-    termino         go to state 48
-    factor          go to state 49
-    between         go to state 62
-    inlist          go to state 63
+    condicion       ir al estado 91
+    termino_logico  ir al estado 59
+    comparacion     ir al estado 60
+    expresion       ir al estado 61
+    termino         ir al estado 48
+    factor          ir al estado 49
+    between         ir al estado 62
+    inlist          ir al estado 63
 
 
-state 72
+estado 72
 
    40 condicion: "NOT" termino_logico .
    43 termino_logico: termino_logico . "AND" comparacion
 
-    "AND"  shift, and go to state 77
+    "AND"  desplazar e ir al estado 77
 
-    $default  reduce using rule 40 (condicion)
+    $default  reduce usando la regla 40 (condicion)
 
 
-state 73
+estado 73
 
    74 between: "BETWEEN" "(" . "identificador" $@21 "," "[" expresion $@22 ";" expresion $@23 "]" ")"
 
-    "identificador"  shift, and go to state 92
+    "identificador"  desplazar e ir al estado 92
 
 
-state 74
+estado 74
 
    75 inlist: "INLIST" "(" . "identificador" "," "[" lista_expresiones "]" ")"
 
-    "identificador"  shift, and go to state 93
+    "identificador"  desplazar e ir al estado 93
 
 
-state 75
+estado 75
 
    31 seleccion: "IF" "(" $@6 condicion ")" . $@7 bloque "ENDIF"
 
-    $default  reduce using rule 30 ($@7)
+    $default  reduce usando la regla 30 ($@7)
 
-    $@7  go to state 94
+    $@7  ir al estado 94
 
 
-state 76
+estado 76
 
    39 condicion: condicion "OR" . termino_logico
 
-    "("                 shift, and go to state 54
-    "identificador"     shift, and go to state 43
-    "constante entera"  shift, and go to state 44
-    "constante real"    shift, and go to state 45
-    "BETWEEN"           shift, and go to state 56
-    "INLIST"            shift, and go to state 57
+    "("                 desplazar e ir al estado 54
+    "identificador"     desplazar e ir al estado 43
+    "constante entera"  desplazar e ir al estado 44
+    "constante real"    desplazar e ir al estado 45
+    "BETWEEN"           desplazar e ir al estado 56
+    "INLIST"            desplazar e ir al estado 57
 
-    termino_logico  go to state 95
-    comparacion     go to state 60
-    expresion       go to state 61
-    termino         go to state 48
-    factor          go to state 49
-    between         go to state 62
-    inlist          go to state 63
+    termino_logico  ir al estado 95
+    comparacion     ir al estado 60
+    expresion       ir al estado 61
+    termino         ir al estado 48
+    factor          ir al estado 49
+    between         ir al estado 62
+    inlist          ir al estado 63
 
 
-state 77
+estado 77
 
    43 termino_logico: termino_logico "AND" . comparacion
 
-    "("                 shift, and go to state 54
-    "identificador"     shift, and go to state 43
-    "constante entera"  shift, and go to state 44
-    "constante real"    shift, and go to state 45
-    "BETWEEN"           shift, and go to state 56
-    "INLIST"            shift, and go to state 57
+    "("                 desplazar e ir al estado 54
+    "identificador"     desplazar e ir al estado 43
+    "constante entera"  desplazar e ir al estado 44
+    "constante real"    desplazar e ir al estado 45
+    "BETWEEN"           desplazar e ir al estado 56
+    "INLIST"            desplazar e ir al estado 57
 
-    comparacion  go to state 96
-    expresion    go to state 61
-    termino      go to state 48
-    factor       go to state 49
-    between      go to state 62
-    inlist       go to state 63
+    comparacion  ir al estado 96
+    expresion    ir al estado 61
+    termino      ir al estado 48
+    factor       ir al estado 49
+    between      ir al estado 62
+    inlist       ir al estado 63
 
 
-state 78
+estado 78
 
    45 comparacion: expresion $@13 . "==" expresion
 
-    "=="  shift, and go to state 97
+    "=="  desplazar e ir al estado 97
 
 
-state 79
+estado 79
 
    47 comparacion: expresion $@14 . "<=" expresion
 
-    "<="  shift, and go to state 98
+    "<="  desplazar e ir al estado 98
 
 
-state 80
+estado 80
 
    49 comparacion: expresion $@15 . ">=" expresion
 
-    ">="  shift, and go to state 99
+    ">="  desplazar e ir al estado 99
 
 
-state 81
+estado 81
 
    51 comparacion: expresion $@16 . ">" expresion
 
-    ">"  shift, and go to state 100
+    ">"  desplazar e ir al estado 100
 
 
-state 82
+estado 82
 
    53 comparacion: expresion $@17 . "<" expresion
 
-    "<"  shift, and go to state 101
+    "<"  desplazar e ir al estado 101
 
 
-state 83
+estado 83
 
    55 comparacion: expresion $@18 . "!=" expresion
 
-    "!="  shift, and go to state 102
+    "!="  desplazar e ir al estado 102
 
 
-state 84
+estado 84
 
    35 seleccion: "IF" "(" $@8 condicion ")" . $@9 bloque $@10 "ELSE" bloque "ENDIF"
 
-    $default  reduce using rule 33 ($@9)
+    $default  reduce usando la regla 33 ($@9)
 
-    $@9  go to state 103
+    $@9  ir al estado 103
 
 
-state 85
+estado 85
 
    38 iteracion: "WHILE" "(" $@11 condicion ")" . $@12 bloque "ENDWHILE"
 
-    $default  reduce using rule 37 ($@12)
+    $default  reduce usando la regla 37 ($@12)
 
-    $@12  go to state 104
+    $@12  ir al estado 104
 
 
-state 86
+estado 86
 
    60 expresion: expresion . "+" termino
    61          | expresion . "-" termino
    70 factor: "(" $@20 expresion . ")"
 
-    "+"  shift, and go to state 67
-    "-"  shift, and go to state 68
-    ")"  shift, and go to state 105
+    "+"  desplazar e ir al estado 67
+    "-"  desplazar e ir al estado 68
+    ")"  desplazar e ir al estado 105
 
 
-state 87
+estado 87
 
    60 expresion: expresion "+" termino .
    63 termino: termino . "*" factor
    64        | termino . "/" factor
 
-    "*"  shift, and go to state 69
-    "/"  shift, and go to state 70
+    "*"  desplazar e ir al estado 69
+    "/"  desplazar e ir al estado 70
 
-    $default  reduce using rule 60 (expresion)
+    $default  reduce usando la regla 60 (expresion)
 
 
-state 88
+estado 88
 
    61 expresion: expresion "-" termino .
    63 termino: termino . "*" factor
    64        | termino . "/" factor
 
-    "*"  shift, and go to state 69
-    "/"  shift, and go to state 70
+    "*"  desplazar e ir al estado 69
+    "/"  desplazar e ir al estado 70
 
-    $default  reduce using rule 61 (expresion)
+    $default  reduce usando la regla 61 (expresion)
 
 
-state 89
+estado 89
 
    63 termino: termino "*" factor .
 
-    $default  reduce using rule 63 (termino)
+    $default  reduce usando la regla 63 (termino)
 
 
-state 90
+estado 90
 
    64 termino: termino "/" factor .
 
-    $default  reduce using rule 64 (termino)
+    $default  reduce usando la regla 64 (termino)
 
 
-state 91
+estado 91
 
    39 condicion: condicion . "OR" termino_logico
    59 comparacion: "(" $@19 condicion . ")"
 
-    ")"   shift, and go to state 106
-    "OR"  shift, and go to state 76
+    ")"   desplazar e ir al estado 106
+    "OR"  desplazar e ir al estado 76
 
 
-state 92
+estado 92
 
    74 between: "BETWEEN" "(" "identificador" . $@21 "," "[" expresion $@22 ";" expresion $@23 "]" ")"
 
-    $default  reduce using rule 71 ($@21)
+    $default  reduce usando la regla 71 ($@21)
 
-    $@21  go to state 107
+    $@21  ir al estado 107
 
 
-state 93
+estado 93
 
    75 inlist: "INLIST" "(" "identificador" . "," "[" lista_expresiones "]" ")"
 
-    ","  shift, and go to state 108
+    ","  desplazar e ir al estado 108
 
 
-state 94
+estado 94
 
    31 seleccion: "IF" "(" $@6 condicion ")" $@7 . bloque "ENDIF"
 
-    "IF"             shift, and go to state 9
-    "WHILE"          shift, and go to state 10
-    "WRITE"          shift, and go to state 11
-    "READ"           shift, and go to state 12
-    "identificador"  shift, and go to state 13
+    "IF"             desplazar e ir al estado 9
+    "WHILE"          desplazar e ir al estado 10
+    "WRITE"          desplazar e ir al estado 11
+    "READ"           desplazar e ir al estado 12
+    "identificador"  desplazar e ir al estado 13
 
-    bloque      go to state 109
-    sentencia   go to state 15
-    salida      go to state 16
-    entrada     go to state 17
-    asignacion  go to state 18
-    seleccion   go to state 19
-    iteracion   go to state 20
+    bloque      ir al estado 109
+    sentencia   ir al estado 15
+    salida      ir al estado 16
+    entrada     ir al estado 17
+    asignacion  ir al estado 18
+    seleccion   ir al estado 19
+    iteracion   ir al estado 20
 
 
-state 95
+estado 95
 
    39 condicion: condicion "OR" termino_logico .
    43 termino_logico: termino_logico . "AND" comparacion
 
-    "AND"  shift, and go to state 77
+    "AND"  desplazar e ir al estado 77
 
-    $default  reduce using rule 39 (condicion)
+    $default  reduce usando la regla 39 (condicion)
 
 
-state 96
+estado 96
 
    43 termino_logico: termino_logico "AND" comparacion .
 
-    $default  reduce using rule 43 (termino_logico)
+    $default  reduce usando la regla 43 (termino_logico)
 
 
-state 97
+estado 97
 
    45 comparacion: expresion $@13 "==" . expresion
 
-    "("                 shift, and go to state 42
-    "identificador"     shift, and go to state 43
-    "constante entera"  shift, and go to state 44
-    "constante real"    shift, and go to state 45
+    "("                 desplazar e ir al estado 42
+    "identificador"     desplazar e ir al estado 43
+    "constante entera"  desplazar e ir al estado 44
+    "constante real"    desplazar e ir al estado 45
 
-    expresion  go to state 110
-    termino    go to state 48
-    factor     go to state 49
+    expresion  ir al estado 110
+    termino    ir al estado 48
+    factor     ir al estado 49
 
 
-state 98
+estado 98
 
    47 comparacion: expresion $@14 "<=" . expresion
 
-    "("                 shift, and go to state 42
-    "identificador"     shift, and go to state 43
-    "constante entera"  shift, and go to state 44
-    "constante real"    shift, and go to state 45
+    "("                 desplazar e ir al estado 42
+    "identificador"     desplazar e ir al estado 43
+    "constante entera"  desplazar e ir al estado 44
+    "constante real"    desplazar e ir al estado 45
 
-    expresion  go to state 111
-    termino    go to state 48
-    factor     go to state 49
+    expresion  ir al estado 111
+    termino    ir al estado 48
+    factor     ir al estado 49
 
 
-state 99
+estado 99
 
    49 comparacion: expresion $@15 ">=" . expresion
 
-    "("                 shift, and go to state 42
-    "identificador"     shift, and go to state 43
-    "constante entera"  shift, and go to state 44
-    "constante real"    shift, and go to state 45
+    "("                 desplazar e ir al estado 42
+    "identificador"     desplazar e ir al estado 43
+    "constante entera"  desplazar e ir al estado 44
+    "constante real"    desplazar e ir al estado 45
 
-    expresion  go to state 112
-    termino    go to state 48
-    factor     go to state 49
+    expresion  ir al estado 112
+    termino    ir al estado 48
+    factor     ir al estado 49
 
 
-state 100
+estado 100
 
    51 comparacion: expresion $@16 ">" . expresion
 
-    "("                 shift, and go to state 42
-    "identificador"     shift, and go to state 43
-    "constante entera"  shift, and go to state 44
-    "constante real"    shift, and go to state 45
+    "("                 desplazar e ir al estado 42
+    "identificador"     desplazar e ir al estado 43
+    "constante entera"  desplazar e ir al estado 44
+    "constante real"    desplazar e ir al estado 45
 
-    expresion  go to state 113
-    termino    go to state 48
-    factor     go to state 49
+    expresion  ir al estado 113
+    termino    ir al estado 48
+    factor     ir al estado 49
 
 
-state 101
+estado 101
 
    53 comparacion: expresion $@17 "<" . expresion
 
-    "("                 shift, and go to state 42
-    "identificador"     shift, and go to state 43
-    "constante entera"  shift, and go to state 44
-    "constante real"    shift, and go to state 45
+    "("                 desplazar e ir al estado 42
+    "identificador"     desplazar e ir al estado 43
+    "constante entera"  desplazar e ir al estado 44
+    "constante real"    desplazar e ir al estado 45
 
-    expresion  go to state 114
-    termino    go to state 48
-    factor     go to state 49
+    expresion  ir al estado 114
+    termino    ir al estado 48
+    factor     ir al estado 49
 
 
-state 102
+estado 102
 
    55 comparacion: expresion $@18 "!=" . expresion
 
-    "("                 shift, and go to state 42
-    "identificador"     shift, and go to state 43
-    "constante entera"  shift, and go to state 44
-    "constante real"    shift, and go to state 45
+    "("                 desplazar e ir al estado 42
+    "identificador"     desplazar e ir al estado 43
+    "constante entera"  desplazar e ir al estado 44
+    "constante real"    desplazar e ir al estado 45
 
-    expresion  go to state 115
-    termino    go to state 48
-    factor     go to state 49
+    expresion  ir al estado 115
+    termino    ir al estado 48
+    factor     ir al estado 49
 
 
-state 103
+estado 103
 
    35 seleccion: "IF" "(" $@8 condicion ")" $@9 . bloque $@10 "ELSE" bloque "ENDIF"
 
-    "IF"             shift, and go to state 9
-    "WHILE"          shift, and go to state 10
-    "WRITE"          shift, and go to state 11
-    "READ"           shift, and go to state 12
-    "identificador"  shift, and go to state 13
+    "IF"             desplazar e ir al estado 9
+    "WHILE"          desplazar e ir al estado 10
+    "WRITE"          desplazar e ir al estado 11
+    "READ"           desplazar e ir al estado 12
+    "identificador"  desplazar e ir al estado 13
 
-    bloque      go to state 116
-    sentencia   go to state 15
-    salida      go to state 16
-    entrada     go to state 17
-    asignacion  go to state 18
-    seleccion   go to state 19
-    iteracion   go to state 20
+    bloque      ir al estado 116
+    sentencia   ir al estado 15
+    salida      ir al estado 16
+    entrada     ir al estado 17
+    asignacion  ir al estado 18
+    seleccion   ir al estado 19
+    iteracion   ir al estado 20
 
 
-state 104
+estado 104
 
    38 iteracion: "WHILE" "(" $@11 condicion ")" $@12 . bloque "ENDWHILE"
 
-    "IF"             shift, and go to state 9
-    "WHILE"          shift, and go to state 10
-    "WRITE"          shift, and go to state 11
-    "READ"           shift, and go to state 12
-    "identificador"  shift, and go to state 13
+    "IF"             desplazar e ir al estado 9
+    "WHILE"          desplazar e ir al estado 10
+    "WRITE"          desplazar e ir al estado 11
+    "READ"           desplazar e ir al estado 12
+    "identificador"  desplazar e ir al estado 13
 
-    bloque      go to state 117
-    sentencia   go to state 15
-    salida      go to state 16
-    entrada     go to state 17
-    asignacion  go to state 18
-    seleccion   go to state 19
-    iteracion   go to state 20
+    bloque      ir al estado 117
+    sentencia   ir al estado 15
+    salida      ir al estado 16
+    entrada     ir al estado 17
+    asignacion  ir al estado 18
+    seleccion   ir al estado 19
+    iteracion   ir al estado 20
 
 
-state 105
+estado 105
 
    70 factor: "(" $@20 expresion ")" .
 
-    $default  reduce using rule 70 (factor)
+    $default  reduce usando la regla 70 (factor)
 
 
-state 106
+estado 106
 
    59 comparacion: "(" $@19 condicion ")" .
 
-    $default  reduce using rule 59 (comparacion)
+    $default  reduce usando la regla 59 (comparacion)
 
 
-state 107
+estado 107
 
    74 between: "BETWEEN" "(" "identificador" $@21 . "," "[" expresion $@22 ";" expresion $@23 "]" ")"
 
-    ","  shift, and go to state 118
+    ","  desplazar e ir al estado 118
 
 
-state 108
+estado 108
 
    75 inlist: "INLIST" "(" "identificador" "," . "[" lista_expresiones "]" ")"
 
-    "["  shift, and go to state 119
+    "["  desplazar e ir al estado 119
 
 
-state 109
+estado 109
 
    16 bloque: bloque . sentencia
    31 seleccion: "IF" "(" $@6 condicion ")" $@7 bloque . "ENDIF"
 
-    "IF"             shift, and go to state 9
-    "ENDIF"          shift, and go to state 120
-    "WHILE"          shift, and go to state 10
-    "WRITE"          shift, and go to state 11
-    "READ"           shift, and go to state 12
-    "identificador"  shift, and go to state 13
+    "IF"             desplazar e ir al estado 9
+    "ENDIF"          desplazar e ir al estado 120
+    "WHILE"          desplazar e ir al estado 10
+    "WRITE"          desplazar e ir al estado 11
+    "READ"           desplazar e ir al estado 12
+    "identificador"  desplazar e ir al estado 13
 
-    sentencia   go to state 34
-    salida      go to state 16
-    entrada     go to state 17
-    asignacion  go to state 18
-    seleccion   go to state 19
-    iteracion   go to state 20
+    sentencia   ir al estado 34
+    salida      ir al estado 16
+    entrada     ir al estado 17
+    asignacion  ir al estado 18
+    seleccion   ir al estado 19
+    iteracion   ir al estado 20
 
 
-state 110
+estado 110
 
    45 comparacion: expresion $@13 "==" expresion .
    60 expresion: expresion . "+" termino
    61          | expresion . "-" termino
 
-    "+"  shift, and go to state 67
-    "-"  shift, and go to state 68
+    "+"  desplazar e ir al estado 67
+    "-"  desplazar e ir al estado 68
 
-    $default  reduce using rule 45 (comparacion)
+    $default  reduce usando la regla 45 (comparacion)
 
 
-state 111
+estado 111
 
    47 comparacion: expresion $@14 "<=" expresion .
    60 expresion: expresion . "+" termino
    61          | expresion . "-" termino
 
-    "+"  shift, and go to state 67
-    "-"  shift, and go to state 68
+    "+"  desplazar e ir al estado 67
+    "-"  desplazar e ir al estado 68
 
-    $default  reduce using rule 47 (comparacion)
+    $default  reduce usando la regla 47 (comparacion)
 
 
-state 112
+estado 112
 
    49 comparacion: expresion $@15 ">=" expresion .
    60 expresion: expresion . "+" termino
    61          | expresion . "-" termino
 
-    "+"  shift, and go to state 67
-    "-"  shift, and go to state 68
+    "+"  desplazar e ir al estado 67
+    "-"  desplazar e ir al estado 68
 
-    $default  reduce using rule 49 (comparacion)
+    $default  reduce usando la regla 49 (comparacion)
 
 
-state 113
+estado 113
 
    51 comparacion: expresion $@16 ">" expresion .
    60 expresion: expresion . "+" termino
    61          | expresion . "-" termino
 
-    "+"  shift, and go to state 67
-    "-"  shift, and go to state 68
+    "+"  desplazar e ir al estado 67
+    "-"  desplazar e ir al estado 68
 
-    $default  reduce using rule 51 (comparacion)
+    $default  reduce usando la regla 51 (comparacion)
 
 
-state 114
+estado 114
 
    53 comparacion: expresion $@17 "<" expresion .
    60 expresion: expresion . "+" termino
    61          | expresion . "-" termino
 
-    "+"  shift, and go to state 67
-    "-"  shift, and go to state 68
+    "+"  desplazar e ir al estado 67
+    "-"  desplazar e ir al estado 68
 
-    $default  reduce using rule 53 (comparacion)
+    $default  reduce usando la regla 53 (comparacion)
 
 
-state 115
+estado 115
 
    55 comparacion: expresion $@18 "!=" expresion .
    60 expresion: expresion . "+" termino
    61          | expresion . "-" termino
 
-    "+"  shift, and go to state 67
-    "-"  shift, and go to state 68
+    "+"  desplazar e ir al estado 67
+    "-"  desplazar e ir al estado 68
 
-    $default  reduce using rule 55 (comparacion)
+    $default  reduce usando la regla 55 (comparacion)
 
 
-state 116
+estado 116
 
    16 bloque: bloque . sentencia
    35 seleccion: "IF" "(" $@8 condicion ")" $@9 bloque . $@10 "ELSE" bloque "ENDIF"
 
-    "IF"             shift, and go to state 9
-    "WHILE"          shift, and go to state 10
-    "WRITE"          shift, and go to state 11
-    "READ"           shift, and go to state 12
-    "identificador"  shift, and go to state 13
+    "IF"             desplazar e ir al estado 9
+    "WHILE"          desplazar e ir al estado 10
+    "WRITE"          desplazar e ir al estado 11
+    "READ"           desplazar e ir al estado 12
+    "identificador"  desplazar e ir al estado 13
 
-    $default  reduce using rule 34 ($@10)
+    $default  reduce usando la regla 34 ($@10)
 
-    sentencia   go to state 34
-    salida      go to state 16
-    entrada     go to state 17
-    asignacion  go to state 18
-    seleccion   go to state 19
-    $@10        go to state 121
-    iteracion   go to state 20
+    sentencia   ir al estado 34
+    salida      ir al estado 16
+    entrada     ir al estado 17
+    asignacion  ir al estado 18
+    seleccion   ir al estado 19
+    $@10        ir al estado 121
+    iteracion   ir al estado 20
 
 
-state 117
+estado 117
 
    16 bloque: bloque . sentencia
    38 iteracion: "WHILE" "(" $@11 condicion ")" $@12 bloque . "ENDWHILE"
 
-    "IF"             shift, and go to state 9
-    "WHILE"          shift, and go to state 10
-    "ENDWHILE"       shift, and go to state 122
-    "WRITE"          shift, and go to state 11
-    "READ"           shift, and go to state 12
-    "identificador"  shift, and go to state 13
+    "IF"             desplazar e ir al estado 9
+    "WHILE"          desplazar e ir al estado 10
+    "ENDWHILE"       desplazar e ir al estado 122
+    "WRITE"          desplazar e ir al estado 11
+    "READ"           desplazar e ir al estado 12
+    "identificador"  desplazar e ir al estado 13
 
-    sentencia   go to state 34
-    salida      go to state 16
-    entrada     go to state 17
-    asignacion  go to state 18
-    seleccion   go to state 19
-    iteracion   go to state 20
+    sentencia   ir al estado 34
+    salida      ir al estado 16
+    entrada     ir al estado 17
+    asignacion  ir al estado 18
+    seleccion   ir al estado 19
+    iteracion   ir al estado 20
 
 
-state 118
+estado 118
 
    74 between: "BETWEEN" "(" "identificador" $@21 "," . "[" expresion $@22 ";" expresion $@23 "]" ")"
 
-    "["  shift, and go to state 123
+    "["  desplazar e ir al estado 123
 
 
-state 119
+estado 119
 
    75 inlist: "INLIST" "(" "identificador" "," "[" . lista_expresiones "]" ")"
 
-    "("                 shift, and go to state 42
-    "identificador"     shift, and go to state 43
-    "constante entera"  shift, and go to state 44
-    "constante real"    shift, and go to state 45
+    "("                 desplazar e ir al estado 42
+    "identificador"     desplazar e ir al estado 43
+    "constante entera"  desplazar e ir al estado 44
+    "constante real"    desplazar e ir al estado 45
 
-    expresion          go to state 124
-    termino            go to state 48
-    factor             go to state 49
-    lista_expresiones  go to state 125
+    expresion          ir al estado 124
+    termino            ir al estado 48
+    factor             ir al estado 49
+    lista_expresiones  ir al estado 125
 
 
-state 120
+estado 120
 
    31 seleccion: "IF" "(" $@6 condicion ")" $@7 bloque "ENDIF" .
 
-    $default  reduce using rule 31 (seleccion)
+    $default  reduce usando la regla 31 (seleccion)
 
 
-state 121
+estado 121
 
    35 seleccion: "IF" "(" $@8 condicion ")" $@9 bloque $@10 . "ELSE" bloque "ENDIF"
 
-    "ELSE"  shift, and go to state 126
+    "ELSE"  desplazar e ir al estado 126
 
 
-state 122
+estado 122
 
    38 iteracion: "WHILE" "(" $@11 condicion ")" $@12 bloque "ENDWHILE" .
 
-    $default  reduce using rule 38 (iteracion)
+    $default  reduce usando la regla 38 (iteracion)
 
 
-state 123
+estado 123
 
    74 between: "BETWEEN" "(" "identificador" $@21 "," "[" . expresion $@22 ";" expresion $@23 "]" ")"
 
-    "("                 shift, and go to state 42
-    "identificador"     shift, and go to state 43
-    "constante entera"  shift, and go to state 44
-    "constante real"    shift, and go to state 45
+    "("                 desplazar e ir al estado 42
+    "identificador"     desplazar e ir al estado 43
+    "constante entera"  desplazar e ir al estado 44
+    "constante real"    desplazar e ir al estado 45
 
-    expresion  go to state 127
-    termino    go to state 48
-    factor     go to state 49
+    expresion  ir al estado 127
+    termino    ir al estado 48
+    factor     ir al estado 49
 
 
-state 124
+estado 124
 
    60 expresion: expresion . "+" termino
    61          | expresion . "-" termino
    77 lista_expresiones: expresion .
 
-    "+"  shift, and go to state 67
-    "-"  shift, and go to state 68
+    "+"  desplazar e ir al estado 67
+    "-"  desplazar e ir al estado 68
 
-    $default  reduce using rule 77 (lista_expresiones)
+    $default  reduce usando la regla 77 (lista_expresiones)
 
 
-state 125
+estado 125
 
    75 inlist: "INLIST" "(" "identificador" "," "[" lista_expresiones . "]" ")"
    76 lista_expresiones: lista_expresiones . ";" expresion
 
-    ";"  shift, and go to state 128
-    "]"  shift, and go to state 129
+    ";"  desplazar e ir al estado 128
+    "]"  desplazar e ir al estado 129
 
 
-state 126
+estado 126
 
    35 seleccion: "IF" "(" $@8 condicion ")" $@9 bloque $@10 "ELSE" . bloque "ENDIF"
 
-    "IF"             shift, and go to state 9
-    "WHILE"          shift, and go to state 10
-    "WRITE"          shift, and go to state 11
-    "READ"           shift, and go to state 12
-    "identificador"  shift, and go to state 13
+    "IF"             desplazar e ir al estado 9
+    "WHILE"          desplazar e ir al estado 10
+    "WRITE"          desplazar e ir al estado 11
+    "READ"           desplazar e ir al estado 12
+    "identificador"  desplazar e ir al estado 13
 
-    bloque      go to state 130
-    sentencia   go to state 15
-    salida      go to state 16
-    entrada     go to state 17
-    asignacion  go to state 18
-    seleccion   go to state 19
-    iteracion   go to state 20
+    bloque      ir al estado 130
+    sentencia   ir al estado 15
+    salida      ir al estado 16
+    entrada     ir al estado 17
+    asignacion  ir al estado 18
+    seleccion   ir al estado 19
+    iteracion   ir al estado 20
 
 
-state 127
+estado 127
 
    60 expresion: expresion . "+" termino
    61          | expresion . "-" termino
    74 between: "BETWEEN" "(" "identificador" $@21 "," "[" expresion . $@22 ";" expresion $@23 "]" ")"
 
-    "+"  shift, and go to state 67
-    "-"  shift, and go to state 68
+    "+"  desplazar e ir al estado 67
+    "-"  desplazar e ir al estado 68
 
-    $default  reduce using rule 72 ($@22)
+    $default  reduce usando la regla 72 ($@22)
 
-    $@22  go to state 131
+    $@22  ir al estado 131
 
 
-state 128
+estado 128
 
    76 lista_expresiones: lista_expresiones ";" . expresion
 
-    "("                 shift, and go to state 42
-    "identificador"     shift, and go to state 43
-    "constante entera"  shift, and go to state 44
-    "constante real"    shift, and go to state 45
+    "("                 desplazar e ir al estado 42
+    "identificador"     desplazar e ir al estado 43
+    "constante entera"  desplazar e ir al estado 44
+    "constante real"    desplazar e ir al estado 45
 
-    expresion  go to state 132
-    termino    go to state 48
-    factor     go to state 49
+    expresion  ir al estado 132
+    termino    ir al estado 48
+    factor     ir al estado 49
 
 
-state 129
+estado 129
 
    75 inlist: "INLIST" "(" "identificador" "," "[" lista_expresiones "]" . ")"
 
-    ")"  shift, and go to state 133
+    ")"  desplazar e ir al estado 133
 
 
-state 130
+estado 130
 
    16 bloque: bloque . sentencia
    35 seleccion: "IF" "(" $@8 condicion ")" $@9 bloque $@10 "ELSE" bloque . "ENDIF"
 
-    "IF"             shift, and go to state 9
-    "ENDIF"          shift, and go to state 134
-    "WHILE"          shift, and go to state 10
-    "WRITE"          shift, and go to state 11
-    "READ"           shift, and go to state 12
-    "identificador"  shift, and go to state 13
+    "IF"             desplazar e ir al estado 9
+    "ENDIF"          desplazar e ir al estado 134
+    "WHILE"          desplazar e ir al estado 10
+    "WRITE"          desplazar e ir al estado 11
+    "READ"           desplazar e ir al estado 12
+    "identificador"  desplazar e ir al estado 13
 
-    sentencia   go to state 34
-    salida      go to state 16
-    entrada     go to state 17
-    asignacion  go to state 18
-    seleccion   go to state 19
-    iteracion   go to state 20
+    sentencia   ir al estado 34
+    salida      ir al estado 16
+    entrada     ir al estado 17
+    asignacion  ir al estado 18
+    seleccion   ir al estado 19
+    iteracion   ir al estado 20
 
 
-state 131
+estado 131
 
    74 between: "BETWEEN" "(" "identificador" $@21 "," "[" expresion $@22 . ";" expresion $@23 "]" ")"
 
-    ";"  shift, and go to state 135
+    ";"  desplazar e ir al estado 135
 
 
-state 132
+estado 132
 
    60 expresion: expresion . "+" termino
    61          | expresion . "-" termino
    76 lista_expresiones: lista_expresiones ";" expresion .
 
-    "+"  shift, and go to state 67
-    "-"  shift, and go to state 68
+    "+"  desplazar e ir al estado 67
+    "-"  desplazar e ir al estado 68
 
-    $default  reduce using rule 76 (lista_expresiones)
+    $default  reduce usando la regla 76 (lista_expresiones)
 
 
-state 133
+estado 133
 
    75 inlist: "INLIST" "(" "identificador" "," "[" lista_expresiones "]" ")" .
 
-    $default  reduce using rule 75 (inlist)
+    $default  reduce usando la regla 75 (inlist)
 
 
-state 134
+estado 134
 
    35 seleccion: "IF" "(" $@8 condicion ")" $@9 bloque $@10 "ELSE" bloque "ENDIF" .
 
-    $default  reduce using rule 35 (seleccion)
+    $default  reduce usando la regla 35 (seleccion)
 
 
-state 135
+estado 135
 
    74 between: "BETWEEN" "(" "identificador" $@21 "," "[" expresion $@22 ";" . expresion $@23 "]" ")"
 
-    "("                 shift, and go to state 42
-    "identificador"     shift, and go to state 43
-    "constante entera"  shift, and go to state 44
-    "constante real"    shift, and go to state 45
+    "("                 desplazar e ir al estado 42
+    "identificador"     desplazar e ir al estado 43
+    "constante entera"  desplazar e ir al estado 44
+    "constante real"    desplazar e ir al estado 45
 
-    expresion  go to state 136
-    termino    go to state 48
-    factor     go to state 49
+    expresion  ir al estado 136
+    termino    ir al estado 48
+    factor     ir al estado 49
 
 
-state 136
+estado 136
 
    60 expresion: expresion . "+" termino
    61          | expresion . "-" termino
    74 between: "BETWEEN" "(" "identificador" $@21 "," "[" expresion $@22 ";" expresion . $@23 "]" ")"
 
-    "+"  shift, and go to state 67
-    "-"  shift, and go to state 68
+    "+"  desplazar e ir al estado 67
+    "-"  desplazar e ir al estado 68
 
-    $default  reduce using rule 73 ($@23)
+    $default  reduce usando la regla 73 ($@23)
 
-    $@23  go to state 137
+    $@23  ir al estado 137
 
 
-state 137
+estado 137
 
    74 between: "BETWEEN" "(" "identificador" $@21 "," "[" expresion $@22 ";" expresion $@23 . "]" ")"
 
-    "]"  shift, and go to state 138
+    "]"  desplazar e ir al estado 138
 
 
-state 138
+estado 138
 
    74 between: "BETWEEN" "(" "identificador" $@21 "," "[" expresion $@22 ";" expresion $@23 "]" . ")"
 
-    ")"  shift, and go to state 139
+    ")"  desplazar e ir al estado 139
 
 
-state 139
+estado 139
 
    74 between: "BETWEEN" "(" "identificador" $@21 "," "[" expresion $@22 ";" expresion $@23 "]" ")" .
 
-    $default  reduce using rule 74 (between)
+    $default  reduce usando la regla 74 (between)

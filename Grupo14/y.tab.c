@@ -127,6 +127,8 @@ void verNodo(const char *p);
 void postOrden(tArbol *p);
 void _tree_print_dot_subtree(int nro_padre, tNodo *padre, int nro, tArbol *nodo, FILE* stream);
 void tree_print_dot(tArbol *p,FILE* stream);
+void llenarGragh(tNodo* padre, FILE *arch, int numNodo);
+void escribirGragh(tNodo* padre);
 
 typedef struct sNodoPila {
   tNodo *dato;
@@ -251,7 +253,7 @@ tArbol 	asigPtr,			//Puntero de asignaciones
 
 
 /* Line 189 of yacc.c  */
-#line 255 "y.tab.c"
+#line 257 "y.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -372,7 +374,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 184 ".\\Sintactico.y"
+#line 186 ".\\Sintactico.y"
 
 int tipo_int;
 double tipo_double;
@@ -381,7 +383,7 @@ char *tipo_str;
 
 
 /* Line 214 of yacc.c  */
-#line 385 "y.tab.c"
+#line 387 "y.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -406,7 +408,7 @@ typedef struct YYLTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 410 "y.tab.c"
+#line 412 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -724,14 +726,14 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   241,   241,   251,   255,   256,   260,   260,   272,   272,
-     286,   286,   301,   301,   308,   308,   319,   329,   341,   346,
-     351,   356,   361,   370,   384,   388,   394,   403,   418,   432,
-     449,   455,   449,   479,   485,   495,   479,   512,   519,   512,
-     548,   552,   556,   563,   567,   574,   574,   578,   578,   582,
-     582,   586,   586,   590,   590,   594,   594,   598,   602,   606,
-     606,   625,   632,   638,   646,   651,   655,   663,   682,   689,
-     696,   696,   715,   727,   730,   715,   740,   748,   755
+       0,   243,   243,   253,   257,   258,   262,   262,   274,   274,
+     288,   288,   303,   303,   310,   310,   321,   331,   343,   348,
+     353,   358,   363,   372,   386,   390,   396,   405,   420,   434,
+     451,   457,   451,   481,   487,   497,   481,   514,   521,   514,
+     550,   554,   558,   565,   569,   576,   576,   580,   580,   584,
+     584,   588,   588,   592,   592,   596,   596,   600,   604,   608,
+     608,   627,   634,   640,   648,   653,   657,   665,   684,   691,
+     699,   699,   718,   730,   733,   718,   743,   751,   758
 };
 #endif
 
@@ -1768,11 +1770,11 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 242 ".\\Sintactico.y"
+#line 244 ".\\Sintactico.y"
     { 
 			guardarTS();
 			postOrden(&bloquePtr); //Agregamos funciones
-			tree_print_dot(&bloquePtr,graph);
+			escribirGragh(bloquePtr);
 			printf("\nCompilacion exitosa.\n");
 		}
     break;
@@ -1780,28 +1782,28 @@ yyreduce:
   case 3:
 
 /* Line 1455 of yacc.c  */
-#line 251 ".\\Sintactico.y"
+#line 253 ".\\Sintactico.y"
     { printf("Bloque declaraciones.\n"); }
     break;
 
   case 4:
 
 /* Line 1455 of yacc.c  */
-#line 255 ".\\Sintactico.y"
+#line 257 ".\\Sintactico.y"
     { printf("Declaraciones.\n"); }
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 256 ".\\Sintactico.y"
+#line 258 ".\\Sintactico.y"
     { printf("Declaraciones.\n"); }
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 260 ".\\Sintactico.y"
+#line 262 ".\\Sintactico.y"
     {
 													for(i=0;i<cantid;i++) //vamos agregando todos los ids que leyo
 													{
@@ -1818,14 +1820,14 @@ yyreduce:
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 271 ".\\Sintactico.y"
+#line 273 ".\\Sintactico.y"
     { printf("Declaracion.\n"); }
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 272 ".\\Sintactico.y"
+#line 274 ".\\Sintactico.y"
     {                                                    
                                                     for(i=0;i<cantid;i++)
                                                     {
@@ -1844,14 +1846,14 @@ yyreduce:
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 285 ".\\Sintactico.y"
+#line 287 ".\\Sintactico.y"
     { printf("Declaracion.\n"); }
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 286 ".\\Sintactico.y"
+#line 288 ".\\Sintactico.y"
     {                                                    
                                                     for(i=0;i<cantid;i++)
                                                     {
@@ -1868,14 +1870,14 @@ yyreduce:
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 297 ".\\Sintactico.y"
+#line 299 ".\\Sintactico.y"
     { printf("Declaracion.\n"); }
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 301 ".\\Sintactico.y"
+#line 303 ".\\Sintactico.y"
     {                        
                         strcpy(vecAux, yylval.tipo_str); //leemos el nombre de la variable
                         punt = strtok(vecAux, " ,\n"); //eliminamos el caracter separador de la lista de variables
@@ -1887,14 +1889,14 @@ yyreduce:
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 307 ".\\Sintactico.y"
+#line 309 ".\\Sintactico.y"
     { printf("Lista de variables.\n"); }
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 308 ".\\Sintactico.y"
+#line 310 ".\\Sintactico.y"
     {                        
                         strcpy(vecAux, yylval.tipo_str); //se repite aca tambien, no lo toma de arriba
                         punt = strtok(vecAux, " ,\n");
@@ -1906,14 +1908,14 @@ yyreduce:
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 315 ".\\Sintactico.y"
+#line 317 ".\\Sintactico.y"
     { printf("Lista de variables.\n"); }
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 320 ".\\Sintactico.y"
+#line 322 ".\\Sintactico.y"
     { 
 			printf("Bloque.\n"); 
 			 
@@ -1928,7 +1930,7 @@ yyreduce:
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 330 ".\\Sintactico.y"
+#line 332 ".\\Sintactico.y"
     { 
 			printf("Bloque.\n"); 
 			if(bloquePtr != NULL){
@@ -1942,7 +1944,7 @@ yyreduce:
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 342 ".\\Sintactico.y"
+#line 344 ".\\Sintactico.y"
     { 
 				printf("Sentencia.\n"); 
 				sentenciaPtr=asigPtr;
@@ -1952,7 +1954,7 @@ yyreduce:
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 347 ".\\Sintactico.y"
+#line 349 ".\\Sintactico.y"
     { 
 				printf("Sentencia.\n"); 
 				sentenciaPtr=seleccionPtr;
@@ -1962,7 +1964,7 @@ yyreduce:
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 352 ".\\Sintactico.y"
+#line 354 ".\\Sintactico.y"
     { 
 				printf("Sentencia.\n"); 
 				sentenciaPtr=iteracionPtr;
@@ -1972,7 +1974,7 @@ yyreduce:
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 357 ".\\Sintactico.y"
+#line 359 ".\\Sintactico.y"
     { 
 				printf("Sentencia.\n"); 
 				sentenciaPtr=salidaPtr;
@@ -1982,7 +1984,7 @@ yyreduce:
   case 22:
 
 /* Line 1455 of yacc.c  */
-#line 362 ".\\Sintactico.y"
+#line 364 ".\\Sintactico.y"
     { 
 				printf("Sentencia.\n"); 
 				sentenciaPtr=entradaPtr;
@@ -1992,7 +1994,7 @@ yyreduce:
   case 23:
 
 /* Line 1455 of yacc.c  */
-#line 371 ".\\Sintactico.y"
+#line 373 ".\\Sintactico.y"
     {
 			strcpy(vecAux, (yyvsp[(2) - (2)].tipo_str)); // Comprueba que la variable esté declarada.
 			punt = strtok(vecAux," ;\n");
@@ -2011,7 +2013,7 @@ yyreduce:
   case 24:
 
 /* Line 1455 of yacc.c  */
-#line 384 ".\\Sintactico.y"
+#line 386 ".\\Sintactico.y"
     {
 			salidaPtr=(tNodo *)crearNodo("WRITE", crearHoja((yyvsp[(2) - (2)].tipo_str), "CONS_STR"), NULL);
 			printf("Salida >>>\n");
@@ -2021,7 +2023,7 @@ yyreduce:
   case 25:
 
 /* Line 1455 of yacc.c  */
-#line 388 ".\\Sintactico.y"
+#line 390 ".\\Sintactico.y"
     {
 			char* name;
 			sprintf(name, "%s", (yyvsp[(2) - (2)].tipo_double));
@@ -2033,7 +2035,7 @@ yyreduce:
   case 26:
 
 /* Line 1455 of yacc.c  */
-#line 394 ".\\Sintactico.y"
+#line 396 ".\\Sintactico.y"
     {
 			char* name;
 			sprintf(name, "%s", (yyvsp[(2) - (2)].tipo_int));
@@ -2045,7 +2047,7 @@ yyreduce:
   case 27:
 
 /* Line 1455 of yacc.c  */
-#line 403 ".\\Sintactico.y"
+#line 405 ".\\Sintactico.y"
     {
 					printf("Entrada >>>\n");
 					strcpy(vecAux, (yyvsp[(2) - (2)].tipo_str)); // Comprueba que la variable esté declarada.
@@ -2063,7 +2065,7 @@ yyreduce:
   case 28:
 
 /* Line 1455 of yacc.c  */
-#line 418 ".\\Sintactico.y"
+#line 420 ".\\Sintactico.y"
     {
 									strcpy(vecAux, (yyvsp[(1) - (3)].tipo_str)); //en $1 esta el valor de ID
 									punt = strtok(vecAux," +-*/[](){}:=,\n");
@@ -2083,7 +2085,7 @@ yyreduce:
   case 29:
 
 /* Line 1455 of yacc.c  */
-#line 432 ".\\Sintactico.y"
+#line 434 ".\\Sintactico.y"
     {
 									strcpy(vecAux, (yyvsp[(1) - (3)].tipo_str)); //en $1 esta el valor de ID
 									punt = strtok(vecAux," +-*/[](){}:=,\n");
@@ -2103,7 +2105,7 @@ yyreduce:
   case 30:
 
 /* Line 1455 of yacc.c  */
-#line 449 ".\\Sintactico.y"
+#line 451 ".\\Sintactico.y"
     {
 				if(condicionPtr){
 						ponerenPila(pilaCondiciones,condicionPtr);
@@ -2115,7 +2117,7 @@ yyreduce:
   case 31:
 
 /* Line 1455 of yacc.c  */
-#line 455 ".\\Sintactico.y"
+#line 457 ".\\Sintactico.y"
     {
 				if(bloquePtr){
 					ponerenPila(pilaBloque,bloquePtr);
@@ -2132,7 +2134,7 @@ yyreduce:
   case 32:
 
 /* Line 1455 of yacc.c  */
-#line 466 ".\\Sintactico.y"
+#line 468 ".\\Sintactico.y"
     { 
 				seleccionPtr=(tNodo *)crearNodo("IF", condicionPtr, bloquePtr);
 				
@@ -2151,7 +2153,7 @@ yyreduce:
   case 33:
 
 /* Line 1455 of yacc.c  */
-#line 479 ".\\Sintactico.y"
+#line 481 ".\\Sintactico.y"
     {
 				if(condicionPtr){
 						ponerenPila(pilaCondiciones,condicionPtr);
@@ -2163,7 +2165,7 @@ yyreduce:
   case 34:
 
 /* Line 1455 of yacc.c  */
-#line 485 ".\\Sintactico.y"
+#line 487 ".\\Sintactico.y"
     {
 				if(bloquePtr){
 					ponerenPila(pilaBloque,bloquePtr);
@@ -2180,14 +2182,14 @@ yyreduce:
   case 35:
 
 /* Line 1455 of yacc.c  */
-#line 495 ".\\Sintactico.y"
+#line 497 ".\\Sintactico.y"
     {auxBloquePtr=bloquePtr;}
     break;
 
   case 36:
 
 /* Line 1455 of yacc.c  */
-#line 497 ".\\Sintactico.y"
+#line 499 ".\\Sintactico.y"
     { 
 				seleccionPtr =(tNodo *) crearNodo("IF-ELSE", condicionPtr, crearNodo("cuerpo",auxBloquePtr,bloquePtr));
 				if (topedePila(pilaCondiciones)){
@@ -2205,7 +2207,7 @@ yyreduce:
   case 37:
 
 /* Line 1455 of yacc.c  */
-#line 512 ".\\Sintactico.y"
+#line 514 ".\\Sintactico.y"
     {
 					if(condicionPtr){
 						ponerenPila(pilaCondiciones,condicionPtr);
@@ -2218,7 +2220,7 @@ yyreduce:
   case 38:
 
 /* Line 1455 of yacc.c  */
-#line 519 ".\\Sintactico.y"
+#line 521 ".\\Sintactico.y"
     {
 				if(bloquePtr){
 					ponerenPila(pilaBloque,bloquePtr);
@@ -2235,7 +2237,7 @@ yyreduce:
   case 39:
 
 /* Line 1455 of yacc.c  */
-#line 531 ".\\Sintactico.y"
+#line 533 ".\\Sintactico.y"
     { 
 				
 				iteracionPtr=(tNodo *)crearNodo("WHILE", condicionPtr, bloquePtr);
@@ -2254,7 +2256,7 @@ yyreduce:
   case 40:
 
 /* Line 1455 of yacc.c  */
-#line 548 ".\\Sintactico.y"
+#line 550 ".\\Sintactico.y"
     {
 				printf("Condicion OR\n"); 
 				condicionPtr=(tNodo *)crearNodo("OR", condicionPtr, terminoLogicoPtr);
@@ -2264,7 +2266,7 @@ yyreduce:
   case 41:
 
 /* Line 1455 of yacc.c  */
-#line 552 ".\\Sintactico.y"
+#line 554 ".\\Sintactico.y"
     { 
 				printf("Condicion NOT\n"); 
 				condicionPtr = (tNodo *)crearNodo("NOT",terminoLogicoPtr,NULL);
@@ -2274,7 +2276,7 @@ yyreduce:
   case 42:
 
 /* Line 1455 of yacc.c  */
-#line 556 ".\\Sintactico.y"
+#line 558 ".\\Sintactico.y"
     { 
 				printf("Condicion\n");
 				condicionPtr=terminoLogicoPtr;
@@ -2284,7 +2286,7 @@ yyreduce:
   case 43:
 
 /* Line 1455 of yacc.c  */
-#line 563 ".\\Sintactico.y"
+#line 565 ".\\Sintactico.y"
     { 
 				terminoLogicoPtr=comparacionPtr;
 				printf("Termino logico\n"); 
@@ -2294,7 +2296,7 @@ yyreduce:
   case 44:
 
 /* Line 1455 of yacc.c  */
-#line 567 ".\\Sintactico.y"
+#line 569 ".\\Sintactico.y"
     { 
 				terminoLogicoPtr=(tNodo *)crearNodo("AND", terminoLogicoPtr, comparacionPtr);
 				printf("Termino logico\n"); 
@@ -2305,14 +2307,14 @@ yyreduce:
   case 45:
 
 /* Line 1455 of yacc.c  */
-#line 574 ".\\Sintactico.y"
+#line 576 ".\\Sintactico.y"
     {exprCMPPtr = exprPtr; }
     break;
 
   case 46:
 
 /* Line 1455 of yacc.c  */
-#line 574 ".\\Sintactico.y"
+#line 576 ".\\Sintactico.y"
     { 
 				comparacionPtr = (tNodo *)crearNodo("OPIDENTICO",exprCMPPtr,exprPtr);
 				printf("Comparacion ==\n"); 
@@ -2322,14 +2324,14 @@ yyreduce:
   case 47:
 
 /* Line 1455 of yacc.c  */
-#line 578 ".\\Sintactico.y"
+#line 580 ".\\Sintactico.y"
     {exprCMPPtr = exprPtr; }
     break;
 
   case 48:
 
 /* Line 1455 of yacc.c  */
-#line 578 ".\\Sintactico.y"
+#line 580 ".\\Sintactico.y"
     { 
 				comparacionPtr = (tNodo *)crearNodo("OPMENORIGUAL",exprCMPPtr,exprPtr);
 				printf("Comparacion <=\n"); 
@@ -2339,14 +2341,14 @@ yyreduce:
   case 49:
 
 /* Line 1455 of yacc.c  */
-#line 582 ".\\Sintactico.y"
+#line 584 ".\\Sintactico.y"
     {exprCMPPtr = exprPtr; }
     break;
 
   case 50:
 
 /* Line 1455 of yacc.c  */
-#line 582 ".\\Sintactico.y"
+#line 584 ".\\Sintactico.y"
     { 
 				comparacionPtr = (tNodo *)crearNodo("OPMAYORIGUAL",exprCMPPtr,exprPtr);
 				printf("Comparacion >=\n"); 
@@ -2356,14 +2358,14 @@ yyreduce:
   case 51:
 
 /* Line 1455 of yacc.c  */
-#line 586 ".\\Sintactico.y"
+#line 588 ".\\Sintactico.y"
     {exprCMPPtr = exprPtr; }
     break;
 
   case 52:
 
 /* Line 1455 of yacc.c  */
-#line 586 ".\\Sintactico.y"
+#line 588 ".\\Sintactico.y"
     { 
 				comparacionPtr = (tNodo *)crearNodo("OPMAYOR",exprCMPPtr,exprPtr);
 				printf("Comparacion >\n"); 
@@ -2373,14 +2375,14 @@ yyreduce:
   case 53:
 
 /* Line 1455 of yacc.c  */
-#line 590 ".\\Sintactico.y"
+#line 592 ".\\Sintactico.y"
     {exprCMPPtr = exprPtr; }
     break;
 
   case 54:
 
 /* Line 1455 of yacc.c  */
-#line 590 ".\\Sintactico.y"
+#line 592 ".\\Sintactico.y"
     { 
 				comparacionPtr = (tNodo *)crearNodo("OPMENOR",exprCMPPtr,exprPtr);
 				printf("Comparacion <\n"); 
@@ -2390,14 +2392,14 @@ yyreduce:
   case 55:
 
 /* Line 1455 of yacc.c  */
-#line 594 ".\\Sintactico.y"
+#line 596 ".\\Sintactico.y"
     {exprCMPPtr = exprPtr; }
     break;
 
   case 56:
 
 /* Line 1455 of yacc.c  */
-#line 594 ".\\Sintactico.y"
+#line 596 ".\\Sintactico.y"
     { 
 				comparacionPtr = (tNodo *)crearNodo("OPDISTINTO",exprCMPPtr,exprPtr);
 				printf("Comparacion !=\n"); 
@@ -2407,7 +2409,7 @@ yyreduce:
   case 57:
 
 /* Line 1455 of yacc.c  */
-#line 598 ".\\Sintactico.y"
+#line 600 ".\\Sintactico.y"
     { 
 			//VER POR LAS DUDAS
 				printf("Comparacion Between\n"); 
@@ -2417,7 +2419,7 @@ yyreduce:
   case 58:
 
 /* Line 1455 of yacc.c  */
-#line 602 ".\\Sintactico.y"
+#line 604 ".\\Sintactico.y"
     { 
 			//VER POR LAS DUDAS
 			printf("Comparacion Inlist\n"); 
@@ -2427,7 +2429,7 @@ yyreduce:
   case 59:
 
 /* Line 1455 of yacc.c  */
-#line 606 ".\\Sintactico.y"
+#line 608 ".\\Sintactico.y"
     {
 				if(condicionPtr){
 					ponerenPila(pilaCondicion, condicionPtr);
@@ -2439,7 +2441,7 @@ yyreduce:
   case 60:
 
 /* Line 1455 of yacc.c  */
-#line 611 ".\\Sintactico.y"
+#line 613 ".\\Sintactico.y"
     { 
 				printf("Comparacion ()\n"); 
 				comparacionPtr=condicionPtr;
@@ -2453,7 +2455,7 @@ yyreduce:
   case 61:
 
 /* Line 1455 of yacc.c  */
-#line 626 ".\\Sintactico.y"
+#line 628 ".\\Sintactico.y"
     { 
 				printf("Expresion suma\n"); 
 				exprAritPtr=(tNodo *)crearNodo("OPSUMA", exprPtr, terminoPtr);
@@ -2465,7 +2467,7 @@ yyreduce:
   case 62:
 
 /* Line 1455 of yacc.c  */
-#line 632 ".\\Sintactico.y"
+#line 634 ".\\Sintactico.y"
     { 
 				printf("Expresion resta\n"); 
 				exprAritPtr=(tNodo *)crearNodo("OPRESTA", exprPtr, terminoPtr);
@@ -2477,7 +2479,7 @@ yyreduce:
   case 63:
 
 /* Line 1455 of yacc.c  */
-#line 638 ".\\Sintactico.y"
+#line 640 ".\\Sintactico.y"
     { 
 				printf("Expresion\n"); //copiado de punteros 
 				exprAritPtr = terminoPtr; 
@@ -2488,7 +2490,7 @@ yyreduce:
   case 64:
 
 /* Line 1455 of yacc.c  */
-#line 646 ".\\Sintactico.y"
+#line 648 ".\\Sintactico.y"
     { 
 			printf("Termino multiplicacion\n");
 			terminoPtr=(tNodo *)crearNodo("OPMUL", terminoPtr, factorPtr);
@@ -2499,7 +2501,7 @@ yyreduce:
   case 65:
 
 /* Line 1455 of yacc.c  */
-#line 651 ".\\Sintactico.y"
+#line 653 ".\\Sintactico.y"
     { printf("Termino division\n");
 			terminoPtr=(tNodo *)crearNodo("OPDIV", terminoPtr, factorPtr);
 			//terminoPtr->info.tipoDato= factorPtr->info.tipoDato;
@@ -2509,7 +2511,7 @@ yyreduce:
   case 66:
 
 /* Line 1455 of yacc.c  */
-#line 655 ".\\Sintactico.y"
+#line 657 ".\\Sintactico.y"
     { 
 			terminoPtr = factorPtr;
 			//terminoPtr->info.tipoDato= factorPtr->info.tipoDato; Parece innecesario
@@ -2520,7 +2522,7 @@ yyreduce:
   case 67:
 
 /* Line 1455 of yacc.c  */
-#line 663 ".\\Sintactico.y"
+#line 665 ".\\Sintactico.y"
     {
 			char error[50];
 			strcpy(vecAux, (yyvsp[(1) - (1)].tipo_str));
@@ -2545,7 +2547,7 @@ yyreduce:
   case 68:
 
 /* Line 1455 of yacc.c  */
-#line 682 ".\\Sintactico.y"
+#line 684 ".\\Sintactico.y"
     { 
             (yyval.tipo_int) = (yyvsp[(1) - (1)].tipo_int); 
 			char* name;
@@ -2558,20 +2560,21 @@ yyreduce:
   case 69:
 
 /* Line 1455 of yacc.c  */
-#line 689 ".\\Sintactico.y"
+#line 691 ".\\Sintactico.y"
     { 
         (yyval.tipo_double) = (yyvsp[(1) - (1)].tipo_double); 
 		char* name;
-		sprintf(name, "%s", (yyvsp[(1) - (1)].tipo_double));
+		sprintf(name, "%g", (yyval.tipo_double));
 		printf("Factor cte real\n"); 
-        factorPtr = (tNodo *)crearHoja(name,"CONST_FLOAT");
+		printf("%g \n",name); 
+        //factorPtr = (tNodo *)crearHoja(name,"CONS_FLOAT");
 		}
     break;
 
   case 70:
 
 /* Line 1455 of yacc.c  */
-#line 696 ".\\Sintactico.y"
+#line 699 ".\\Sintactico.y"
     {
 			if(exprAritPtr){
 				ponerenPila(pilaExpresion,exprAritPtr);
@@ -2582,7 +2585,7 @@ yyreduce:
   case 71:
 
 /* Line 1455 of yacc.c  */
-#line 703 ".\\Sintactico.y"
+#line 706 ".\\Sintactico.y"
     { 
 			factorPtr = exprAritPtr;
 			if(topedePila(pilaExpresion)){
@@ -2596,7 +2599,7 @@ yyreduce:
   case 72:
 
 /* Line 1455 of yacc.c  */
-#line 715 ".\\Sintactico.y"
+#line 718 ".\\Sintactico.y"
     {
                             //ver que sea una variable numérica
                             char error[50];
@@ -2614,7 +2617,7 @@ yyreduce:
   case 73:
 
 /* Line 1455 of yacc.c  */
-#line 727 ".\\Sintactico.y"
+#line 730 ".\\Sintactico.y"
     {//Acá iría una comparacion por mayor
 						//condicionIfPtr=crearNodo(">", crearHoja (printf("%s",$3), getTipoId(printf("%s",$3))), exprPtr);
 						}
@@ -2623,7 +2626,7 @@ yyreduce:
   case 74:
 
 /* Line 1455 of yacc.c  */
-#line 730 ".\\Sintactico.y"
+#line 733 ".\\Sintactico.y"
     {
 						//Aca iría una comparación por menor	
 						//condicionIfPtr=crearNodo("AND", condicionIfPtr , crearNodo("<", crearHoja (printf("%s",$3), getTipoId(printf("%s",$3))), exprPtr));
@@ -2635,14 +2638,14 @@ yyreduce:
   case 75:
 
 /* Line 1455 of yacc.c  */
-#line 735 ".\\Sintactico.y"
+#line 738 ".\\Sintactico.y"
     {printf("Between\n");}
     break;
 
   case 76:
 
 /* Line 1455 of yacc.c  */
-#line 740 ".\\Sintactico.y"
+#line 743 ".\\Sintactico.y"
     {
 			printf("Inlist\n");
 			//comparar ID con cada una de las expresiones.
@@ -2654,7 +2657,7 @@ yyreduce:
   case 77:
 
 /* Line 1455 of yacc.c  */
-#line 749 ".\\Sintactico.y"
+#line 752 ".\\Sintactico.y"
     { 
 					
 						printf("Lista de expresiones\n"); 
@@ -2666,7 +2669,7 @@ yyreduce:
   case 78:
 
 /* Line 1455 of yacc.c  */
-#line 756 ".\\Sintactico.y"
+#line 759 ".\\Sintactico.y"
     { 
 						printf("Lista de expresiones\n"); 
 						//listaExpPtr=(tNodo *)crearNodo("==", crearHoja (ID, getTipoId(ID)), exprPtr);
@@ -2679,7 +2682,7 @@ yyreduce:
 
 
 /* Line 1455 of yacc.c  */
-#line 2683 "y.tab.c"
+#line 2686 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2898,7 +2901,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 765 ".\\Sintactico.y"
+#line 768 ".\\Sintactico.y"
 
 
 
@@ -2914,11 +2917,18 @@ int main(int argc, char *argv[])
     }
     else
     { 
-		pilaExpresion = crearPila();      
-		pilaBloque = crearPila();
-		pilaCondicion = crearPila();
-		pilaEtiq = crearPila();
-		pilaEtiqExpMax = crearPila();
+
+	/*graph = fopen("gragh.dot", "wt");
+	if (graph == NULL) 
+	{
+		printf("\nNo se pudo crear el archivo del grafico de generacion de codigo intermedia: %s\r\n", argv[1]);
+		return -1;
+	}*/
+	pilaExpresion = crearPila();      
+	pilaBloque = crearPila();
+	pilaCondicion = crearPila();
+	pilaEtiq = crearPila();
+	pilaEtiqExpMax = crearPila();
         crearTablaTS(); //tablaTS.primero = NULL;
         yyparse();
         fclose(yyin);
@@ -3312,4 +3322,44 @@ void tree_print_dot(tArbol *p,FILE* stream)
 	if (*p)
 		_tree_print_dot_subtree(-1, NULL, 0, &(*p), stream);
 	fprintf(stream, "}");
+}
+void llenarGragh(tNodo* padre, FILE *arch, int numNodo) {
+    char* string1 = (char*) malloc(sizeof(char) *50);
+    char* string2 = (char*) malloc(sizeof(char) *50);
+    if(padre == NULL) {
+        return;
+    }
+    int numHI = numNodo*2+1;
+    int numHD = numNodo*2+2;
+    
+    if(padre->izq) {
+        sprintf(string1, "%s|%s", padre->info.dato, padre->info.tipoDato);
+        sprintf(string2, "%s|%s", padre->izq->info.dato, padre->izq->info.tipoDato);
+        fprintf(arch, "\t\"nodo_%d \\n%s\" -> \"nodo_%d \\n%s\"\n", numNodo, string1, numHI, string2);
+    }
+    if(padre->der) {
+        sprintf(string1, "%s|%s", padre->info.dato, padre->info.tipoDato);
+        sprintf(string2, "%s|%s", padre->der->info.dato, padre->der->info.tipoDato);
+        fprintf(arch, "\t\"nodo_%d \\n%s\" -> \"nodo_%d \\n%s\"\n", numNodo, string1 ,numHD ,string2);
+    }
+    llenarGragh(padre->izq, arch, numHI);
+    llenarGragh(padre->der, arch, numHD);
+    return;
+}
+
+void escribirGragh(tNodo* padre) {
+    FILE *archivo;
+
+	archivo = fopen("gragh.dot", "w");
+	if (archivo == NULL) {
+		printf("ERROR");
+		return;
+	}
+    //Escribir plantilla para poder dibujar el grafo
+    fprintf(archivo, "%s\n", "digraph G {");
+    llenarGragh(padre, archivo, 0);
+    fprintf(archivo, "%s", "}");
+    
+    fclose(archivo);
+    return;
 }

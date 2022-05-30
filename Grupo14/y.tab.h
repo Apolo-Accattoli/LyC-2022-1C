@@ -133,7 +133,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 184 ".\\Sintactico.y"
+#line 186 ".\\Sintactico.y"
 
 int tipo_int;
 double tipo_double;

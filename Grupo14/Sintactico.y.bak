@@ -129,7 +129,10 @@ void crearNodoCMP(char * comp);
 
 /* ---  Pilas   --- */
 tPila* pilaExpresion;
+tPila* pilaTermino;
+tPila* pilaFactor;
 tPila* pilaBloque;
+tPila* pilaBloqueAux;
 tPila* pilaCondicion;
 tPila* pilaCondiciones;
 tPila* pilaEtiq;
@@ -322,11 +325,11 @@ bloque:
         { 
 			printf("Bloque.\n"); 
 			 
-			if(bloquePtr != NULL){
-				bloquePtr = (tNodo *)crearNodo("BLOQUE", sentenciaPtr, NULL);
-			} else {
+			// if(bloquePtr != NULL){
+				// bloquePtr = (tNodo *)crearNodo("BLOQUE", sentenciaPtr, NULL);
+			// } else {
 				bloquePtr = sentenciaPtr;
-			}
+			// }
 		}
         | bloque sentencia
         { 
@@ -464,7 +467,7 @@ seleccion:
 			}
             | condicionif bloque {
 									if(auxBloquePtr) {
-										ponerenPila(pilaBloque,auxBloquePtr);
+										ponerenPila(pilaBloqueAux,auxBloquePtr);
 					
 									}
 									auxBloquePtr=bloquePtr;
@@ -482,9 +485,9 @@ seleccion:
 					  bloquePtr = topedePila(pilaBloque);
 					  sacardePila(pilaBloque);
 				}
-				if (topedePila(pilaBloque)){
-					  auxBloquePtr = topedePila(pilaBloque);
-					  sacardePila(pilaBloque);
+				if (topedePila(pilaBloqueAux)){
+					  auxBloquePtr = topedePila(pilaBloqueAux);
+					  sacardePila(pilaBloqueAux);
 				}
 				printf("Seleccion con ELSE\n"); 
 			}
@@ -675,6 +678,11 @@ factor:
         | PARENTESISA {
 			if(exprAritPtr){
 				ponerenPila(pilaExpresion,exprAritPtr);
+				exprAritPtr=NULL;
+			}
+			if(terminoPtr){
+				ponerenPila(pilaTermino,terminoPtr);
+				exprAritPtr=NULL;
 			}
 		}
 
@@ -685,7 +693,12 @@ factor:
             exprAritPtr = topedePila(pilaExpresion);
             sacardePila(pilaExpresion);
             }
-			printf("Factor ()\n"); 
+			if(topedePila(pilaTermino)){
+            terminoPtr = topedePila(pilaTermino);
+            sacardePila(pilaTermino);
+            }
+
+			printf("Factor(exp)\n"); 
 		}
         ;
 
@@ -770,8 +783,11 @@ int main(int argc, char *argv[])
 		printf("\nNo se pudo crear el archivo intermedia.txt \r\n");
 		return -1;
 	}
-	pilaExpresion = crearPila();      
+	pilaExpresion = crearPila(); 
+	pilaTermino = crearPila(); 
+	pilaFactor = crearPila();     
 	pilaBloque = crearPila();
+	pilaBloqueAux = crearPila();
 	pilaCondicion = crearPila();
 	pilaCondiciones = crearPila();
 	pilaEtiq = crearPila();

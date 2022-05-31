@@ -129,6 +129,8 @@ void crearNodoCMP(char * comp);
 
 /* ---  Pilas   --- */
 tPila* pilaExpresion;
+tPila* pilaTermino;
+tPila* pilaFactor;
 tPila* pilaBloque;
 tPila* pilaBloqueAux;
 tPila* pilaCondicion;
@@ -323,11 +325,11 @@ bloque:
         { 
 			printf("Bloque.\n"); 
 			 
-			if(bloquePtr != NULL){
-				bloquePtr = (tNodo *)crearNodo("BLOQUE", sentenciaPtr, NULL);
-			} else {
+			// if(bloquePtr != NULL){
+				// bloquePtr = (tNodo *)crearNodo("BLOQUE", sentenciaPtr, NULL);
+			// } else {
 				bloquePtr = sentenciaPtr;
-			}
+			// }
 		}
         | bloque sentencia
         { 
@@ -591,10 +593,12 @@ comparacion:
 			}
 			| between { 
 			//VER POR LAS DUDAS
+			comparacionPtr=betweenPtr;
 				printf("Comparacion Between\n"); 
 			}
 			| inlist { 
 			//VER POR LAS DUDAS
+			comparacionPtr=inlistPtr;
 			printf("Comparacion Inlist\n"); 
 			}
             ;
@@ -676,6 +680,11 @@ factor:
         | PARENTESISA {
 			if(exprAritPtr){
 				ponerenPila(pilaExpresion,exprAritPtr);
+				exprAritPtr=NULL;
+			}
+			if(terminoPtr){
+				ponerenPila(pilaTermino,terminoPtr);
+				exprAritPtr=NULL;
 			}
 		}
 
@@ -686,7 +695,12 @@ factor:
             exprAritPtr = topedePila(pilaExpresion);
             sacardePila(pilaExpresion);
             }
-			printf("Factor ()\n"); 
+			if(topedePila(pilaTermino)){
+            terminoPtr = topedePila(pilaTermino);
+            sacardePila(pilaTermino);
+            }
+
+			printf("Factor(exp)\n"); 
 		}
         ;
 
@@ -771,7 +785,9 @@ int main(int argc, char *argv[])
 		printf("\nNo se pudo crear el archivo intermedia.txt \r\n");
 		return -1;
 	}
-	pilaExpresion = crearPila();      
+	pilaExpresion = crearPila(); 
+	pilaTermino = crearPila(); 
+	pilaFactor = crearPila();     
 	pilaBloque = crearPila();
 	pilaBloqueAux = crearPila();
 	pilaCondicion = crearPila();

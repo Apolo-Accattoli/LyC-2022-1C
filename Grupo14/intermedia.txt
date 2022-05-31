@@ -22,7 +22,6 @@ OPASIG
 WRITE 
 cuerpo 
 IF-ELSE 
-BLOQUE 
 i 
 7 
 OPASIG 
@@ -72,7 +71,6 @@ cuerpo
 IF-ELSE 
 BLOQUE 
 WHILE 
-BLOQUE 
 "primero" 
 WRITE 
 BLOQUE 
@@ -91,9 +89,9 @@ OPSUMA
 OPASIG 
 BLOQUE 
 a 
-4 
+a 
 b 
-4 
+9 
 OPSUMA 
 OPMUL 
 OPASIG 

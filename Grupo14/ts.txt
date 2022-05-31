@@ -25,6 +25,7 @@ _"menor"                      CONS_STR                      "menor"             
 _"mayor"                      CONS_STR                      "mayor"                       7
 _"primero"                    CONS_STR                      "primero"                     9
 _4                            CONS_INT                      4                             1
+_9                            CONS_INT                      9                             1
 _3.33                         CONS_FLOAT                    3.33                          4
 _2                            CONS_INT                      2                             1
 _0                            CONS_INT                      0                             1

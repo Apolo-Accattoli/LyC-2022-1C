@@ -4,8 +4,8 @@ cadena : STRING
 f1, f2, f3 : FLOAT
 ENDDEC
 f1:=3.25
-IF (NOT a > 5 )
-	x:=6
+IF (NOT((a > 5 OR c <= 10) AND ((b<3) AND a>3)))
+	c:=5
 ELSE
 	IF (a <= 30 OR a == 31)
 		c:=10
@@ -17,8 +17,8 @@ ENDIF
 
 READ x
 
-IF (a <= 40 AND a == 41)
-	b:=120
+IF (a <= 30 OR a == 31)
+	c:=10
 ENDIF
 
 WRITE x
@@ -26,7 +26,7 @@ WRITE x
 WHILE(a > 1 OR b > 1)
 	WHILE(c > 1)
 		x := 1
-		IF(c < 100)
+		IF(c < 10)
 		
 			WRITE "menor"
 		
@@ -35,7 +35,6 @@ WHILE(a > 1 OR b > 1)
 			WRITE "mayor"
 		ENDIF
 	ENDWHILE
-	WRITE "primero"
 ENDWHILE
 a := a+b
 a := b+4

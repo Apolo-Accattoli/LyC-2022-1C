@@ -8,6 +8,7 @@
 
 FILE  *yyin;
 FILE *graph;
+FILE *intermedia;
 int yyerror();
 int yylex();
 
@@ -53,9 +54,9 @@ typedef tNodo* tArbol;
 tNodo* crearNodo(const char* dato, tNodo *pIzq, tNodo *pDer);
 tNodo* crearHoja(char* dato,char* tipo);
 tArbol * hijoMasIzq(tArbol *p);
-void enOrden(tArbol *p);
-void verNodo(const char *p);
-void postOrden(tArbol *p);
+void enOrden(tArbol *p, FILE* file);
+void verNodo(const char *p, FILE* file);
+void postOrden(tArbol *p, FILE* file);
 void _tree_print_dot_subtree(int nro_padre, tNodo *padre, int nro, tArbol *nodo, FILE* stream);
 void tree_print_dot(tArbol *p,FILE* stream);
 void llenarGragh(tNodo* padre, FILE *arch, int numNodo);
@@ -129,6 +130,7 @@ void crearNodoCMP(char * comp);
 /* ---  Pilas   --- */
 tPila* pilaExpresion;
 tPila* pilaBloque;
+tPila* pilaBloqueAux;
 tPila* pilaCondicion;
 tPila* pilaCondiciones;
 tPila* pilaEtiq;
@@ -137,7 +139,6 @@ tPila* pilaEtiqExpMax;
 //Declaración de punteros árbol sintáctico
 
 tArbol 	asigPtr,			//Puntero de asignaciones
-		exprPtr,			//Puntero de expresiones
 		exprCadPtr,			//Puntero de expresiones de cadenas
 		exprAritPtr,		//Puntero de expresiones aritmeticas
 		terminoPtr,			//Puntero de terminos
@@ -243,8 +244,8 @@ PROGRAMA:
         bloque_declaraciones bloque
         { 
 			guardarTS();
-			postOrden(&bloquePtr); //Agregamos funciones
-			//tree_print_dot(&bloquePtr, graph);
+			postOrden(&bloquePtr, intermedia); //Agregamos funciones
+			tree_print_dot(&bloquePtr, graph);
 			printf("\nCompilacion exitosa.\n");
 		}
         ;
@@ -462,7 +463,15 @@ seleccion:
 				}
 				printf("Seleccion\n");
 			}
-            | condicionif bloque {auxBloquePtr=bloquePtr;} 
+            | condicionif bloque {
+									if(auxBloquePtr) {
+										ponerenPila(pilaBloqueAux,auxBloquePtr);
+					
+									}
+									auxBloquePtr=bloquePtr;
+									bloquePtr=NULL;
+										
+				} 
 			ELSE bloque ENDIF
             { 
 				seleccionPtr =(tNodo *) crearNodo("IF-ELSE", condicionPtr, crearNodo("cuerpo",auxBloquePtr,bloquePtr));
@@ -473,6 +482,10 @@ seleccion:
 				if (topedePila(pilaBloque)){
 					  bloquePtr = topedePila(pilaBloque);
 					  sacardePila(pilaBloque);
+				}
+				if (topedePila(pilaBloqueAux)){
+					  auxBloquePtr = topedePila(pilaBloqueAux);
+					  sacardePila(pilaBloqueAux);
 				}
 				printf("Seleccion con ELSE\n"); 
 			}
@@ -533,54 +546,47 @@ iteracion:
             ;
 
 condicion:
-            condicion OR termino_logico {
+            condicion OR comparacion {
 				printf("Condicion OR\n"); 
-				condicionPtr=(tNodo *)crearNodo("OR", condicionPtr, terminoLogicoPtr);
+				condicionPtr=(tNodo *)crearNodo("OR", condicionPtr, comparacionPtr);
 				} 
-            | NOT termino_logico { 
-				printf("Condicion NOT\n"); 
-				condicionPtr = (tNodo *)crearNodo("NOT",terminoLogicoPtr,NULL);
+            | condicion AND comparacion {
+				printf("Condicion AND\n"); 
+				condicionPtr=(tNodo *)crearNodo("AND", condicionPtr, comparacionPtr);
+				} 
+            | NOT comparacion { 
+				printf("Condicion NOT\n");
+				condicionPtr = (tNodo *)crearNodo("NOT",comparacionPtr,NULL);
 			} 
-			| termino_logico { 
+			| comparacion { 
 				printf("Condicion\n");
-				condicionPtr=terminoLogicoPtr;
+				condicionPtr=comparacionPtr;
 				}
 			;
 			
-termino_logico:
-			comparacion { 
-				terminoLogicoPtr=comparacionPtr;
-				printf("Termino logico\n"); 
-			} 
-			| termino_logico AND comparacion { 
-				terminoLogicoPtr=(tNodo *)crearNodo("AND", terminoLogicoPtr, comparacionPtr);
-				printf("Termino logico\n"); 
-				
-			}
-			;
 comparacion:
-            expresion  {exprCMPPtr = exprPtr; } OPIDENTICO expresion { 
-				comparacionPtr = (tNodo *)crearNodo("OPIDENTICO",exprCMPPtr,exprPtr);
+            expresion  {exprCMPPtr = exprAritPtr; } OPIDENTICO expresion { 
+				comparacionPtr = (tNodo *)crearNodo("OPIDENTICO",exprCMPPtr,exprAritPtr);
 				printf("Comparacion ==\n"); 
 			}
-            | expresion {exprCMPPtr = exprPtr; } OPMENORIGUAL expresion { 
-				comparacionPtr = (tNodo *)crearNodo("OPMENORIGUAL",exprCMPPtr,exprPtr);
+            | expresion {exprCMPPtr = exprAritPtr; } OPMENORIGUAL expresion { 
+				comparacionPtr = (tNodo *)crearNodo("OPMENORIGUAL",exprCMPPtr,exprAritPtr);
 				printf("Comparacion <=\n"); 
 			}
-            | expresion {exprCMPPtr = exprPtr; } OPMAYORIGUAL expresion { 
-				comparacionPtr = (tNodo *)crearNodo("OPMAYORIGUAL",exprCMPPtr,exprPtr);
+            | expresion {exprCMPPtr = exprAritPtr; } OPMAYORIGUAL expresion { 
+				comparacionPtr = (tNodo *)crearNodo("OPMAYORIGUAL",exprCMPPtr,exprAritPtr);
 				printf("Comparacion >=\n"); 
 			}
-            | expresion {exprCMPPtr = exprPtr; } OPMAYOR expresion { 
-				comparacionPtr = (tNodo *)crearNodo("OPMAYOR",exprCMPPtr,exprPtr);
+            | expresion {exprCMPPtr = exprAritPtr; } OPMAYOR expresion { 
+				comparacionPtr = (tNodo *)crearNodo("OPMAYOR",exprCMPPtr,exprAritPtr);
 				printf("Comparacion >\n"); 
 			}
-            | expresion {exprCMPPtr = exprPtr; } OPMENOR expresion { 
-				comparacionPtr = (tNodo *)crearNodo("OPMENOR",exprCMPPtr,exprPtr);
+            | expresion {exprCMPPtr = exprAritPtr; } OPMENOR expresion { 
+				comparacionPtr = (tNodo *)crearNodo("OPMENOR",exprCMPPtr,exprAritPtr);
 				printf("Comparacion <\n"); 
 			}
-            | expresion {exprCMPPtr = exprPtr; } OPDISTINTO expresion { 
-				comparacionPtr = (tNodo *)crearNodo("OPDISTINTO",exprCMPPtr,exprPtr);
+            | expresion {exprCMPPtr = exprAritPtr; } OPDISTINTO expresion { 
+				comparacionPtr = (tNodo *)crearNodo("OPDISTINTO",exprCMPPtr,exprAritPtr);
 				printf("Comparacion !=\n"); 
 			}
 			| between { 
@@ -591,21 +597,6 @@ comparacion:
 			//VER POR LAS DUDAS
 			printf("Comparacion Inlist\n"); 
 			}
-			|PARENTESISA {
-				if(condicionPtr){
-					ponerenPila(pilaCondicion, condicionPtr);
-				}
-					
-			}condicion PARENTESISC { 
-				printf("Comparacion ()\n"); 
-				comparacionPtr=condicionPtr;
-				if(topedePila(pilaCondicion)){
-					condicionPtr = topedePila(pilaCondicion);
-					sacardePila(pilaCondicion);
-				}
-			}
-			
-			
             ;
 
 
@@ -613,13 +604,13 @@ expresion:
             expresion OPSUMA termino 
 			{ 
 				printf("Expresion suma\n"); 
-				exprAritPtr=(tNodo *)crearNodo("OPSUMA", exprPtr, terminoPtr);
+				exprAritPtr=(tNodo *)crearNodo("OPSUMA", exprAritPtr, terminoPtr);
 				//exprAritPtr->info.tipoDato= terminoPtr->info.tipoDato;
 				//Puntero de Expresion (EXPT) = Crear nodo(+, EXPT, TEPT)
 			}
             | expresion OPRESTA termino { 
 				printf("Expresion resta\n"); 
-				exprAritPtr=(tNodo *)crearNodo("OPRESTA", exprPtr, terminoPtr);
+				exprAritPtr=(tNodo *)crearNodo("OPRESTA", exprAritPtr, terminoPtr);
 				//exprAritPtr->info.tipoDato= terminoPtr->info.tipoDato;
 				//Puntero de Expresion (EXPT) = Crear nodo(-, EXPT, TEPT)
 				}
@@ -714,11 +705,11 @@ between:
                             //insertar en árbol
                         } COMA CORCHETEA expresion 
 						{//Acá iría una comparacion por mayor
-						//condicionIfPtr=crearNodo(">", crearHoja (printf("%s",$3), getTipoId(printf("%s",$3))), exprPtr);
+						//condicionIfPtr=crearNodo(">", crearHoja (printf("%s",$3), getTipoId(printf("%s",$3))), exprAritPtr);
 						} 
 						PUNTOCOMA expresion{
 						//Aca iría una comparación por menor	
-						//condicionIfPtr=crearNodo("AND", condicionIfPtr , crearNodo("<", crearHoja (printf("%s",$3), getTipoId(printf("%s",$3))), exprPtr));
+						//condicionIfPtr=crearNodo("AND", condicionIfPtr , crearNodo("<", crearHoja (printf("%s",$3), getTipoId(printf("%s",$3))), exprAritPtr));
 						//accionPtr=crearNodo("Cuerpo",crearNodo(":=","@between","1"),crearNodo(":=","@between","0"));
 						//listaExpPtr=crearNodo("IF",condicionIfPtr,accionPtr);
 						} CORCHETEC PARENTESISC {printf("Between\n");}
@@ -738,13 +729,13 @@ lista_expresiones:	//Se cambió la recursividad para que sea a izquierda
 					{ 
 					
 						printf("Lista de expresiones\n"); 
-						//listaExpPtr=(tNodo *)crearNodo("OR", listaExpPtr , crearNodo("==", crearHoja (ID, getTipoId(ID)), exprPtr));
+						//listaExpPtr=(tNodo *)crearNodo("OR", listaExpPtr , crearNodo("==", crearHoja (ID, getTipoId(ID)), exprAritPtr));
 						
 					}
 					| expresion
 					{ 
 						printf("Lista de expresiones\n"); 
-						//listaExpPtr=(tNodo *)crearNodo("==", crearHoja (ID, getTipoId(ID)), exprPtr);
+						//listaExpPtr=(tNodo *)crearNodo("==", crearHoja (ID, getTipoId(ID)), exprAritPtr);
 						//IF ( ID = expresion OR ID = expresion 2, etc)
 						//		@found=true	
 						//
@@ -770,11 +761,19 @@ int main(int argc, char *argv[])
 	graph = fopen("gragh.dot", "w");
 	if (graph == NULL) 
 	{
-		printf("\nNo se pudo crear el archivo del grafico de generacion de codigo intermedia: %s\r\n", argv[1]);
+		printf("\nNo se pudo crear el archivo del grafico de arbol.\r\n");
+		return -1;
+	}
+		intermedia = fopen("intermedia.txt", "wt");
+		
+	if (intermedia == NULL) 
+	{
+		printf("\nNo se pudo crear el archivo intermedia.txt \r\n");
 		return -1;
 	}
 	pilaExpresion = crearPila();      
 	pilaBloque = crearPila();
+	pilaBloqueAux = crearPila();
 	pilaCondicion = crearPila();
 	pilaCondiciones = crearPila();
 	pilaEtiq = crearPila();
@@ -783,6 +782,7 @@ int main(int argc, char *argv[])
         yyparse();
         fclose(yyin);
 		fclose(graph);
+		fclose(intermedia);
         system("Pause");
         return 0;
     }
@@ -1028,7 +1028,7 @@ char* getTipoId(const char* id)
 }
 
 void crearNodoCMP(char * comp){
-	comparacionPtr = (tNodo *)crearNodo("CMP",exprCMPPtr,exprPtr);
+	comparacionPtr = (tNodo *)crearNodo("CMP",exprCMPPtr,exprAritPtr);
 	comparacionPtr = (tNodo *)crearNodo(comp,comparacionPtr,NULL);
 }
 
@@ -1072,25 +1072,27 @@ tArbol * hijoMasIzq(tArbol *p){
     return NULL;
 }
 
-void enOrden(tArbol *p){
+void enOrden(tArbol *p, FILE* file){
     if (*p)
     {
-        enOrden(&(*p)->izq);
-        verNodo((*p)->info.dato);
-        enOrden(&(*p)->der);
+        enOrden(&(*p)->izq, file);
+        verNodo((*p)->info.dato, file);
+        enOrden(&(*p)->der, file);
+		fprintf(file, "\n", p);
     }
 }
 
-void postOrden(tArbol *p){
+void postOrden(tArbol *p, FILE* file){
     if (*p){
-        postOrden(&(*p)->izq);
-        postOrden(&(*p)->der);
-		verNodo((*p)->info.dato);
+        postOrden(&(*p)->izq, file);
+        postOrden(&(*p)->der,file);
+		verNodo((*p)->info.dato,file);
+		fprintf(file, "\n", p);
     }
 }
 
-void verNodo(const char *p){
-    printf("%s ", p);
+void verNodo(const char *p, FILE* file){
+    fprintf(file, "%s ", p);
 }
 
 

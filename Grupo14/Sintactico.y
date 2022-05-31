@@ -57,10 +57,8 @@ tArbol * hijoMasIzq(tArbol *p);
 void enOrden(tArbol *p, FILE* file);
 void verNodo(const char *p, FILE* file);
 void postOrden(tArbol *p, FILE* file);
-void _tree_print_dot_subtree(int nro_padre, tNodo *padre, int nro, tArbol *nodo, FILE* stream);
-void tree_print_dot(tArbol *p,FILE* stream);
-void llenarGragh(tNodo* padre, FILE *arch, int numNodo);
-void escribirGragh(tNodo* padre);
+void graficar_subarbol(int nro_padre, tNodo *padre, int nro, tArbol *nodo, FILE* stream);
+void graficar_arbol(tArbol *p,FILE* stream);
 
 typedef struct sNodoPila {
   tNodo *dato;
@@ -118,7 +116,7 @@ char idvec[32][50];
 int cantid = 0, i=0;
 char vecAux[20];
 char* punt;
-
+char* idInlist;
 /* --- Validaciones --- */
 int existeID(const char*);
 char mensajes[100];
@@ -129,6 +127,7 @@ void crearNodoCMP(char * comp);
 
 /* ---  Pilas   --- */
 tPila* pilaExpresion;
+tPila* pilaExpresionAux;
 tPila* pilaTermino;
 tPila* pilaFactor;
 tPila* pilaBloque;
@@ -143,6 +142,8 @@ tPila* pilaEtiqExpMax;
 tArbol 	asigPtr,			//Puntero de asignaciones
 		exprCadPtr,			//Puntero de expresiones de cadenas
 		exprAritPtr,		//Puntero de expresiones aritmeticas
+		exprPtr,
+		exprPtrAux,
 		terminoPtr,			//Puntero de terminos
 		factorPtr,			//Puntero de factores
 		bloquePtr,			//Puntero de bloque
@@ -181,6 +182,8 @@ tArbol 	asigPtr,			//Puntero de asignaciones
 		listaExpPtr,
 		inlistPtr,
 		betweenPtr,
+		limSupBetweenPtr,
+		limInfBetweenPtr,
 		condicionIfPtr,
 		accionPtr;
 
@@ -247,7 +250,7 @@ PROGRAMA:
         { 
 			guardarTS();
 			postOrden(&bloquePtr, intermedia); //Agregamos funciones
-			tree_print_dot(&bloquePtr, graph);
+			graficar_arbol(&bloquePtr, graph);
 			printf("\nCompilacion exitosa.\n");
 		}
         ;
@@ -716,43 +719,50 @@ between:
                                 sprintf(mensajes, "%s", error);
                                 yyerror(mensajes, @1.first_line, @1.first_column, @1.last_column);
                             }
+							if(!existeID(punt)) //No existe: entonces no esta declarada
+							{
+								sprintf(mensajes, "%s%s%s", "Error: no se declaro la variable '", punt, "'");
+								yyerror(mensajes, @1.first_line, @1.first_column, @1.last_column);
+							}
                             //insertar en árbol
                         } COMA CORCHETEA expresion 
-						{//Acá iría una comparacion por mayor
-						//condicionIfPtr=crearNodo(">", crearHoja (printf("%s",$3), getTipoId(printf("%s",$3))), exprAritPtr);
+						{
+							limInfBetweenPtr = (tNodo *)crearNodo("OPMAYOR",crearHoja(punt,getTipoId(punt)),exprAritPtr);
 						} 
 						PUNTOCOMA expresion{
-						//Aca iría una comparación por menor	
-						//condicionIfPtr=crearNodo("AND", condicionIfPtr , crearNodo("<", crearHoja (printf("%s",$3), getTipoId(printf("%s",$3))), exprAritPtr));
-						//accionPtr=crearNodo("Cuerpo",crearNodo(":=","@between","1"),crearNodo(":=","@between","0"));
-						//listaExpPtr=crearNodo("IF",condicionIfPtr,accionPtr);
+							limSupBetweenPtr = (tNodo *)crearNodo("OPMENOR",crearHoja(punt,getTipoId(punt)),exprAritPtr);
+							betweenPtr = (tNodo *)crearNodo("AND",limInfBetweenPtr,limSupBetweenPtr);				
 						} CORCHETEC PARENTESISC {printf("Between\n");}
-						//betweenPtr = listaExpPtr;
         ; 
 		
 inlist:
-        INLIST PARENTESISA ID COMA CORCHETEA lista_expresiones CORCHETEC PARENTESISC {
+        INLIST PARENTESISA ID
+		{
+            idInlist = (char*)malloc(sizeof($3));
+			strcpy(idInlist, strtok($3," ;\n"));
+
+			if(!existeID(idInlist)) //No existe: entonces no esta declarada
+			{
+				sprintf(mensajes, "%s%s%s", "Error: no se declaro la variable '", idInlist, "'");
+				yyerror(mensajes, @1.first_line, @1.first_column, @1.last_column);
+			}
+		}
+		COMA CORCHETEA lista_expresiones CORCHETEC PARENTESISC {
 			printf("Inlist\n");
-			//comparar ID con cada una de las expresiones.
-			//Podría haber una variable @found que indique si se encontró
 			inlistPtr = listaExpPtr;
 		}; 
 
 lista_expresiones:	//Se cambió la recursividad para que sea a izquierda
 					lista_expresiones PUNTOCOMA expresion
-					{ 
-					
+					{ 			
+						exprPtrAux = (tNodo *)crearNodo("OPIDENTICO", crearHoja (idInlist, getTipoId(idInlist)), exprAritPtr);
+						listaExpPtr = (tNodo *)crearNodo("OR", listaExpPtr, exprPtrAux);
 						printf("Lista de expresiones\n"); 
-						//listaExpPtr=(tNodo *)crearNodo("OR", listaExpPtr , crearNodo("==", crearHoja (ID, getTipoId(ID)), exprAritPtr));
-						
 					}
 					| expresion
 					{ 
+						listaExpPtr = (tNodo *)crearNodo("OPIDENTICO", crearHoja (idInlist, getTipoId(idInlist)), exprAritPtr);
 						printf("Lista de expresiones\n"); 
-						//listaExpPtr=(tNodo *)crearNodo("==", crearHoja (ID, getTipoId(ID)), exprAritPtr);
-						//IF ( ID = expresion OR ID = expresion 2, etc)
-						//		@found=true	
-						//
 					}
 
 
@@ -771,29 +781,29 @@ int main(int argc, char *argv[])
     }
     else
     { 
-
-	graph = fopen("gragh.dot", "w");
-	if (graph == NULL) 
-	{
-		printf("\nNo se pudo crear el archivo del grafico de arbol.\r\n");
-		return -1;
-	}
-		intermedia = fopen("intermedia.txt", "wt");
-		
-	if (intermedia == NULL) 
-	{
-		printf("\nNo se pudo crear el archivo intermedia.txt \r\n");
-		return -1;
-	}
-	pilaExpresion = crearPila(); 
-	pilaTermino = crearPila(); 
-	pilaFactor = crearPila();     
-	pilaBloque = crearPila();
-	pilaBloqueAux = crearPila();
-	pilaCondicion = crearPila();
-	pilaCondiciones = crearPila();
-	pilaEtiq = crearPila();
-	pilaEtiqExpMax = crearPila();
+		graph = fopen("intermedia.dot", "w");
+		if (graph == NULL) 
+		{
+			printf("\nNo se pudo crear el archivo del grafico de arbol.\r\n");
+			return -1;
+		}
+			intermedia = fopen("intermedia.txt", "wt");
+			
+		if (intermedia == NULL) 
+		{
+			printf("\nNo se pudo crear el archivo intermedia.txt \r\n");
+			return -1;
+		}
+		pilaExpresion = crearPila(); 
+		pilaExpresionAux = crearPila(); 
+		pilaTermino = crearPila(); 
+		pilaFactor = crearPila();     
+		pilaBloque = crearPila();
+		pilaBloqueAux = crearPila();
+		pilaCondicion = crearPila();
+		pilaCondiciones = crearPila();
+		pilaEtiq = crearPila();
+		pilaEtiqExpMax = crearPila();
         crearTablaTS(); //tablaTS.primero = NULL;
         yyparse();
         fclose(yyin);
@@ -1172,7 +1182,7 @@ void borrarPila( tPila **theStack)
   free(*theStack);
   *theStack = NULL;
 }
-void _tree_print_dot_subtree(int nro_padre, tNodo *padre, int nro, tArbol *nodo, FILE* stream)
+void graficar_subarbol(int nro_padre, tNodo *padre, int nro, tArbol *nodo, FILE* stream)
 {
     if (*nodo != NULL)
     {    
@@ -1180,55 +1190,15 @@ void _tree_print_dot_subtree(int nro_padre, tNodo *padre, int nro, tArbol *nodo,
         if (padre != NULL){
             fprintf(stream, "x%d -> x%d;\n",nro_padre,nro);
         }   
-        _tree_print_dot_subtree(nro, *nodo, 2 * nro + 1, &(*nodo)->izq, stream);
-        _tree_print_dot_subtree(nro, *nodo, 2 * nro + 2, &(*nodo)->der, stream);
+        graficar_subarbol(nro, *nodo, 2 * nro + 1, &(*nodo)->izq, stream);
+        graficar_subarbol(nro, *nodo, 2 * nro + 2, &(*nodo)->der, stream);
         
     }
 }
-void tree_print_dot(tArbol *p,FILE* stream)
+void graficar_arbol(tArbol *p,FILE* stream)
 {
 	fprintf(stream, "digraph BST {\n");
 	if (*p)
-		_tree_print_dot_subtree(-1, NULL, 0, &(*p), stream);
+		graficar_subarbol(-1, NULL, 0, &(*p), stream);
 	fprintf(stream, "}");
-}
-void llenarGragh(tNodo* padre, FILE *arch, int numNodo) {
-    char* string1 = (char*) malloc(sizeof(char) *50);
-    char* string2 = (char*) malloc(sizeof(char) *50);
-    if(padre == NULL) {
-        return;
-    }
-    int numHI = numNodo*2+1;
-    int numHD = numNodo*2+2;
-    
-    if(padre->izq) {
-        sprintf(string1, "%s|%s", padre->info.dato, padre->info.tipoDato);
-        sprintf(string2, "%s|%s", padre->izq->info.dato, padre->izq->info.tipoDato);
-        fprintf(arch, "\t\"nodo_%d \\n%s\" -> \"nodo_%d \\n%s\"\n", numNodo, string1, numHI, string2);
-    }
-    if(padre->der) {
-        sprintf(string1, "%s|%s", padre->info.dato, padre->info.tipoDato);
-        sprintf(string2, "%s|%s", padre->der->info.dato, padre->der->info.tipoDato);
-        fprintf(arch, "\t\"nodo_%d \\n%s\" -> \"nodo_%d \\n%s\"\n", numNodo, string1 ,numHD ,string2);
-    }
-    llenarGragh(padre->izq, arch, numHI);
-    llenarGragh(padre->der, arch, numHD);
-    return;
-}
-
-void escribirGragh(tNodo* padre) {
-    FILE *archivo;
-
-	archivo = fopen("gragh.dot", "w");
-	if (archivo == NULL) {
-		printf("ERROR");
-		return;
-	}
-    //Escribir plantilla para poder dibujar el grafo
-    fprintf(archivo, "%s\n", "digraph G {");
-    llenarGragh(padre, archivo, 0);
-    fprintf(archivo, "%s", "}");
-    
-    fclose(archivo);
-    return;
 }

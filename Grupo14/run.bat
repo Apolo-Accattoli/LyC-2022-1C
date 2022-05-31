@@ -1,12 +1,14 @@
-del Primera.exe
+del Segunda.exe
 del ts.txt
-del grafico.png
-del gragh.dot
+del intermedia.png
+del intermedia.dot
+del intermedia.txt
+
 flex .\Lexico.l
 bison -dyv .\Sintactico.y
-gcc.exe lex.yy.c y.tab.c -o Primera.exe
-.\Primera.exe prueba.txt
-dot -Tpng gragh.dot > grafico.png
+gcc.exe lex.yy.c y.tab.c -o Segunda.exe
+.\Segunda.exe prueba.txt
+dot -Tpng intermedia.dot > intermedia.png
 pause
 
 del lex.yy.c

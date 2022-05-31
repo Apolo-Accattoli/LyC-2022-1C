@@ -104,9 +104,13 @@ OPSUMA
 OPSUMA 
 OPASIG 
 BLOQUE 
-c 
-100 
+a 
+2 
+OPMAYOR 
+a 
+15 
 OPMENOR 
+AND 
 "si BETWEEN" 
 WRITE 
 "no BETWEEN" 
@@ -114,9 +118,31 @@ WRITE
 cuerpo 
 IF-ELSE 
 BLOQUE 
-c 
-100 
-OPMENOR 
+a 
+2 
+b 
+OPMUL 
+7 
+OPSUMA 
+OPIDENTICO 
+a 
+12 
+OPIDENTICO 
+OR 
+a 
+a 
+b 
+34 
+i 
+OPSUMA 
+OPMUL 
+OPSUMA 
+OPIDENTICO 
+OR 
+a 
+48 
+OPIDENTICO 
+OR 
 "si INLIST" 
 WRITE 
 "no INLIST" 

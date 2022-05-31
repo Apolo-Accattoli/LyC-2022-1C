@@ -41,7 +41,7 @@ a := a+b
 a := b+4
 a := a*(b+9)
 f2:=f1+a+3.33
-IF (BETWEEN (a, [2 ; 0]))
+IF (BETWEEN (a, [2 ; 15]))
 	WRITE "si BETWEEN"
 ELSE
 	WRITE "no BETWEEN"

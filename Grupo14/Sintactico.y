@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include "y.tab.h"
 #include <string.h>
+#include <float.h>
+#include <limits.h>
+
 
 FILE  *yyin;
 FILE *graph;
@@ -971,6 +974,7 @@ t_data* crearDatos(const char *nombre, const char *tipo, const char* valString, 
             strcpy(data->nombre, full);
             data->valor.valor_int = valInt;
         }
+        data->longitud = strlen(data->nombre)-1;
         return data;
     }
     return NULL;
@@ -1000,27 +1004,27 @@ void guardarTS()
         
         if(strcmp(aux->data.tipo, "INTEGER") == 0) //variable integer
         {
-            sprintf(linea, "%-30s%-30s%-30s%-d\n", aux->data.nombre, aux->data.tipo, "--", strlen(aux->data.nombre));
+            sprintf(linea, "%-30s%-30s%-30s%-s\n", aux->data.nombre, aux->data.tipo, "--", "--");
         }
         else if(strcmp(aux->data.tipo, "CONS_INT") == 0)
         {
-            sprintf(linea, "%-30s%-30s%-30d%-d\n", aux->data.nombre, aux->data.tipo, aux->data.valor.valor_int, strlen(aux->data.nombre) -1);
+            sprintf(linea, "%-30s%-30s%-30d%-d\n", aux->data.nombre, aux->data.tipo, aux->data.valor.valor_int, aux->data.longitud);
         }
-        else if(strcmp(aux->data.tipo, "FLOAT") ==0)
+        else if(strcmp(aux->data.tipo, "FLOAT") == 0)
         {
-            sprintf(linea, "%-30s%-30s%-30s%-d\n", aux->data.nombre, aux->data.tipo, "--", strlen(aux->data.nombre));
+            sprintf(linea, "%-30s%-30s%-30s%-s\n", aux->data.nombre, aux->data.tipo, "--", "--");
         }
         else if(strcmp(aux->data.tipo, "CONS_FLOAT") == 0)
         {
-            sprintf(linea, "%-30s%-30s%-30g%-d\n", aux->data.nombre, aux->data.tipo, aux->data.valor.valor_double, strlen(aux->data.nombre) -1);
+            sprintf(linea, "%-30s%-30s%-30g%-d\n", aux->data.nombre, aux->data.tipo, aux->data.valor.valor_double, aux->data.longitud);
         }
         else if(strcmp(aux->data.tipo, "STRING") == 0)
         {
-            sprintf(linea, "%-30s%-30s%-30s%-d\n", aux->data.nombre, aux->data.tipo, "--", strlen(aux->data.nombre));
+            sprintf(linea, "%-30s%-30s%-30s%-s\n", aux->data.nombre, aux->data.tipo, "--", "--");
         }
         else if(strcmp(aux->data.tipo, "CONS_STR") == 0)
         {
-            sprintf(linea, "%-30s%-30s%-30s%-d\n", aux->data.nombre, aux->data.tipo, aux->data.valor.valor_str, strlen(aux->data.nombre) -1);
+            sprintf(linea, "%-30s%-30s%-30s%-d\n", aux->data.nombre, aux->data.tipo, aux->data.valor.valor_str, aux->data.longitud);
         }
         fprintf(arch, "%s", linea);
         free(aux);
@@ -1364,39 +1368,16 @@ int printData(){
         }
         else if(strcmp(tabla->data.tipo, "CONS_INT") == 0)
         {
-            	fprintf(fp, "%-32s\tdb\t\"%d\",'$', %d dup (?)\n", tabla->data.nombre, tabla->data.valor.valor_int,
-                    tabla->data.longitud);
+            	fprintf(fp, "%-32s\tdd\t%d\n", tabla->data.nombre, tabla->data.valor.valor_int);
         }
         else if(strcmp(tabla->data.tipo, "CONS_FLOAT") == 0)
         {
-            	fprintf(fp, "%-32s\tdb\t\"%g\",'$', %d dup (?)\n", tabla->data.nombre, tabla->data.valor.valor_double,
-                    tabla->data.longitud);
+            	fprintf(fp, "%-32s\tdd\t%g\n", tabla->data.nombre, tabla->data.valor.valor_double);
         }
         else
         {	
-        	char* auxValor;
-			if(strcmp(tabla->data.tipo, "INTEGER") == 0)
-			{
-			    auxValor = (char*) malloc(sizeof(tabla->data.valor.valor_int));
-			    sprintf(auxValor, "%d",tabla->data.valor.valor_int);
-
-			}
-			else if(strcmp(tabla->data.tipo, "FLOAT") == 0)
-			{
-				auxValor = (char*) malloc(sizeof(tabla->data.valor.valor_double));
-			    sprintf(auxValor, "%g",tabla->data.valor.valor_double);
-			}
-			else if(strcmp(tabla->data.tipo, "STRING") == 0)
-			{
-				if(tabla->data.valor.valor_str)
-				{
-					auxValor = (char*) malloc(sizeof(tabla->data.valor.valor_str));
-					sprintf(auxValor, "%s",tabla->data.valor.valor_str);
-				}
-			}
-
-
-			fprintf(fp, "%-32s\tdd\t%s\n", tabla->data.nombre, checkEmptyValue(auxValor));
+        	
+			fprintf(fp, "%-32s\tdd\t?\n", tabla->data.nombre);
 
         }	
 
@@ -1609,22 +1590,24 @@ int popLabel(const int labelType) {
 
 //Determina la operación entre el nodo, y sus 2 hijos, y escribe las instrucciones assembler en el archivo.
 void setOperation(FILE * fp, tArbol root){
+    
     if(isArithmetic(root->info.dato)) {
         if(strcmp(root->info.dato, "OPASIG") == 0) {
-            if(strcmp(root->izq->info.dato, "OPASIG") == 0){
-                 fprintf(fp, "f%sst %s\n", determinarCargaPila(root, root->der), root->der->info.dato);
-            }else if (root->info.tipoDato && strcmp(root->info.tipoDato, "CONS_STR")==0) {
+     
+           if (root->info.tipoDato && strcmp(root->info.tipoDato, "CONS_STR")==0) {
+           		//	REVISAR, DEBERIA SER DERECHA
+                printf("**************** *************************** LINEA 1600 ************************************** **********************\n");
                 addCodeToProcesString = 1; 
                 fprintf(fp, "MOV si, OFFSET   %s\n", root->izq);
                 fprintf(fp, "MOV di, OFFSET  %s\n", root->der);
                 fprintf(fp, "CALL assignString\n");
             } else {
+            	//REVISAR VARIABLES STRING
                 //ASIGNACION DE ALGO QUE NO ES UN STRING (FLOAT O INT)
                 fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->izq), root->izq->info.dato);
                 fprintf(fp, "f%sst %s\n", determinarCargaPila(root, root->der), root->der->info.dato);
             }
         } else {
-            //OPERACION ARTIMETICA
             fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->izq), root->izq->info.dato); //st0 = izq
             fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->der), root->der->info.dato); //st0 = der st1 = izq
             fprintf(fp, "%s\n", getArithmeticInstruction(root->info.dato));
@@ -1644,17 +1627,23 @@ void setOperation(FILE * fp, tArbol root){
         fprintf(fp, "fcom\n"); // compara ST0 con ST1"
         fprintf(fp, "fstsw ax\n");
         fprintf(fp, "sahf\n");
-        if (isWhile)
+        if (isWhile){
+        	printf("**************** *************************** LINEA 1631 ************************************** **********************\n");
             fprintf(fp, "%s %s%d\n", getComparationInstruction(root->info.dato), getJump(), getTopLabelStack(LABEL_WHILE));
-        else
+            }
+        else{
+        	printf("**************** *************************** LINEA 1635 ************************************** **********************\n");
             fprintf(fp, "%s %s%d\n", getComparationInstruction(root->info.dato), getJump(), getTopLabelStack(LABEL_IF));
+            }
     }
 
     if(strcmp(root->info.dato, "READ") == 0) {
+    	printf("**************** *************************** LINEA 1641 ************************************** **********************\n");
         fprintf(fp, "%s %s\n", getInstructionGet(root->der), root->der->info.dato);
     }
 
     if(strcmp(root->info.dato, "WRITE") == 0) {
+    	printf("**************** *************************** LINEA 1645 ************************************** **********************\n");
         fprintf(fp, "%s\n", getDisplayInstruction(root->der));
         fprintf(fp, "newLine 1\n");
     }
@@ -1782,6 +1771,7 @@ char* getJump() {
 //Obtiene la instrucción display del archivo "numbers.asm", y dependiendo del tipo de dato del nodo, lo convierte a array para poder mostrarlo por pantalla.
 char* getDisplayInstruction(tNodo* nodo) {
 	
+	printf("**************** %s **********************",nodo->info.dato);
 	
 	char * auxiliartipo = getTipoId (nodo->info.dato);
 	
@@ -1790,7 +1780,7 @@ char* getDisplayInstruction(tNodo* nodo) {
 	} else if (strcmp(auxiliartipo,"STRING")==0 || strcmp(auxiliartipo,"CONS_STR")==0) {
         sprintf(instruccionDisplay, "displayString %s", nodo->info.dato);
     }
-    
+    printf("**************** %s **********************",instruccionDisplay);
     return instruccionDisplay;
 }
 

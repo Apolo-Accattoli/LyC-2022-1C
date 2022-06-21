@@ -1,0 +1,216 @@
+
+START:
+MOV AX,@DATA
+MOV DS,AX
+MOV es,ax
+FINIT
+FFREE
+
+fld f1
+fst 3.25
+fld 5
+fild a
+fxch
+fcom
+fstsw ax
+sahf
+JB else1
+JMP startIf1
+else1:
+fild x
+fst 6
+JMP endif1
+startIf1:
+fld 30
+fild a
+fxch
+fcom
+fstsw ax
+sahf
+JAE startIf2
+fld 31
+fild a
+fxch
+fcom
+fstsw ax
+sahf
+JE startIf2
+JMP else2
+JMP startIf2
+else2:
+fild c
+fst 10
+JMP endif2
+startIf2:
+endif2:
+fild i
+fst 7
+endif1:
+fld 40
+fild a
+fxch
+fcom
+fstsw ax
+sahf
+JNAE endif3
+fld 41
+fild a
+fxch
+fcom
+fstsw ax
+sahf
+JNE endif3
+startIf3:
+fild b
+fst 120
+endif3:
+condicionWhile1:
+fld 1
+fild a
+fxch
+fcom
+fstsw ax
+sahf
+JB startWhile1
+fld 1
+fild b
+fxch
+fcom
+fstsw ax
+sahf
+JB startWhile1
+startWhile1:
+condicionWhile2:
+fld 1
+fild c
+fxch
+fcom
+fstsw ax
+sahf
+JNB endwhile2
+startWhile2:
+fild x
+fst 1
+fld 100
+fild c
+fxch
+fcom
+fstsw ax
+sahf
+JNA else4
+JMP startIf4
+else4:
+JMP endif4
+startIf4:
+endif4:
+JMP condicionWhile2
+endwhile2:
+JMP condicionWhile1
+endwhile1:
+fild a
+fild b
+fadd
+fistp @aux1
+fild a
+fist @aux1
+fild b
+fld 4
+fadd
+fstp @aux2
+fild a
+fst @aux2
+fild b
+fld 9
+fadd
+fstp @aux3
+fild a
+fld @aux3
+fmul
+fstp @aux4
+fild a
+fst @aux4
+fld f1
+fild a
+fadd
+fistp @aux5
+fild @aux5
+fld 3.33
+fadd
+fstp @aux6
+fld f2
+fst @aux6
+fld 2
+fild a
+fxch
+fcom
+fstsw ax
+sahf
+JNB else5
+fld 15
+fild a
+fxch
+fcom
+fstsw ax
+sahf
+JNA else5
+JMP startIf5
+else5:
+JMP endif5
+startIf5:
+endif5:
+fld 2
+fild b
+fmul
+fistp @aux7
+fild @aux7
+fld 7
+fadd
+fstp @aux8
+fld @aux8
+fild a
+fxch
+fcom
+fstsw ax
+sahf
+JE startIf6
+fld 12
+fild a
+fxch
+fcom
+fstsw ax
+sahf
+JE startIf6
+fld 34
+fild i
+fadd
+fistp @aux9
+fild b
+fild @aux9
+fmul
+fistp @aux10
+fild a
+fild @aux10
+fadd
+fistp @aux11
+fild @aux11
+fild a
+fxch
+fcom
+fstsw ax
+sahf
+JE startIf6
+fld 48
+fild a
+fxch
+fcom
+fstsw ax
+sahf
+JE startIf6
+JMP else6
+JMP startIf6
+else6:
+JMP endif6
+startIf6:
+endif6:
+fld cadena
+fst una cadena

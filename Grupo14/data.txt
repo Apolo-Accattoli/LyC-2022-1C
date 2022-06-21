@@ -1,0 +1,54 @@
+	.DATA
+	MAXTEXTSIZE equ 200
+a                               	dd	0
+b                               	dd	0
+c                               	dd	0
+i                               	dd	0
+x                               	dd	0
+cadena                          	dd	0
+f1                              	dd	0
+f2                              	dd	0
+f3                              	dd	0
+_3.25                           	db	"3.25",'$', 0 dup (?)
+_5                              	db	"5",'$', 0 dup (?)
+_6                              	db	"6",'$', 0 dup (?)
+_30                             	db	"30",'$', 0 dup (?)
+_31                             	db	"31",'$', 0 dup (?)
+_10                             	db	"10",'$', 0 dup (?)
+_Else                           	db	"Else",'$', 0 dup (?)
+_7                              	db	"7",'$', 0 dup (?)
+_40                             	db	"40",'$', 0 dup (?)
+_41                             	db	"41",'$', 0 dup (?)
+_120                            	db	"120",'$', 0 dup (?)
+_1                              	db	"1",'$', 0 dup (?)
+_100                            	db	"100",'$', 0 dup (?)
+_menor                          	db	"menor",'$', 0 dup (?)
+_mayor                          	db	"mayor",'$', 0 dup (?)
+_primero                        	db	"primero",'$', 0 dup (?)
+_4                              	db	"4",'$', 0 dup (?)
+_9                              	db	"9",'$', 0 dup (?)
+_3.33                           	db	"3.33",'$', 0 dup (?)
+_2                              	db	"2",'$', 0 dup (?)
+_15                             	db	"15",'$', 0 dup (?)
+_si BETWEEN                     	db	"si BETWEEN",'$', 0 dup (?)
+_no BETWEEN                     	db	"no BETWEEN",'$', 0 dup (?)
+_12                             	db	"12",'$', 0 dup (?)
+_34                             	db	"34",'$', 0 dup (?)
+_48                             	db	"48",'$', 0 dup (?)
+_si INLIST                      	db	"si INLIST",'$', 0 dup (?)
+_no INLIST                      	db	"no INLIST",'$', 0 dup (?)
+_una cadena                     	db	"una cadena",'$', 0 dup (?)
+_ewr                            	db	"ewr",'$', 0 dup (?)
+@aux1                           	dd	0
+@aux2                           	dd	0
+@aux3                           	dd	0
+@aux4                           	dd	0
+@aux5                           	dd	0
+@aux6                           	dd	0
+@aux7                           	dd	0
+@aux8                           	dd	0
+@aux9                           	dd	0
+@aux10                          	dd	0
+@aux11                          	dd	0
+
+.CODE

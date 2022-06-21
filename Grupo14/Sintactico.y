@@ -42,7 +42,7 @@ enum tipoError
 /* Defino estructura de informacion para el arbol*/
 typedef struct {
 	char* dato;
-	char* tipoDato;		
+	char tipoDato[15];
 }tInfo;
 
 /* Defino estructura de nodo de arbol*/
@@ -295,10 +295,11 @@ char *tipo_str;
 PROGRAMA:
         bloque_declaraciones bloque
         { 
-			guardarTS();
 			postOrden(&bloquePtr, intermedia); //Agregamos funciones
 			graficar_arbol(&bloquePtr, graph);
-			toAssembler(bloquePtr);
+            toAssembler(bloquePtr);
+			guardarTS();
+
 			printf("\nCompilacion exitosa.\n");
 		}
         ;
@@ -660,19 +661,19 @@ expresion:
 			{ 
 				printf("Expresion suma\n"); 
 				exprAritPtr=(tNodo *)crearNodo("OPSUMA", exprAritPtr, terminoPtr);
-				//exprAritPtr->info.tipoDato= terminoPtr->info.tipoDato;
+				strcpy(exprAritPtr->info.tipoDato, terminoPtr->info.tipoDato);
 				//Puntero de Expresion (EXPT) = Crear nodo(+, EXPT, TEPT)
 			}
             | expresion OPRESTA termino { 
 				printf("Expresion resta\n"); 
 				exprAritPtr=(tNodo *)crearNodo("OPRESTA", exprAritPtr, terminoPtr);
-				//exprAritPtr->info.tipoDato= terminoPtr->info.tipoDato;
+                strcpy(exprAritPtr->info.tipoDato, terminoPtr->info.tipoDato);
 				//Puntero de Expresion (EXPT) = Crear nodo(-, EXPT, TEPT)
 				}
             | termino { 
 				printf("Expresion\n"); //copiado de punteros 
 				exprAritPtr = terminoPtr; 
-				//exprAritPtr->info.tipoDato= terminoPtr->info.tipoDato;
+                strcpy(exprAritPtr->info.tipoDato, terminoPtr->info.tipoDato);
 			}
             ;
 
@@ -680,15 +681,15 @@ termino:
         termino OPMUL factor { 
 			printf("Termino multiplicacion\n");
 			terminoPtr=(tNodo *)crearNodo("OPMUL", terminoPtr, factorPtr);
-			//terminoPtr->info.tipoDato= factorPtr->info.tipoDato;
+            strcpy(terminoPtr->info.tipoDato,factorPtr->info.tipoDato);
 		}
         | termino OPDIV factor { printf("Termino division\n");
 			terminoPtr=(tNodo *)crearNodo("OPDIV", terminoPtr, factorPtr);
-			//terminoPtr->info.tipoDato= factorPtr->info.tipoDato;
+            strcpy(terminoPtr->info.tipoDato, factorPtr->info.tipoDato);
 		}
         | factor { 
 			terminoPtr = factorPtr;
-			//terminoPtr->info.tipoDato= factorPtr->info.tipoDato; Parece innecesario
+        strcpy(terminoPtr->info.tipoDato, factorPtr->info.tipoDato);// Parece innecesario
 			printf("Termino\n"); //copiado de punteros TEPT=FAPT
 			}
         ;
@@ -854,6 +855,7 @@ int main(int argc, char *argv[])
 		pilaEtiqExpMax = crearPila();
         crearTablaTS(); //tablaTS.primero = NULL;
         yyparse();
+		
         fclose(yyin);
 		fclose(graph);
 		fclose(intermedia);
@@ -1113,7 +1115,8 @@ tNodo* crearNodo(const char* dato, tNodo *pIzq, tNodo *pDer){
 
     info.dato = (char*)malloc(sizeof(char) * (strlen(dato) + 1));
 	strcpy(info.dato, dato);
-    
+    //strcpy(info.tipoDato, "SIN_TIPO");
+
     nodo->info = info;
     nodo->izq = pIzq;
     nodo->der = pDer;
@@ -1127,8 +1130,8 @@ tNodo* crearHoja(char* dato,char* tipo){
     nodoNuevo->info.dato = (char*)malloc(sizeof(char) * (strlen(dato) + 1));
 	strcpy(nodoNuevo->info.dato, dato);
 	
-    nodoNuevo->info.tipoDato = (char*)malloc(sizeof(char) * (strlen(tipo) + 1));
-    strcpy(nodoNuevo->info.tipoDato, dato);
+    //nodoNuevo->info.tipoDato = (char*)malloc(sizeof(char) * (strlen(tipo) + 1));
+    strcpy(nodoNuevo->info.tipoDato, tipo);
     
     nodoNuevo->izq = NULL;
     nodoNuevo->der = NULL;
@@ -1353,6 +1356,7 @@ int printData(){
 
      while(tabla)
     {
+
         if(strcmp(tabla->data.tipo, "CONS_STR") == 0)
         {
                fprintf(fp, "%-32s\tdb\t\"%s\",'$', %d dup (?)\n", tabla->data.nombre, tabla->data.valor.valor_str,
@@ -1384,13 +1388,18 @@ int printData(){
 			}
 			else if(strcmp(tabla->data.tipo, "STRING") == 0)
 			{
-				auxValor = (char*) malloc(sizeof(tabla->data.valor.valor_str));
-			    sprintf(auxValor, "%s",tabla->data.valor.valor_str);
+				if(tabla->data.valor.valor_str)
+				{
+					auxValor = (char*) malloc(sizeof(tabla->data.valor.valor_str));
+					sprintf(auxValor, "%s",tabla->data.valor.valor_str);
+				}
 			}
+
 
 			fprintf(fp, "%-32s\tdd\t%s\n", tabla->data.nombre, checkEmptyValue(auxValor));
 
         }	
+
         tabla = tabla->next;
         
     }
@@ -1601,10 +1610,10 @@ int popLabel(const int labelType) {
 //Determina la operación entre el nodo, y sus 2 hijos, y escribe las instrucciones assembler en el archivo.
 void setOperation(FILE * fp, tArbol root){
     if(isArithmetic(root->info.dato)) {
-        if(strcmp(root->info.dato, ":=") == 0) {
-            if(strcmp(root->izq->info.dato, ":=") == 0){
+        if(strcmp(root->info.dato, "OPASIG") == 0) {
+            if(strcmp(root->izq->info.dato, "OPASIG") == 0){
                  fprintf(fp, "f%sst %s\n", determinarCargaPila(root, root->der), root->der->info.dato);
-            }else if (strcmp(root->info.tipoDato, "CONS_STR")==0) {
+            }else if (root->info.tipoDato && strcmp(root->info.tipoDato, "CONS_STR")==0) {
                 addCodeToProcesString = 1; 
                 fprintf(fp, "MOV si, OFFSET   %s\n", root->izq);
                 fprintf(fp, "MOV di, OFFSET  %s\n", root->der);

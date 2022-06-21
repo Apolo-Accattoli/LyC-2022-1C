@@ -14,27 +14,38 @@ _6                            CONS_INT                      6                   
 _30                           CONS_INT                      30                            2
 _31                           CONS_INT                      31                            2
 _10                           CONS_INT                      10                            2
-_"Else"                       CONS_STR                      "Else"                        6
+_Else                         CONS_STR                      Else                          4
 _7                            CONS_INT                      7                             1
 _40                           CONS_INT                      40                            2
 _41                           CONS_INT                      41                            2
 _120                          CONS_INT                      120                           3
 _1                            CONS_INT                      1                             1
 _100                          CONS_INT                      100                           3
-_"menor"                      CONS_STR                      "menor"                       7
-_"mayor"                      CONS_STR                      "mayor"                       7
-_"primero"                    CONS_STR                      "primero"                     9
+_menor                        CONS_STR                      menor                         5
+_mayor                        CONS_STR                      mayor                         5
+_primero                      CONS_STR                      primero                       7
 _4                            CONS_INT                      4                             1
 _9                            CONS_INT                      9                             1
 _3.33                         CONS_FLOAT                    3.33                          4
 _2                            CONS_INT                      2                             1
 _15                           CONS_INT                      15                            2
-_"si BETWEEN"                 CONS_STR                      "si BETWEEN"                  12
-_"no BETWEEN"                 CONS_STR                      "no BETWEEN"                  12
+_si BETWEEN                   CONS_STR                      si BETWEEN                    10
+_no BETWEEN                   CONS_STR                      no BETWEEN                    10
 _12                           CONS_INT                      12                            2
 _34                           CONS_INT                      34                            2
 _48                           CONS_INT                      48                            2
-_"si INLIST"                  CONS_STR                      "si INLIST"                   11
-_"no INLIST"                  CONS_STR                      "no INLIST"                   11
-_"una cadena"                 CONS_STR                      "una cadena"                  12
-_"ewr"                        CONS_STR                      "ewr"                         5
+_si INLIST                    CONS_STR                      si INLIST                     9
+_no INLIST                    CONS_STR                      no INLIST                     9
+_una cadena                   CONS_STR                      una cadena                    10
+_ewr                          CONS_STR                      ewr                           3
+@aux1                         FLOAT                         --                            5
+@aux2                         FLOAT                         --                            5
+@aux3                         FLOAT                         --                            5
+@aux4                         FLOAT                         --                            5
+@aux5                         FLOAT                         --                            5
+@aux6                         FLOAT                         --                            5
+@aux7                         FLOAT                         --                            5
+@aux8                         FLOAT                         --                            5
+@aux9                         FLOAT                         --                            5
+@aux10                        FLOAT                         --                            6
+@aux11                        FLOAT                         --                            6

@@ -85,7 +85,7 @@ SIMBOLO       	[!|@|#|$|%|^|&|=|*|.|/|-|+|\"|" "|:|)|(|<|>]
 {OPMUL}  		{return OPMUL;}
 {OPDIV}    		{return OPDIV;}
 {CONS_STR}		{
-					yylval.tipo_str = yytext;
+					yylval.tipo_str = strtok(yytext,"\"");
                     validarString(yylval.tipo_str);
                     insertarTS(yylval.tipo_str, "CONS_STR", yylval.tipo_str, 0, 0);
                     return CONS_STR;

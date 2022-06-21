@@ -6,8 +6,8 @@ del intermedia.txt
 
 flex .\Lexico.l
 bison -dyv .\Sintactico.y
-gcc.exe lex.yy.c y.tab.c -o Segunda.exe
-.\Segunda.exe prueba.txt
+gcc.exe lex.yy.c y.tab.c -o Grupo14.exe
+.\Grupo14.exe prueba.txt
 dot -Tpng intermedia.dot > intermedia.png
 pause
 

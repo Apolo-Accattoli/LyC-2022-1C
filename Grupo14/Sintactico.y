@@ -127,31 +127,30 @@ int esNumero(const char*,char*);
 
 /* ---  Funciones ASEEMBLER   --- */
 
-#ifndef ASSEMBLER_H
-#define ASSEMBLER_H
-int toAssembler(nodo *);
+int toAssembler(tNodo *);
 int printHeader();
 int printData();
-int printInstructions(nodo *);
+int printInstructions(tNodo *);
 int printFooter();
 char * checkEmptyValue(char *);
 void pushLabel(const int);
-void recorrerArbolParaAssembler(FILE *, nodo*);
+void recorrerArbolParaAssembler(FILE *, tNodo*);
 int getTopLabelStack(const int);
 int popLabel(const int);
-void setOperation(FILE *, nodo *);
+void setOperation(FILE *, tNodo *);
 int isArithmetic(const char *);
-char *determinarCargaPila(const nodo *, const nodo *);
-char *determinarDescargaPila(const nodo *);
+char *determinarCargaPila(const tArbol, const tNodo *);
+char *determinarDescargaPila(const tArbol);
 char* getArithmeticInstruction(const char *);
 int isComparation(const char *);
 int getAux();
 char* getJump();
 char* getComparationInstruction(const char *);
-char* getDisplayInstruction(nodo*);
-char* getInstructionGet(nodo*);
+char* getDisplayInstruction(tNodo*);
+char* getInstructionGet(tNodo*);
 int makeASM();
 int setFile(FILE*, char *);
+int esHoja(tNodo *);
 
 int cantAux = 0;
 int hasElse = 0;
@@ -299,7 +298,7 @@ PROGRAMA:
 			guardarTS();
 			postOrden(&bloquePtr, intermedia); //Agregamos funciones
 			graficar_arbol(&bloquePtr, graph);
-			toAssembler(&bloquePtr);
+			toAssembler(bloquePtr);
 			printf("\nCompilacion exitosa.\n");
 		}
         ;
@@ -1794,4 +1793,11 @@ char* getInstructionGet(tNodo* nodo) {
         return "GetFloat";
     if (strcmp(auxiliartipo,"STRING")==0)
         return "getString"; //Esta en macros2.asm
+}
+
+int esHoja(tNodo *hoja) {
+    if (hoja == NULL) {
+        return 0;
+    }
+    return hoja->izq == NULL && hoja->der == NULL;
 }

@@ -299,6 +299,7 @@ PROGRAMA:
 			guardarTS();
 			postOrden(&bloquePtr, intermedia); //Agregamos funciones
 			graficar_arbol(&bloquePtr, graph);
+			toAssembler(&bloquePtr);
 			printf("\nCompilacion exitosa.\n");
 		}
         ;
@@ -1254,7 +1255,7 @@ void graficar_arbol(tArbol *p,FILE* stream)
 
 // ************ FUNCIONES DE ASSEMBLER **********
 
-int toAssembler(nodo * root){
+int toAssembler(tArbol root){
     if(printHeader() == -1){
         printf("Error al generar el assembler");
         return -1;
@@ -1284,6 +1285,7 @@ int toAssembler(nodo * root){
     }
 }
 
+//Genera el archivo final de assembler uniéndolo con setFile
 int makeASM() {
     FILE * fp = fopen("./Final.asm", "w+");
 	
@@ -1324,9 +1326,10 @@ int printHeader(){
 		printf("Error abriendo el archivo del header\n");
 		return -1;
 	}
-
+	fprintf(fp, "INCLUDE macros.asm\n");
 	fprintf(fp, "INCLUDE macros2.asm\n");
     fprintf(fp, "INCLUDE number.asm\n");
+	fprintf(fp, "INCLUDE numbers.asm\n");
     fprintf(fp, ".MODEL LARGE\n");
     fprintf(fp, ".386\n");
     fprintf(fp, ".STACK 200h\n"); 
@@ -1428,7 +1431,7 @@ int printData(){
 }
 
 
-int printInstructions(nodo * root){
+int printInstructions(tArbol root){
     FILE * fp = fopen("./instructions.txt", "wt+");
 	if (fp == NULL) {
 		printf("Error al escribir el archivo de instrucciones");
@@ -1468,45 +1471,45 @@ char * checkEmptyValue(char *value) {
 }
 
 // Función que recorre el arbol y llena el archivo instruction.txt con las instrucciones de assembler que correspondan
-void recorrerArbolParaAssembler(FILE * fp, nodo* root) {
+void recorrerArbolParaAssembler(FILE * fp, tArbol root) {
     if (root != NULL) {
         
         int currentIfNode = 0;
         int currentWhileNode = 0;
 
         //Nodo IF
-        if(strcmp(root->dato, "IF") == 0) {
+        if(strcmp(root->info.dato, "IF") == 0) {
             hasElse = 0;
             ORcondition = 0;
             NOTcondition = 0;
             currentIfNode = 1;
             pushLabel(LABEL_IF);
             
-            if (strcmp(root->hijoDer->dato, "CUERPO") == 0) {
+            if (strcmp(root->der->info.dato, "CUERPO") == 0) {
                 hasElse = 1;
             }
-            if (strcmp(root->hijoIzq->dato, "OR") == 0) {
+            if (strcmp(root->izq->info.dato, "OR") == 0) {
                 ORcondition = 1;
             }
-            if (strcmp(root->hijoIzq->dato, "NOT") == 0) {
+            if (strcmp(root->izq->info.dato, "NOT") == 0) {
                 NOTcondition = 1;
             }
         }
 
         //WHILE
-        if(strcmp(root->dato, "WHILE") == 0) {
+        if(strcmp(root->info.dato, "WHILE") == 0) {
             currentWhileNode = 1;
             isWhile = 1;
             ORcondition = 0;
             pushLabel(LABEL_WHILE);
             fprintf(fp, "condicionWhile%d:\n", getTopLabelStack(LABEL_WHILE));
-            if (strcmp(root->hijoIzq->dato, "OR") == 0) {
+            if (strcmp(root->izq->info.dato, "OR") == 0) {
                 ORcondition = 1;
             }
         }
 
         // Buscamos nodo a la izquierda
-        recorrerArbolParaAssembler(fp, root->hijoIzq);
+        recorrerArbolParaAssembler(fp, root->izq);
         // Fin de recorrido a la izquierda
 
         if(currentIfNode) {
@@ -1525,7 +1528,7 @@ void recorrerArbolParaAssembler(FILE * fp, nodo* root) {
                 fprintf(fp, "startIf%d:\n", getTopLabelStack(LABEL_IF));
         }
 
-        if(strcmp(root->dato, "CUERPO") == 0) {
+        if(strcmp(root->info.dato, "CUERPO") == 0) {
             fprintf(fp, "JMP endif%d\n", getTopLabelStack(LABEL_IF));
             fprintf(fp, "startIf%d:\n", getTopLabelStack(LABEL_IF));
         }
@@ -1536,7 +1539,7 @@ void recorrerArbolParaAssembler(FILE * fp, nodo* root) {
         }
         
         // Buscamos nodo a la derecha
-        recorrerArbolParaAssembler(fp, root->hijoDer);
+        recorrerArbolParaAssembler(fp, root->der);
         // Fin de recorrido a la derecha
 
         if (currentIfNode) {
@@ -1549,12 +1552,12 @@ void recorrerArbolParaAssembler(FILE * fp, nodo* root) {
             fprintf(fp, "endwhile%d:\n", popLabel(LABEL_WHILE));
         }
         
-        if (esHoja(root->hijoIzq) && esHoja(root->hijoDer)) {
+        if (esHoja(root->izq) && esHoja(root->der)) {
             // soy nodo mas a la izquierda con dos hijos hojas
             setOperation(fp, root);
             // reduzco arbol
-            root->hijoIzq = NULL;
-            root->hijoDer = NULL;
+            root->izq = NULL;
+            root->der = NULL;
         }
     }
 }
@@ -1597,78 +1600,78 @@ int popLabel(const int labelType) {
 }
 
 //Determina la operación entre el nodo, y sus 2 hijos, y escribe las instrucciones assembler en el archivo.
-void setOperation(FILE * fp, nodo * root){
-    if(isArithmetic(root->dato)) {
-        if(strcmp(root->dato, ":") == 0) {
-            if(strcmp(root->hijoIzq->dato, ":") == 0){
-                 fprintf(fp, "f%sst %s\n", determinarCargaPila(root, root->hijoDer), root->hijoDer->dato);
-            }else if (root->tipo == TOKEN_CTE_STRING) {
+void setOperation(FILE * fp, tArbol root){
+    if(isArithmetic(root->info.dato)) {
+        if(strcmp(root->info.dato, ":=") == 0) {
+            if(strcmp(root->izq->info.dato, ":=") == 0){
+                 fprintf(fp, "f%sst %s\n", determinarCargaPila(root, root->der), root->der->info.dato);
+            }else if (strcmp(root->info.tipoDato, "CONS_STR")==0) {
                 addCodeToProcesString = 1; 
-                fprintf(fp, "MOV si, OFFSET   %s\n", root->hijoIzq);
-                fprintf(fp, "MOV di, OFFSET  %s\n", root->hijoDer);
+                fprintf(fp, "MOV si, OFFSET   %s\n", root->izq);
+                fprintf(fp, "MOV di, OFFSET  %s\n", root->der);
                 fprintf(fp, "CALL assignString\n");
             } else {
                 //ASIGNACION DE ALGO QUE NO ES UN STRING (FLOAT O INT)
-                fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->hijoIzq), root->hijoIzq->dato);
-                fprintf(fp, "f%sst %s\n", determinarCargaPila(root, root->hijoDer), root->hijoDer->dato);
+                fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->izq), root->izq->info.dato);
+                fprintf(fp, "f%sst %s\n", determinarCargaPila(root, root->der), root->der->info.dato);
             }
         } else {
             //OPERACION ARTIMETICA
-            fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->hijoIzq), root->hijoIzq->dato); //st0 = izq
-            fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->hijoDer), root->hijoDer->dato); //st0 = der st1 = izq
-            fprintf(fp, "%s\n", getArithmeticInstruction(root->dato));
+            fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->izq), root->izq->info.dato); //st0 = izq
+            fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->der), root->der->info.dato); //st0 = der st1 = izq
+            fprintf(fp, "%s\n", getArithmeticInstruction(root->info.dato));
             
-            fprintf(fp, "f%sstp @aux%d\n", determinarDescargaPila(root), getAux(root->tipo));
+            fprintf(fp, "f%sstp @aux%d\n", determinarDescargaPila(root), getAux(root->info.tipoDato));
 
             // Guardo en el arbol el dato del resultado, si uso un aux
-            sprintf(root->dato, "@aux%d", cantAux);
+            sprintf(root->info.dato, "@aux%d", cantAux);
         }
     }
 
-    if(isComparation(root->dato)) {
+    if(isComparation(root->info.dato)) {
         // esto funciona para comparaciones simples
-        fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->hijoDer), root->hijoDer->dato); //st0 = der
-        fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->hijoIzq), root->hijoIzq->dato); //st0 = izq  st1 = der
+        fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->der), root->der->info.dato); //st0 = der
+        fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->izq), root->izq->info.dato); //st0 = izq  st1 = der
         fprintf(fp, "fxch\n"); // compara ST0 con ST1"
         fprintf(fp, "fcom\n"); // compara ST0 con ST1"
         fprintf(fp, "fstsw ax\n");
         fprintf(fp, "sahf\n");
         if (isWhile)
-            fprintf(fp, "%s %s%d\n", getComparationInstruction(root->dato), getJump(), getTopLabelStack(LABEL_WHILE));
+            fprintf(fp, "%s %s%d\n", getComparationInstruction(root->info.dato), getJump(), getTopLabelStack(LABEL_WHILE));
         else
-            fprintf(fp, "%s %s%d\n", getComparationInstruction(root->dato), getJump(), getTopLabelStack(LABEL_IF));
+            fprintf(fp, "%s %s%d\n", getComparationInstruction(root->info.dato), getJump(), getTopLabelStack(LABEL_IF));
     }
 
-    if(strcmp(root->dato, "READ") == 0) {
-        fprintf(fp, "%s %s\n", getInstructionGet(root->hijoDer), root->hijoDer->dato);
+    if(strcmp(root->info.dato, "READ") == 0) {
+        fprintf(fp, "%s %s\n", getInstructionGet(root->der), root->der->info.dato);
     }
 
-    if(strcmp(root->dato, "WRITE") == 0) {
-        fprintf(fp, "%s\n", getDisplayInstruction(root->hijoDer));
+    if(strcmp(root->info.dato, "WRITE") == 0) {
+        fprintf(fp, "%s\n", getDisplayInstruction(root->der));
         fprintf(fp, "newLine 1\n");
     }
 }
 
 //Devuelve true o false dependiendo si el operador que se pasa por parámetro es del tipo aritmético.
 int isArithmetic(const char *operator) {
-    return strcmp(operator, "+") == 0 ||
-        strcmp(operator, "/") == 0 ||
-        strcmp(operator, "*") == 0 ||
-        strcmp(operator, ":=") == 0 || 
-        strcmp(operator, "-") == 0;
+    return strcmp(operator, "OPSUMA") == 0 ||
+        strcmp(operator, "OPDIV") == 0 ||
+        strcmp(operator, "OPMUL") == 0 ||
+        strcmp(operator, "OPASIG") == 0 || 
+        strcmp(operator, "OPRESTA") == 0;
 }
 
 //Si el tipo de dato del nodo, es del tipo integer, retorna una i, para que la instrucción se procese del tipo integer y sino, que se mantenga del tipo float.
-char *determinarCargaPila(const nodo * raiz, const nodo * hijo) {
-    if (typeDecorator(hijo->tipo) == TIPO_INTEGER) {
+char *determinarCargaPila(const tArbol raiz, const tNodo * hijo) {
+    if (strcmp(hijo->info.tipoDato, "INTEGER")==0) {
         return "i";
     }
     return "";
 }
 
 //Si el tipo de dato del nodo, es del tipo integer, retorna una i, para que la instrucción se procese del tipo integer y sino, que se mantenga del tipo float.
-char *determinarDescargaPila(const nodo * raiz) {
-    if (typeDecorator(raiz->tipo) == TIPO_INTEGER) {
+char *determinarDescargaPila(const tArbol raiz) {
+    if (strcmp(raiz->info.tipoDato, "INTEGER")==0) {
         return "i";
     }
     return "";
@@ -1676,13 +1679,13 @@ char *determinarDescargaPila(const nodo * raiz) {
 
 //Obtiene la instrucción aritmética correspondiente dependiendo del operador.
 char* getArithmeticInstruction(const char *operator) {
-    if (strcmp(operator, "+") == 0)
+    if (strcmp(operator, "OPSUMA") == 0)
         return "fadd";
-    if (strcmp(operator, "-") == 0)
+    if (strcmp(operator, "OPRESTA") == 0)
         return "fsub";
-    if (strcmp(operator, "*") == 0)
+    if (strcmp(operator, "OPMUL") == 0)
         return "fmul";
-    if (strcmp(operator, "/") == 0)
+    if (strcmp(operator, "OPDIV") == 0)
         return "fdiv";
 }
 
@@ -1691,55 +1694,55 @@ char* getComparationInstruction(const char *comparador) {
     // Esto nos va a servir para cuando venga un OR, ya que hay que invertir la primer comparacion
     // para que pueda evaluar las dos, sin hacer tantos if
     if(ORcondition) { //Pongo operadores opuestos porque los carga al reves en la pila para compararlos
-        if (strcmp(comparador, ">") == 0)
+        if (strcmp(comparador, "OPMAYOR") == 0)
             return "JB";
-        if (strcmp(comparador, ">=") == 0)
+        if (strcmp(comparador, "OPMAYORIGUAL") == 0)
             return "JBE";
-        if (strcmp(comparador, "<") == 0)
+        if (strcmp(comparador, "OPMENOR") == 0)
             return "JA";
-        if (strcmp(comparador, "<=") == 0)
+        if (strcmp(comparador, "OPMENORIGUAL") == 0)
             return "JAE";
-        if (strcmp(comparador, "==") == 0)
+        if (strcmp(comparador, "OPIDENTICO") == 0)
             return "JE";
-        if (strcmp(comparador, "!=") == 0)
+        if (strcmp(comparador, "OPDISTINTO") == 0)
             return "JNE";
     } else if(NOTcondition) { 
-        if (strcmp(comparador, ">") == 0)
+        if (strcmp(comparador, "OPMAYOR") == 0)
             return "JB";
-        if (strcmp(comparador, ">=") == 0)
+        if (strcmp(comparador, "OPMAYORIGUAL") == 0)
             return "JBE";
-        if (strcmp(comparador, "<") == 0)
+        if (strcmp(comparador, "OPMENOR") == 0)
             return "JA";
-        if (strcmp(comparador, "<=") == 0)
+        if (strcmp(comparador, "OPMENORIGUAL") == 0)
             return "JAE";
-        if (strcmp(comparador, "==") == 0)
+        if (strcmp(comparador, "OPIDENTICO") == 0)
             return "JNE";
-        if (strcmp(comparador, "!=") == 0)
+        if (strcmp(comparador, "OPDISTINTO") == 0)
             return "JE";
     } else{ //Pongo operadores opuestos porque los carga al reves en la pila para compararlos y ademas los niego porque si no se cumple, salgo
-        if (strcmp(comparador, ">") == 0)
+        if (strcmp(comparador, "OPMAYOR") == 0)
             return "JNB";
-        if (strcmp(comparador, ">=") == 0)
+        if (strcmp(comparador, "OPMAYORIGUAL") == 0)
             return "JNBE";
-        if (strcmp(comparador, "<") == 0)
+        if (strcmp(comparador, "OPMENOR") == 0)
             return "JNA";
-        if (strcmp(comparador, "<=") == 0)
+        if (strcmp(comparador, "OPMENORIGUAL") == 0)
             return "JNAE";
-        if (strcmp(comparador, "==") == 0)
+        if (strcmp(comparador, "OPIDENTICO") == 0)
             return "JNE";
-        if (strcmp(comparador, "!=") == 0)
+        if (strcmp(comparador, "OPDISTINTO") == 0)
             return "JE";            
     }
 }
 
 //Devuelve true o false, dependiendo si el operador es del tipo comparación.
 int isComparation(const char *comp) {
-    return strcmp(comp, ">") == 0 ||
-    strcmp(comp, ">=") == 0 ||
-    strcmp(comp, "<") == 0 ||
-    strcmp(comp, "<=") == 0 ||
-    strcmp(comp, "==") == 0 ||
-    strcmp(comp, "!=") == 0;
+    return strcmp(comp, "OPMAYOR") == 0 ||
+    strcmp(comp, "OPMAYORIGUAL") == 0 ||
+    strcmp(comp, "OPMENOR") == 0 ||
+    strcmp(comp, "OPMENORIGUAL") == 0 ||
+    strcmp(comp, "OPIDENTICO") == 0 ||
+    strcmp(comp, "OPDISTINTO") == 0;
 }
 
 //Guarda un auxiliar en la tabla de símbolo, por defecto lo genera del tipo float
@@ -1747,7 +1750,7 @@ int getAux() {
     cantAux++;
     char aux[10];
     sprintf(aux, "@aux%d", cantAux);
-    grabarToken(TOKEN_ID, "FLOAT" , aux, "", strlen(aux));
+    insertarTS(aux, "FLOAT" , "", 0 , 0);
     return cantAux;
 }
 
@@ -1769,22 +1772,26 @@ char* getJump() {
 }
 
 //Obtiene la instrucción display del archivo "numbers.asm", y dependiendo del tipo de dato del nodo, lo convierte a array para poder mostrarlo por pantalla.
-char* getDisplayInstruction(nodo* nodo) {
-    int tipo = mapNombreTipoDatoToConst(getTipoDato(nodo->dato));
-    if (tipo == TOKEN_CTE_FLOAT || tipo == TOKEN_CTE_INTEGER) {
-        sprintf(instruccionDisplay, "DisplayFloat %s,2", nodo->dato);
-    } else if (tipo == TOKEN_CTE_STRING) {
-        sprintf(instruccionDisplay, "displayString %s", nodo->dato);
+char* getDisplayInstruction(tNodo* nodo) {
+	
+	
+	char * auxiliartipo = getTipoId (nodo->info.dato);
+	
+	if (strcmp(auxiliartipo,"INTEGER")==0 || strcmp(auxiliartipo,"CONS_INT")==0 || strcmp(auxiliartipo,"FLOAT")==0 || strcmp(auxiliartipo,"CONS_FLOAT")==0) {
+		sprintf(instruccionDisplay, "DisplayFloat %s,2", nodo->info.dato);
+	} else if (strcmp(auxiliartipo,"STRING")==0 || strcmp(auxiliartipo,"CONS_STR")==0) {
+        sprintf(instruccionDisplay, "displayString %s", nodo->info.dato);
     }
     
     return instruccionDisplay;
 }
 
 //Obtiene la instrucción get del archivo "numbers.asm", es cuando se recibe por teclado algún valor, y convierte al array recibido en integer, float o string, dependiendo del tipo de dato del ID del nodo.
-char* getInstructionGet(nodo* nodo) {
-    int tipoDato = mapNombreTipoDatoToConst(getTipoDato(nodo->dato));
-    if (tipoDato == TOKEN_CTE_FLOAT || tipoDato == TOKEN_CTE_INTEGER )
+char* getInstructionGet(tNodo* nodo) {
+    char * auxiliartipo = getTipoId (nodo->info.dato);
+	
+    if (strcmp(auxiliartipo,"INTEGER")==0 || strcmp(auxiliartipo,"FLOAT")==0 )
         return "GetFloat";
-    if (tipoDato == TOKEN_CTE_STRING)
-        return "getString"; //No está en el archivo number
+    if (strcmp(auxiliartipo,"STRING")==0)
+        return "getString"; //Esta en macros2.asm
 }

@@ -36,6 +36,9 @@ enum tipoError
 #define TAM_NOMBRE 32
 #define ES_CTE_CON_NOMBRE 1
 
+
+#define LABEL_IF 100
+#define LABEL_WHILE 110
 /* Defino estructura de informacion para el arbol*/
 typedef struct {
 	char* dato;
@@ -524,7 +527,7 @@ seleccion:
 				} 
 			ELSE bloque ENDIF
             { 
-				seleccionPtr =(tNodo *) crearNodo("IF-ELSE", condicionPtr, crearNodo("cuerpo",auxBloquePtr,bloquePtr));
+				seleccionPtr =(tNodo *) crearNodo("IF", condicionPtr, crearNodo("CUERPO",auxBloquePtr,bloquePtr));
 				if (topedePila(pilaCondiciones)){
 					condicionPtr = topedePila(pilaCondiciones);
 					sacardePila(pilaCondiciones);
@@ -1369,31 +1372,25 @@ int printData(){
 			if(strcmp(tabla->data.tipo, "INTEGER") == 0)
 			{
 			    auxValor = (char*) malloc(sizeof(tabla->data.valor.valor_int));
-			    sprintf(auxValor, "%d",)
+			    sprintf(auxValor, "%d",tabla->data.valor.valor_int);
 
 			}
 			else if(strcmp(tabla->data.tipo, "FLOAT") == 0)
 			{
-			    fprintf(fp, "%-32s\tdd\t%s\n", tabla->data.nombre, checkEmptyValue(tabla->data.valor.valor_double));
+				auxValor = (char*) malloc(sizeof(tabla->data.valor.valor_double));
+			    sprintf(auxValor, "%g",tabla->data.valor.valor_double);
 			}
 			else if(strcmp(tabla->data.tipo, "STRING") == 0)
 			{
-			    fprintf(fp, "%-32s\tdd\t%s\n", tabla->data.nombre, checkEmptyValue(tabla->data.valor.valor_str));
+				auxValor = (char*) malloc(sizeof(tabla->data.valor.valor_str));
+			    sprintf(auxValor, "%s",tabla->data.valor.valor_str);
 			}
 
-			fprintf(fp, "%-32s\tdd\t%s\n", tabla->data.nombre, checkEmptyValue(auxValor))
+			fprintf(fp, "%-32s\tdd\t%s\n", tabla->data.nombre, checkEmptyValue(auxValor));
 
         }	
         tabla = tabla->next;
         
-    }
-    return 0;
-    for (i = 0; i < posTablaSimb; i++) {
-        if (tablaSimb[i].tipo_token == TOKEN_CTE_STRING)
-            fprintf(fp, "%-32s\tdb\t\"%s\",'$', %s dup (?)\n", tablaSimb[i].nombre, tablaSimb[i].valor,
-                    tablaSimb[i].longitud);
-        else
-            fprintf(fp, "%-32s\tdd\t%s\n", tablaSimb[i].nombre, checkEmptyValue(tablaSimb[i].valor));
     }
 
     fprintf(fp, "\n.CODE\n");
@@ -1485,7 +1482,7 @@ void recorrerArbolParaAssembler(FILE * fp, nodo* root) {
             currentIfNode = 1;
             pushLabel(LABEL_IF);
             
-            if (strcmp(root->hijoDer->dato, "BODY") == 0) {
+            if (strcmp(root->hijoDer->dato, "CUERPO") == 0) {
                 hasElse = 1;
             }
             if (strcmp(root->hijoIzq->dato, "OR") == 0) {
@@ -1528,7 +1525,7 @@ void recorrerArbolParaAssembler(FILE * fp, nodo* root) {
                 fprintf(fp, "startIf%d:\n", getTopLabelStack(LABEL_IF));
         }
 
-        if(strcmp(root->dato, "BODY") == 0) {
+        if(strcmp(root->dato, "CUERPO") == 0) {
             fprintf(fp, "JMP endif%d\n", getTopLabelStack(LABEL_IF));
             fprintf(fp, "startIf%d:\n", getTopLabelStack(LABEL_IF));
         }
@@ -1657,7 +1654,7 @@ int isArithmetic(const char *operator) {
     return strcmp(operator, "+") == 0 ||
         strcmp(operator, "/") == 0 ||
         strcmp(operator, "*") == 0 ||
-        strcmp(operator, ":") == 0 || 
+        strcmp(operator, ":=") == 0 || 
         strcmp(operator, "-") == 0;
 }
 

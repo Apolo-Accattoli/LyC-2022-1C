@@ -37,14 +37,14 @@ _9                              	dd	9
 _3.33                           	dd	3.33
 _2                              	dd	2
 _15                             	dd	15
-_si BETWEEN                     	db	"si BETWEEN",'$', 10 dup (?)
-_no BETWEEN                     	db	"no BETWEEN",'$', 10 dup (?)
+_si_BETWEEN                     	db	"si BETWEEN",'$', 10 dup (?)
+_no_BETWEEN                     	db	"no BETWEEN",'$', 10 dup (?)
 _12                             	dd	12
 _34                             	dd	34
 _48                             	dd	48
-_si INLIST                      	db	"si INLIST",'$', 9 dup (?)
-_no INLIST                      	db	"no INLIST",'$', 9 dup (?)
-_una cadena                     	db	"una cadena",'$', 10 dup (?)
+_si_INLIST                      	db	"si INLIST",'$', 9 dup (?)
+_no_INLIST                      	db	"no INLIST",'$', 9 dup (?)
+_una_cadena                     	db	"una cadena",'$', 10 dup (?)
 _ewr                            	db	"ewr",'$', 3 dup (?)
 @aux1                           	dd	?
 @aux2                           	dd	?
@@ -59,6 +59,29 @@ _ewr                            	db	"ewr",'$', 3 dup (?)
 @aux11                          	dd	?
 
 .CODE
+strlen proc
+	mov bx, 0
+	strLoop:
+		cmp BYTE PTR [si+bx],'$'
+		je strend
+		inc bx
+		jmp strLoop
+	strend:
+		ret
+strlen endp
+assignString proc
+	call strlen
+	cmp bx , MAXTEXTSIZE
+	jle assignStringSizeOk
+	mov bx , MAXTEXTSIZE
+	assignStringSizeOk:
+		mov cx , bx
+		cld
+		rep movsb
+		mov al , '$'
+		mov byte ptr[di],al
+		ret
+assignString endp
 
 START:
 MOV AX,@DATA
@@ -67,8 +90,8 @@ MOV es,ax
 FINIT
 FFREE
 
-fld f1
-fst 3.25
+fld 3.25
+fst f1
 fld 5
 fild a
 fxch
@@ -78,8 +101,8 @@ sahf
 JB else1
 JMP startIf1
 else1:
-fild x
-fst 6
+fld 6
+fist x
 JMP endif1
 startIf1:
 fld 30
@@ -99,14 +122,17 @@ JE startIf2
 JMP else2
 JMP startIf2
 else2:
-fild c
-fst 10
+fld 10
+fist c
 JMP endif2
 startIf2:
+displayString _Else
+newLine 1
 endif2:
-fild i
-fst 7
+fld 7
+fist i
 endif1:
+GetFloat x
 fld 40
 fild a
 fxch
@@ -122,9 +148,11 @@ fstsw ax
 sahf
 JNE endif3
 startIf3:
-fild b
-fst 120
+fld 120
+fist b
 endif3:
+DisplayFloat x,2
+newLine 1
 condicionWhile1:
 fld 1
 fild a
@@ -150,8 +178,8 @@ fstsw ax
 sahf
 JNB endwhile2
 startWhile2:
-fild x
-fst 1
+fld 1
+fist x
 fld 100
 fild c
 fxch
@@ -161,35 +189,41 @@ sahf
 JNA else4
 JMP startIf4
 else4:
+displayString _menor
+newLine 1
 JMP endif4
 startIf4:
+displayString _mayor
+newLine 1
 endif4:
 JMP condicionWhile2
 endwhile2:
+displayString _primero
+newLine 1
 JMP condicionWhile1
 endwhile1:
 fild a
 fild b
 fadd
 fistp @aux1
-fild a
-fist @aux1
+fild @aux1
+fist a
 fild b
-fld 4
+fild 4
 fadd
-fstp @aux2
-fild a
-fst @aux2
+fistp @aux2
+fld @aux2
+fist a
 fild b
-fld 9
+fild 9
 fadd
-fstp @aux3
+fistp @aux3
 fild a
-fld @aux3
+fild @aux3
 fmul
-fstp @aux4
-fild a
-fst @aux4
+fistp @aux4
+fld @aux4
+fist a
 fld f1
 fild a
 fadd
@@ -198,8 +232,8 @@ fild @aux5
 fld 3.33
 fadd
 fstp @aux6
-fld f2
-fst @aux6
+fld @aux6
+fst f2
 fld 2
 fild a
 fxch
@@ -216,17 +250,21 @@ sahf
 JNA else5
 JMP startIf5
 else5:
+displayString _si_BETWEEN
+newLine 1
 JMP endif5
 startIf5:
+displayString _no_BETWEEN
+newLine 1
 endif5:
 fld 2
 fild b
 fmul
 fistp @aux7
 fild @aux7
-fld 7
+fild 7
 fadd
-fstp @aux8
+fistp @aux8
 fld @aux8
 fild a
 fxch
@@ -270,11 +308,18 @@ JE startIf6
 JMP else6
 JMP startIf6
 else6:
+displayString _si_INLIST
+newLine 1
 JMP endif6
 startIf6:
+displayString _no_INLIST
+newLine 1
 endif6:
-fld cadena
-fst una cadena
+MOV si, OFFSET   _una_cadena
+MOV di, OFFSET  cadena
+CALL assignString
+displayString _ewr
+newLine 1
 
 liberar:
 	ffree

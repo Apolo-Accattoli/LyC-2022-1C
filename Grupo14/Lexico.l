@@ -85,9 +85,16 @@ SIMBOLO       	[!|@|#|$|%|^|&|=|*|.|/|-|+|\"|" "|:|)|(|<|>]
 {OPMUL}  		{return OPMUL;}
 {OPDIV}    		{return OPDIV;}
 {CONS_STR}		{
+					char* auxStr;
 					yylval.tipo_str = strtok(yytext,"\"");
+					
+					auxStr = (char*) malloc(sizeof(auxStr)*sizeof(char) +2);
+					strcpy(auxStr, "_");
+					strcat(auxStr, yylval.tipo_str);
+					replace_char(auxStr, ' ', '_');
+					
                     validarString(yylval.tipo_str);
-                    insertarTS(yylval.tipo_str, "CONS_STR", yylval.tipo_str, 0, 0);
+                    insertarTS(auxStr, "CONS_STR", yylval.tipo_str, 0, 0);
                     return CONS_STR;
 				}
 {CONS_INT}		{

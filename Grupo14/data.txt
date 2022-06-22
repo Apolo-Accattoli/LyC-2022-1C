@@ -30,14 +30,14 @@ _9                              	dd	9
 _3.33                           	dd	3.33
 _2                              	dd	2
 _15                             	dd	15
-_si BETWEEN                     	db	"si BETWEEN",'$', 10 dup (?)
-_no BETWEEN                     	db	"no BETWEEN",'$', 10 dup (?)
+_si_BETWEEN                     	db	"si BETWEEN",'$', 10 dup (?)
+_no_BETWEEN                     	db	"no BETWEEN",'$', 10 dup (?)
 _12                             	dd	12
 _34                             	dd	34
 _48                             	dd	48
-_si INLIST                      	db	"si INLIST",'$', 9 dup (?)
-_no INLIST                      	db	"no INLIST",'$', 9 dup (?)
-_una cadena                     	db	"una cadena",'$', 10 dup (?)
+_si_INLIST                      	db	"si INLIST",'$', 9 dup (?)
+_no_INLIST                      	db	"no INLIST",'$', 9 dup (?)
+_una_cadena                     	db	"una cadena",'$', 10 dup (?)
 _ewr                            	db	"ewr",'$', 3 dup (?)
 @aux1                           	dd	?
 @aux2                           	dd	?
@@ -52,3 +52,26 @@ _ewr                            	db	"ewr",'$', 3 dup (?)
 @aux11                          	dd	?
 
 .CODE
+strlen proc
+	mov bx, 0
+	strLoop:
+		cmp BYTE PTR [si+bx],'$'
+		je strend
+		inc bx
+		jmp strLoop
+	strend:
+		ret
+strlen endp
+assignString proc
+	call strlen
+	cmp bx , MAXTEXTSIZE
+	jle assignStringSizeOk
+	mov bx , MAXTEXTSIZE
+	assignStringSizeOk:
+		mov cx , bx
+		cld
+		rep movsb
+		mov al , '$'
+		mov byte ptr[di],al
+		ret
+assignString endp

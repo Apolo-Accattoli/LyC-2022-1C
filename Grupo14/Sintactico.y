@@ -45,6 +45,7 @@ enum tipoError
 /* Defino estructura de informacion para el arbol*/
 typedef struct {
 	char* dato;
+	char* nombre;
 	char tipoDato[15];
 }tInfo;
 
@@ -115,7 +116,7 @@ int insertarTS(const char*, const char*, const char*, int, double);
 t_data* crearDatos(const char*, const char*, const char*, int, double);
 void guardarTS();
 t_tabla tablaTS;
-
+char* replace_char(char* str, char find, char replace);
 char* getTipoId(const char* id); 
 
 char idvec[32][50];
@@ -952,9 +953,12 @@ t_data* crearDatos(const char *nombre, const char *tipo, const char* valString, 
         if(strcmp(tipo, "CONS_STR") == 0)
         {
             data->valor.valor_str = (char*)malloc(sizeof(char) * strlen(valString) +1);
-            data->nombre = (char*)malloc(sizeof(char) * (strlen(valString) + 1));
-            strcat(full, valString);
-            strcpy(data->nombre, full);    
+            
+			//data->nombre = (char*)malloc(sizeof(char) * (strlen(valString) + 1));
+            //strcat(full, valString);
+			
+            data->nombre = (char*)malloc(sizeof(char) * (strlen(valString) + 1));	
+			strcpy(data->nombre, nombre);    
             strcpy(data->valor.valor_str, valString);
         }
         if(strcmp(tipo, "CONS_FLOAT") == 0)
@@ -1119,8 +1123,12 @@ tNodo* crearNodo(const char* dato, tNodo *pIzq, tNodo *pDer){
 
     info.dato = (char*)malloc(sizeof(char) * (strlen(dato) + 1));
 	strcpy(info.dato, dato);
-    //strcpy(info.tipoDato, "SIN_TIPO");
-
+	
+	info.nombre = (char*)malloc(sizeof(char) * (strlen(dato) + 2));
+	strcpy(info.nombre, "_");
+	strcat(info.nombre, dato);
+	replace_char(info.nombre, ' ', '_');
+	
     nodo->info = info;
     nodo->izq = pIzq;
     nodo->der = pDer;
@@ -1128,13 +1136,29 @@ tNodo* crearNodo(const char* dato, tNodo *pIzq, tNodo *pDer){
     return nodo;
 }
 
+char* replace_char(char* str, char find, char replace){
+    char *current_pos = strchr(str,find);
+    while (current_pos) {
+        *current_pos = replace;
+        current_pos = strchr(current_pos,find);
+    }
+    return str;
+}
+
 tNodo* crearHoja(char* dato,char* tipo){	
+
     tNodo* nodoNuevo = (tNodo*)malloc(sizeof(tNodo));
 
     nodoNuevo->info.dato = (char*)malloc(sizeof(char) * (strlen(dato) + 1));
 	strcpy(nodoNuevo->info.dato, dato);
 	
-    //nodoNuevo->info.tipoDato = (char*)malloc(sizeof(char) * (strlen(tipo) + 1));
+    
+	nodoNuevo->info.nombre = (char*)malloc(sizeof(char) * (strlen(dato) + 2));
+	strcpy(nodoNuevo->info.nombre, "_");
+	strcat(nodoNuevo->info.nombre, dato);
+	replace_char(nodoNuevo->info.nombre, ' ', '_');
+
+	//nodoNuevo->info.tipoDato = (char*)malloc(sizeof(char) * (strlen(tipo) + 1));
     strcpy(nodoNuevo->info.tipoDato, tipo);
     
     nodoNuevo->izq = NULL;
@@ -1465,7 +1489,6 @@ void recorrerArbolParaAssembler(FILE * fp, tArbol root) {
         
         int currentIfNode = 0;
         int currentWhileNode = 0;
-
         //Nodo IF
         if(strcmp(root->info.dato, "IF") == 0) {
             hasElse = 0;
@@ -1513,9 +1536,10 @@ void recorrerArbolParaAssembler(FILE * fp, tArbol root) {
                 fprintf(fp, "JMP startIf%d\n", getTopLabelStack(LABEL_IF));
                 fprintf(fp, "else%d:\n", getTopLabelStack(LABEL_IF));
             }
-            else
+            else{
                 fprintf(fp, "startIf%d:\n", getTopLabelStack(LABEL_IF));
-        }
+			}
+		}
 
         if(strcmp(root->info.dato, "CUERPO") == 0) {
             fprintf(fp, "JMP endif%d\n", getTopLabelStack(LABEL_IF));
@@ -1540,9 +1564,8 @@ void recorrerArbolParaAssembler(FILE * fp, tArbol root) {
             fprintf(fp, "JMP condicionWhile%d\n", getTopLabelStack(LABEL_WHILE));
             fprintf(fp, "endwhile%d:\n", popLabel(LABEL_WHILE));
         }
-        
         if (esHoja(root->izq) && esHoja(root->der)) {
-            // soy nodo mas a la izquierda con dos hijos hojas
+			// soy nodo mas a la izquierda con dos hijos hojas
             setOperation(fp, root);
             // reduzco arbol
             root->izq = NULL;
@@ -1593,19 +1616,15 @@ void setOperation(FILE * fp, tArbol root){
     
     if(isArithmetic(root->info.dato)) {
         if(strcmp(root->info.dato, "OPASIG") == 0) {
-     
-           if (root->info.tipoDato && strcmp(root->info.tipoDato, "CONS_STR")==0) {
-           		//	REVISAR, DEBERIA SER DERECHA
-                printf("**************** *************************** LINEA 1600 ************************************** **********************\n");
+           if (strcmp(root->der->info.tipoDato, "CONS_STR")==0) {
                 addCodeToProcesString = 1; 
-                fprintf(fp, "MOV si, OFFSET   %s\n", root->izq);
-                fprintf(fp, "MOV di, OFFSET  %s\n", root->der);
+                fprintf(fp, "MOV si, OFFSET   %s\n", root->der->info.nombre);
+                fprintf(fp, "MOV di, OFFSET  %s\n", root->izq->info.dato);
                 fprintf(fp, "CALL assignString\n");
             } else {
-            	//REVISAR VARIABLES STRING
                 //ASIGNACION DE ALGO QUE NO ES UN STRING (FLOAT O INT)
-                fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->izq), root->izq->info.dato);
-                fprintf(fp, "f%sst %s\n", determinarCargaPila(root, root->der), root->der->info.dato);
+                fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->der), root->der->info.dato);
+                fprintf(fp, "f%sst %s\n", determinarCargaPila(root, root->izq), root->izq->info.dato);
             }
         } else {
             fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->izq), root->izq->info.dato); //st0 = izq
@@ -1628,23 +1647,19 @@ void setOperation(FILE * fp, tArbol root){
         fprintf(fp, "fstsw ax\n");
         fprintf(fp, "sahf\n");
         if (isWhile){
-        	printf("**************** *************************** LINEA 1631 ************************************** **********************\n");
             fprintf(fp, "%s %s%d\n", getComparationInstruction(root->info.dato), getJump(), getTopLabelStack(LABEL_WHILE));
             }
         else{
-        	printf("**************** *************************** LINEA 1635 ************************************** **********************\n");
             fprintf(fp, "%s %s%d\n", getComparationInstruction(root->info.dato), getJump(), getTopLabelStack(LABEL_IF));
             }
     }
 
     if(strcmp(root->info.dato, "READ") == 0) {
-    	printf("**************** *************************** LINEA 1641 ************************************** **********************\n");
-        fprintf(fp, "%s %s\n", getInstructionGet(root->der), root->der->info.dato);
+        fprintf(fp, "%s %s\n", getInstructionGet(root->izq), root->izq->info.dato);
     }
 
     if(strcmp(root->info.dato, "WRITE") == 0) {
-    	printf("**************** *************************** LINEA 1645 ************************************** **********************\n");
-        fprintf(fp, "%s\n", getDisplayInstruction(root->der));
+        fprintf(fp, "%s\n", getDisplayInstruction(root->izq));
         fprintf(fp, "newLine 1\n");
     }
 }
@@ -1660,7 +1675,7 @@ int isArithmetic(const char *operator) {
 
 //Si el tipo de dato del nodo, es del tipo integer, retorna una i, para que la instrucción se procese del tipo integer y sino, que se mantenga del tipo float.
 char *determinarCargaPila(const tArbol raiz, const tNodo * hijo) {
-    if (strcmp(hijo->info.tipoDato, "INTEGER")==0) {
+    if (strcmp(hijo->info.tipoDato, "INTEGER")==0||strcmp(raiz->info.tipoDato, "CONS_INT")==0) {
         return "i";
     }
     return "";
@@ -1668,7 +1683,7 @@ char *determinarCargaPila(const tArbol raiz, const tNodo * hijo) {
 
 //Si el tipo de dato del nodo, es del tipo integer, retorna una i, para que la instrucción se procese del tipo integer y sino, que se mantenga del tipo float.
 char *determinarDescargaPila(const tArbol raiz) {
-    if (strcmp(raiz->info.tipoDato, "INTEGER")==0) {
+    if (strcmp(raiz->info.tipoDato, "INTEGER")==0||strcmp(raiz->info.tipoDato, "CONS_INT")==0) {
         return "i";
     }
     return "";
@@ -1769,18 +1784,12 @@ char* getJump() {
 }
 
 //Obtiene la instrucción display del archivo "numbers.asm", y dependiendo del tipo de dato del nodo, lo convierte a array para poder mostrarlo por pantalla.
-char* getDisplayInstruction(tNodo* nodo) {
-	
-	printf("**************** %s **********************",nodo->info.dato);
-	
-	char * auxiliartipo = getTipoId (nodo->info.dato);
-	
-	if (strcmp(auxiliartipo,"INTEGER")==0 || strcmp(auxiliartipo,"CONS_INT")==0 || strcmp(auxiliartipo,"FLOAT")==0 || strcmp(auxiliartipo,"CONS_FLOAT")==0) {
+char* getDisplayInstruction(tNodo* nodo) {	
+	if (strcmp(nodo->info.tipoDato,"INTEGER")==0 || strcmp(nodo->info.tipoDato,"CONS_INT")==0 || strcmp(nodo->info.tipoDato,"FLOAT")==0 || strcmp(nodo->info.tipoDato,"CONS_FLOAT")==0) {
 		sprintf(instruccionDisplay, "DisplayFloat %s,2", nodo->info.dato);
-	} else if (strcmp(auxiliartipo,"STRING")==0 || strcmp(auxiliartipo,"CONS_STR")==0) {
-        sprintf(instruccionDisplay, "displayString %s", nodo->info.dato);
+	} else if (strcmp(nodo->info.tipoDato,"STRING")==0 || strcmp(nodo->info.tipoDato,"CONS_STR")==0) {
+        sprintf(instruccionDisplay, "displayString %s", nodo->info.nombre);
     }
-    printf("**************** %s **********************",instruccionDisplay);
     return instruccionDisplay;
 }
 
@@ -1795,8 +1804,5 @@ char* getInstructionGet(tNodo* nodo) {
 }
 
 int esHoja(tNodo *hoja) {
-    if (hoja == NULL) {
-        return 0;
-    }
-    return hoja->izq == NULL && hoja->der == NULL;
+    return hoja == NULL || (hoja->izq == NULL && hoja->der == NULL);
 }

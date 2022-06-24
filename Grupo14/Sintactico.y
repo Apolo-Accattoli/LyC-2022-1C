@@ -1550,8 +1550,13 @@ void recorrerArbolParaAssembler(FILE * fp, tArbol root) {
         }
 
         if(currentWhileNode) {
-            fprintf(fp, "startWhile%d:\n", getTopLabelStack(LABEL_WHILE));
-            isWhile = 0; 
+            if(ORcondition){
+                  fprintf(fp, "JMP endwhile%d\n", getTopLabelStack(LABEL_WHILE));
+            }
+			fprintf(fp, "startWhile%d:\n", getTopLabelStack(LABEL_WHILE));
+            isWhile = 0;
+			
+            
         }
         
         // Buscamos nodo a la derecha

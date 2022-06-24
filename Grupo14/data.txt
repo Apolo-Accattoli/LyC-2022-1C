@@ -10,13 +10,68 @@ f1                              	dd	?
 f2                              	dd	?
 f3                              	dd	?
 _3.25                           	dd	3.25
+_5                              	dd	5
+_6                              	dd	6
 _30                             	dd	30
 _31                             	dd	31
-_True1                          	db	"True1",'$', 5 dup (?)
+_10                             	dd	10
+_Else                           	db	"Else",'$', 4 dup (?)
+_7                              	dd	7
 _40                             	dd	40
-_51                             	dd	51
-_True2                          	db	"True2",'$', 5 dup (?)
-_False2                         	db	"False2",'$', 6 dup (?)
-_False1                         	db	"False1",'$', 6 dup (?)
+_41                             	dd	41
+_120                            	dd	120
+_1                              	dd	1
+_100                            	dd	100
+_menor                          	db	"menor",'$', 5 dup (?)
+_mayor                          	db	"mayor",'$', 5 dup (?)
+_primero                        	db	"primero",'$', 7 dup (?)
+_4                              	dd	4
+_9                              	dd	9
+_3.33                           	dd	3.33
+_2                              	dd	2
+_15                             	dd	15
+_si_BETWEEN                     	db	"si BETWEEN",'$', 10 dup (?)
+_no_BETWEEN                     	db	"no BETWEEN",'$', 10 dup (?)
+_12                             	dd	12
+_34                             	dd	34
+_48                             	dd	48
+_si_INLIST                      	db	"si INLIST",'$', 9 dup (?)
+_no_INLIST                      	db	"no INLIST",'$', 9 dup (?)
+_una_cadena                     	db	"una cadena",'$', 10 dup (?)
+_ewr                            	db	"ewr",'$', 3 dup (?)
+@aux1                           	dd	?
+@aux2                           	dd	?
+@aux3                           	dd	?
+@aux4                           	dd	?
+@aux5                           	dd	?
+@aux6                           	dd	?
+@aux7                           	dd	?
+@aux8                           	dd	?
+@aux9                           	dd	?
+@aux10                          	dd	?
+@aux11                          	dd	?
 
 .CODE
+strlen proc
+	mov bx, 0
+	strLoop:
+		cmp BYTE PTR [si+bx],'$'
+		je strend
+		inc bx
+		jmp strLoop
+	strend:
+		ret
+strlen endp
+assignString proc
+	call strlen
+	cmp bx , MAXTEXTSIZE
+	jle assignStringSizeOk
+	mov bx , MAXTEXTSIZE
+	assignStringSizeOk:
+		mov cx , bx
+		cld
+		rep movsb
+		mov al , '$'
+		mov byte ptr[di],al
+		ret
+assignString endp

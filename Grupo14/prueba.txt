@@ -1,13 +1,33 @@
 DECVAR
-a, b : INTEGER
+a, b, c : INTEGER
 f1, f2 : FLOAT
 ENDDEC
 f1:=3.33
 f2:=2.22
+c :=0
 a := 25
 b := 3
 a := b*(a+5)
 WRITE a
 f2:=f1+f2+1.11
 WRITE f2
-WRITE "si BETWEEN"
+IF (a<b OR f2<f1)
+	WRITE "Verdadero"
+ELSE
+	WRITE "Falso"
+ENDIF
+WHILE (c<10)
+	c := c+1
+	WRITE c
+ENDWHILE
+IF (INLIST (a, [2*b+7 ; 12 ; a+b*(34+c) ; 48]))
+	WRITE "si INLIST"
+ELSE
+	WRITE "no INLIST"
+ENDIF
+
+IF (BETWEEN (a, [2 ; 90]))
+	WRITE "si BETWEEN"
+ELSE
+	WRITE "no BETWEEN"
+ENDIF

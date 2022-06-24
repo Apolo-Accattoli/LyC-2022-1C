@@ -1,16 +1,37 @@
 NOMBRE                        TIPODATO                      VALOR                         LONGITUD                      
 a                             INTEGER                       --                            --
 b                             INTEGER                       --                            --
+c                             INTEGER                       --                            --
 f1                            FLOAT                         --                            --
 f2                            FLOAT                         --                            --
 _3_33                         CONS_FLOAT                    3.33                          4
 _2_22                         CONS_FLOAT                    2.22                          4
+_0                            CONS_INT                      0                             1
 _25                           CONS_INT                      25                            2
 _3                            CONS_INT                      3                             1
 _5                            CONS_INT                      5                             1
 _1_11                         CONS_FLOAT                    1.11                          4
+_Verdadero                    CONS_STR                      Verdadero                     9
+_Falso                        CONS_STR                      Falso                         5
+_10                           CONS_INT                      10                            2
+_1                            CONS_INT                      1                             1
+_2                            CONS_INT                      2                             1
+_7                            CONS_INT                      7                             1
+_12                           CONS_INT                      12                            2
+_34                           CONS_INT                      34                            2
+_48                           CONS_INT                      48                            2
+_si_INLIST                    CONS_STR                      si INLIST                     9
+_no_INLIST                    CONS_STR                      no INLIST                     9
+_90                           CONS_INT                      90                            2
 _si_BETWEEN                   CONS_STR                      si BETWEEN                    10
+_no_BETWEEN                   CONS_STR                      no BETWEEN                    10
 @aux1                         INTEGER                       --                            --
 @aux2                         INTEGER                       --                            --
 @aux3                         FLOAT                         --                            --
 @aux4                         FLOAT                         --                            --
+@aux5                         INTEGER                       --                            --
+@aux6                         INTEGER                       --                            --
+@aux7                         INTEGER                       --                            --
+@aux8                         INTEGER                       --                            --
+@aux9                         INTEGER                       --                            --
+@aux10                        INTEGER                       --                            --

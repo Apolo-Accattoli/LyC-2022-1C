@@ -966,8 +966,8 @@ t_data* crearDatos(const char *nombre, const char *tipo, const char* valString, 
             sprintf(aux, "%g", valDouble);
             strcat(full, aux);
             data->nombre = (char*)malloc(sizeof(char) * strlen(full));
-
-            strcpy(data->nombre, full);
+			strcpy(data->nombre, full);
+			replace_char(data->nombre, '.', '_');
             data->valor.valor_double = valDouble;
         }
         if(strcmp(tipo, "CONS_INT") == 0)
@@ -1159,6 +1159,7 @@ tNodo* crearHoja(char* dato,char* tipo){
 		strcpy(nodoNuevo->info.nombre, "_");
 		strcat(nodoNuevo->info.nombre, dato);
 		replace_char(nodoNuevo->info.nombre, ' ', '_');
+		replace_char(nodoNuevo->info.nombre, '.', '_');
 	}
 	else {
 		strcpy(nodoNuevo->info.nombre, dato);
@@ -1363,11 +1364,10 @@ int printHeader(){
 		printf("Error abriendo el archivo del header\n");
 		return -1;
 	}
-	fprintf(fp, "INCLUDE macros.asm\n");
+	
 	fprintf(fp, "INCLUDE macros2.asm\n");
     fprintf(fp, "INCLUDE number.asm\n");
-	fprintf(fp, "INCLUDE numbers.asm\n");
-    fprintf(fp, ".MODEL LARGE\n");
+	fprintf(fp, ".MODEL LARGE\n");
     fprintf(fp, ".386\n");
     fprintf(fp, ".STACK 200h\n"); 
     fclose(fp);

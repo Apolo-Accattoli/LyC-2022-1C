@@ -1,56 +1,13 @@
 DECVAR
-a, b, c, i, x : INTEGER
-cadena : STRING
-f1, f2, f3 : FLOAT
+a, b : INTEGER
+f1, f2 : FLOAT
 ENDDEC
-f1:=3.25
-IF (NOT a > 5 )
-	x:=6
-ELSE
-	IF (a <= 30 OR a == 31)
-		c:=10
-	ELSE
-		WRITE "Else"
-	ENDIF
-	i:=7
-ENDIF
-
-READ x
-
-IF (a <= 40 AND a == 41)
-	b:=120
-ENDIF
-
-WRITE x
-
-WHILE(a > 1 OR b > 1)
-	WHILE(c > 1)
-		x := 1
-		IF(c < 100)
-		
-			WRITE "menor"
-		
-		ELSE
-		
-			WRITE "mayor"
-		ENDIF
-	ENDWHILE
-	WRITE "primero"
-ENDWHILE
-a := a+b
-a := b+4
-a := a*(b+9)
-f2:=f1+a+3.33
-IF (BETWEEN (a, [2 ; 15]))
-	WRITE "si BETWEEN"
-ELSE
-	WRITE "no BETWEEN"
-ENDIF
-
-IF (INLIST (a, [2*b+7 ; 12 ; a+b*(34+i) ; 48]))
-	WRITE "si INLIST"
-ELSE
-	WRITE "no INLIST"
-ENDIF
-cadena := "una cadena" 
-WRITE "ewr" -/ donde "ewr" debe ser una cte string /-
+f1:=3.33
+f2:=2.22
+a := 25
+b := 3
+a := b*(a+5)
+WRITE a
+f2:=f1+f2+1.11
+WRITE f2
+WRITE "si BETWEEN"

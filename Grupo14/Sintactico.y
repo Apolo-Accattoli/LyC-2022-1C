@@ -1154,9 +1154,16 @@ tNodo* crearHoja(char* dato,char* tipo){
 	
     
 	nodoNuevo->info.nombre = (char*)malloc(sizeof(char) * (strlen(dato) + 2));
-	strcpy(nodoNuevo->info.nombre, "_");
-	strcat(nodoNuevo->info.nombre, dato);
-	replace_char(nodoNuevo->info.nombre, ' ', '_');
+	
+	if (strcmp(tipo,"CONS_INT")==0 || strcmp(tipo,"CONS_FLOAT")==0 ||  strcmp(tipo,"CONS_STR")==0 ) {
+		strcpy(nodoNuevo->info.nombre, "_");
+		strcat(nodoNuevo->info.nombre, dato);
+		replace_char(nodoNuevo->info.nombre, ' ', '_');
+	}
+	else {
+		strcpy(nodoNuevo->info.nombre, dato);
+	}
+	
 
 	//nodoNuevo->info.tipoDato = (char*)malloc(sizeof(char) * (strlen(tipo) + 1));
     strcpy(nodoNuevo->info.tipoDato, tipo);
@@ -1631,18 +1638,19 @@ void setOperation(FILE * fp, tArbol root){
                 fprintf(fp, "CALL assignString\n");
             } else {
                 //ASIGNACION DE ALGO QUE NO ES UN STRING (FLOAT O INT)
-                fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->der), root->der->info.dato);
-                fprintf(fp, "f%sst %s\n", determinarCargaPila(root, root->izq), root->izq->info.dato);
+				fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->der), root->der->info.nombre);
+                fprintf(fp, "f%sst %s\n", determinarCargaPila(root, root->izq), root->izq->info.nombre);
             }
         } else {
-            fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->izq), root->izq->info.dato); //st0 = izq
-            fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->der), root->der->info.dato); //st0 = der st1 = izq
+            fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->izq), root->izq->info.nombre); //st0 = izq
+            fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->der), root->der->info.nombre); //st0 = der st1 = izq
             fprintf(fp, "%s\n", getArithmeticInstruction(root->info.dato));
             
             fprintf(fp, "f%sstp @aux%d\n", determinarDescargaPila(root), getAux(root->info.tipoDato));
 
             // Guardo en el arbol el dato del resultado, si uso un aux
             sprintf(root->info.dato, "@aux%d", cantAux);
+			sprintf(root->info.nombre, "@aux%d", cantAux);
         }
     }
 
@@ -1650,8 +1658,8 @@ void setOperation(FILE * fp, tArbol root){
         // esto funciona para comparaciones simples
         //fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->der), root->der->info.dato); //st0 = der
         //fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->izq), root->izq->info.dato); //st0 = izq  st1 = der
-        fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->izq), root->izq->info.dato); 
-		fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->der), root->der->info.dato);
+        fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->izq), root->izq->info.nombre); 
+		fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->der), root->der->info.nombre);
         fprintf(fp, "fxch\n"); 
         fprintf(fp, "fcom\n");
         fprintf(fp, "fstsw ax\n");

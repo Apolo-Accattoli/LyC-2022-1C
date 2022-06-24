@@ -6,29 +6,29 @@ MOV es,ax
 FINIT
 FFREE
 
-fld 3.25
+fld _3.25
 fst f1
 fild a
-fld 5
+fld _5
 fxch
 fcom
 fstsw ax
 sahf
 JA else1
 startIf1:
-fld 6
+fld _6
 fist x
 JMP endif1
 else1:
 fild a
-fld 30
+fld _30
 fxch
 fcom
 fstsw ax
 sahf
 JNA startIf2
 fild a
-fld 31
+fld _31
 fxch
 fcom
 fstsw ax
@@ -36,47 +36,47 @@ sahf
 JE startIf2
 JMP else2
 startIf2:
-fld 10
+fld _10
 fist c
 JMP endif2
 else2:
 displayString _Else
 newLine 1
 endif2:
-fld 7
+fld _7
 fist i
 endif1:
 GetFloat x
 fild a
-fld 40
+fld _40
 fxch
 fcom
 fstsw ax
 sahf
 JA endif3
 fild a
-fld 41
+fld _41
 fxch
 fcom
 fstsw ax
 sahf
 JNE endif3
 startIf3:
-fld 120
+fld _120
 fist b
 endif3:
 DisplayFloat x,2
 newLine 1
 condicionWhile1:
 fild a
-fld 1
+fld _1
 fxch
 fcom
 fstsw ax
 sahf
 JA startWhile1
 fild b
-fld 1
+fld _1
 fxch
 fcom
 fstsw ax
@@ -86,17 +86,17 @@ JMP endwhile1
 startWhile1:
 condicionWhile2:
 fild c
-fld 1
+fld _1
 fxch
 fcom
 fstsw ax
 sahf
 JNA endwhile2
 startWhile2:
-fld 1
+fld _1
 fist x
 fild c
-fld 100
+fld _100
 fxch
 fcom
 fstsw ax
@@ -123,13 +123,13 @@ fistp @aux1
 fild @aux1
 fist a
 fild b
-fild 4
+fild _4
 fadd
 fistp @aux2
 fld @aux2
 fist a
 fild b
-fild 9
+fild _9
 fadd
 fistp @aux3
 fild a
@@ -143,20 +143,20 @@ fild a
 fadd
 fistp @aux5
 fild @aux5
-fld 3.33
+fld _3.33
 fadd
 fstp @aux6
 fld @aux6
 fst f2
 fild a
-fld 2
+fld _2
 fxch
 fcom
 fstsw ax
 sahf
 JNA else5
 fild a
-fld 15
+fld _15
 fxch
 fcom
 fstsw ax
@@ -170,12 +170,12 @@ else5:
 displayString _no_BETWEEN
 newLine 1
 endif5:
-fld 2
+fld _2
 fild b
 fmul
 fistp @aux7
 fild @aux7
-fild 7
+fild _7
 fadd
 fistp @aux8
 fild a
@@ -186,13 +186,13 @@ fstsw ax
 sahf
 JE startIf6
 fild a
-fld 12
+fld _12
 fxch
 fcom
 fstsw ax
 sahf
 JE startIf6
-fld 34
+fld _34
 fild i
 fadd
 fistp @aux9
@@ -212,7 +212,7 @@ fstsw ax
 sahf
 JE startIf6
 fild a
-fld 48
+fld _48
 fxch
 fcom
 fstsw ax

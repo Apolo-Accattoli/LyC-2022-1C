@@ -10,9 +10,9 @@ fld _3_33
 fst f1
 fld _2_22
 fst f2
-fld _25
+fild _25
 fist a
-fld _3
+fild _3
 fist b
 fild a
 fild _5
@@ -22,9 +22,9 @@ fild b
 fild @aux1
 fmul
 fistp @aux2
-fld @aux2
+fild @aux2
 fist a
-DisplayFloat a,2
+DisplayInteger a
 newLine 1
 fld f1
 fld f2

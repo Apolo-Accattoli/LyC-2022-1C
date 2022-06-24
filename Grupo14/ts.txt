@@ -10,7 +10,7 @@ _3                            CONS_INT                      3                   
 _5                            CONS_INT                      5                             1
 _1_11                         CONS_FLOAT                    1.11                          4
 _si_BETWEEN                   CONS_STR                      si BETWEEN                    10
-@aux1                         FLOAT                         --                            --
-@aux2                         FLOAT                         --                            --
+@aux1                         INTEGER                       --                            --
+@aux2                         INTEGER                       --                            --
 @aux3                         FLOAT                         --                            --
 @aux4                         FLOAT                         --                            --

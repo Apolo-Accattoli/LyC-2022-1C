@@ -147,7 +147,7 @@ char *determinarCargaPila(const tArbol, const tNodo *);
 char *determinarDescargaPila(const tArbol);
 char* getArithmeticInstruction(const char *);
 int isComparation(const char *);
-int getAux();
+int getAux(char *);
 char* getJump();
 char* getComparationInstruction(const char *);
 char* getDisplayInstruction(tNodo*);
@@ -1639,6 +1639,7 @@ void setOperation(FILE * fp, tArbol root){
             } else {
                 //ASIGNACION DE ALGO QUE NO ES UN STRING (FLOAT O INT)
 				fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->der), root->der->info.nombre);
+				//printf("*******************HijoDerecho tipo:%s /n", root->der->info.tipo);
                 fprintf(fp, "f%sst %s\n", determinarCargaPila(root, root->izq), root->izq->info.nombre);
             }
         } else {
@@ -1651,6 +1652,8 @@ void setOperation(FILE * fp, tArbol root){
             // Guardo en el arbol el dato del resultado, si uso un aux
             sprintf(root->info.dato, "@aux%d", cantAux);
 			sprintf(root->info.nombre, "@aux%d", cantAux);
+			strcpy(root->info.tipoDato, root->izq->info.tipoDato);
+			
         }
     }
 
@@ -1693,7 +1696,7 @@ int isArithmetic(const char *operator) {
 
 //Si el tipo de dato del nodo, es del tipo integer, retorna una i, para que la instrucción se procese del tipo integer y sino, que se mantenga del tipo float.
 char *determinarCargaPila(const tArbol raiz, const tNodo * hijo) {
-    if (strcmp(hijo->info.tipoDato, "INTEGER")==0||strcmp(raiz->info.tipoDato, "CONS_INT")==0) {
+    if (strcmp(hijo->info.tipoDato, "INTEGER")==0||strcmp(hijo->info.tipoDato, "CONS_INT")==0) {
         return "i";
     }
     return "";
@@ -1774,11 +1777,16 @@ int isComparation(const char *comp) {
 }
 
 //Guarda un auxiliar en la tabla de símbolo, por defecto lo genera del tipo float
-int getAux() {
+int getAux(char * tipoDato) {
     cantAux++;
     char aux[10];
     sprintf(aux, "@aux%d", cantAux);
-    insertarTS(aux, "FLOAT" , "", 0 , 0);
+	if (strcmp(tipoDato,"CONS_INT")==0 || strcmp(tipoDato,"INTEGER")==0) {
+		insertarTS(aux, "INTEGER" , "", 0 , 0);
+	}
+	else {
+		insertarTS(aux, "FLOAT" , "", 0 , 0);
+	}
     return cantAux;
 }
 
@@ -1801,11 +1809,13 @@ char* getJump() {
 
 //Obtiene la instrucción display del archivo "numbers.asm", y dependiendo del tipo de dato del nodo, lo convierte a array para poder mostrarlo por pantalla.
 char* getDisplayInstruction(tNodo* nodo) {	
-	if (strcmp(nodo->info.tipoDato,"INTEGER")==0 || strcmp(nodo->info.tipoDato,"CONS_INT")==0 || strcmp(nodo->info.tipoDato,"FLOAT")==0 || strcmp(nodo->info.tipoDato,"CONS_FLOAT")==0) {
+	if (strcmp(nodo->info.tipoDato,"FLOAT")==0 || strcmp(nodo->info.tipoDato,"CONS_FLOAT")==0) {
 		sprintf(instruccionDisplay, "DisplayFloat %s,2", nodo->info.dato);
 	} else if (strcmp(nodo->info.tipoDato,"STRING")==0 || strcmp(nodo->info.tipoDato,"CONS_STR")==0) {
         sprintf(instruccionDisplay, "displayString %s", nodo->info.nombre);
-    }
+    } else if (strcmp(nodo->info.tipoDato,"INTEGER")==0 || strcmp(nodo->info.tipoDato,"CONS_INT")==0) {
+		sprintf(instruccionDisplay, "DisplayInteger %s", nodo->info.dato);
+	}
     return instruccionDisplay;
 }
 

@@ -9,43 +9,11 @@ f1                            FLOAT                         --                  
 f2                            FLOAT                         --                            --
 f3                            FLOAT                         --                            --
 _3.25                         CONS_FLOAT                    3.25                          4
-_5                            CONS_INT                      5                             1
-_6                            CONS_INT                      6                             1
 _30                           CONS_INT                      30                            2
 _31                           CONS_INT                      31                            2
-_10                           CONS_INT                      10                            2
-_Else                         CONS_STR                      Else                          4
-_7                            CONS_INT                      7                             1
+_True1                        CONS_STR                      True1                         5
 _40                           CONS_INT                      40                            2
-_41                           CONS_INT                      41                            2
-_120                          CONS_INT                      120                           3
-_1                            CONS_INT                      1                             1
-_100                          CONS_INT                      100                           3
-_menor                        CONS_STR                      menor                         5
-_mayor                        CONS_STR                      mayor                         5
-_primero                      CONS_STR                      primero                       7
-_4                            CONS_INT                      4                             1
-_9                            CONS_INT                      9                             1
-_3.33                         CONS_FLOAT                    3.33                          4
-_2                            CONS_INT                      2                             1
-_15                           CONS_INT                      15                            2
-_si_BETWEEN                   CONS_STR                      si BETWEEN                    10
-_no_BETWEEN                   CONS_STR                      no BETWEEN                    10
-_12                           CONS_INT                      12                            2
-_34                           CONS_INT                      34                            2
-_48                           CONS_INT                      48                            2
-_si_INLIST                    CONS_STR                      si INLIST                     9
-_no_INLIST                    CONS_STR                      no INLIST                     9
-_una_cadena                   CONS_STR                      una cadena                    10
-_ewr                          CONS_STR                      ewr                           3
-@aux1                         FLOAT                         --                            --
-@aux2                         FLOAT                         --                            --
-@aux3                         FLOAT                         --                            --
-@aux4                         FLOAT                         --                            --
-@aux5                         FLOAT                         --                            --
-@aux6                         FLOAT                         --                            --
-@aux7                         FLOAT                         --                            --
-@aux8                         FLOAT                         --                            --
-@aux9                         FLOAT                         --                            --
-@aux10                        FLOAT                         --                            --
-@aux11                        FLOAT                         --                            --
+_51                           CONS_INT                      51                            2
+_True2                        CONS_STR                      True2                         5
+_False2                       CONS_STR                      False2                        6
+_False1                       CONS_STR                      False1                        6

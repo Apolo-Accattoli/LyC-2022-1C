@@ -4,8 +4,13 @@ cadena : STRING
 f1, f2, f3 : FLOAT
 ENDDEC
 f1:=3.25
-IF (a > 5 )
-	x:=6
+IF (a <= 30 OR x == 31)
+	WRITE "True1"
 ELSE
-	f1:=3.25
+	IF (b <= 40 AND i == 51)
+		WRITE "True2"
+	ELSE
+		WRITE "False2"
+	ENDIF
+	WRITE "False1"
 ENDIF

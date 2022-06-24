@@ -1533,10 +1533,8 @@ void recorrerArbolParaAssembler(FILE * fp, tArbol root) {
                 }
             }
             if(hasElse){
-                //fprintf(fp, "JMP startIf%d\n", getTopLabelStack(LABEL_IF));
-                //fprintf(fp, "else%d:\n", getTopLabelStack(LABEL_IF));
-				fprintf(fp, "startIf%d:\n", getTopLabelStack(LABEL_IF));
-                
+                fprintf(fp, "JMP startIf%d\n", getTopLabelStack(LABEL_IF));
+                fprintf(fp, "else%d:\n", getTopLabelStack(LABEL_IF));
             }
             else{
                 fprintf(fp, "startIf%d:\n", getTopLabelStack(LABEL_IF));
@@ -1545,8 +1543,7 @@ void recorrerArbolParaAssembler(FILE * fp, tArbol root) {
 
         if(strcmp(root->info.dato, "CUERPO") == 0) {
             fprintf(fp, "JMP endif%d\n", getTopLabelStack(LABEL_IF));
-            //fprintf(fp, "startIf%d:\n", getTopLabelStack(LABEL_IF));
-			fprintf(fp, "else%d:\n", getTopLabelStack(LABEL_IF));
+            fprintf(fp, "startIf%d:\n", getTopLabelStack(LABEL_IF));
         }
 
         if(currentWhileNode) {
@@ -1643,12 +1640,10 @@ void setOperation(FILE * fp, tArbol root){
 
     if(isComparation(root->info.dato)) {
         // esto funciona para comparaciones simples
-        //fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->der), root->der->info.dato); //st0 = der
-        //fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->izq), root->izq->info.dato); //st0 = izq  st1 = der
-        fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->izq), root->izq->info.dato); 
-		fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->der), root->der->info.dato);
-        fprintf(fp, "fxch\n"); 
-        fprintf(fp, "fcom\n");
+        fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->der), root->der->info.dato); //st0 = der
+        fprintf(fp, "f%sld %s\n", determinarCargaPila(root, root->izq), root->izq->info.dato); //st0 = izq  st1 = der
+        fprintf(fp, "fxch\n"); // compara ST0 con ST1"
+        fprintf(fp, "fcom\n"); // compara ST0 con ST1"
         fprintf(fp, "fstsw ax\n");
         fprintf(fp, "sahf\n");
         if (isWhile){
@@ -1708,45 +1703,47 @@ char* getArithmeticInstruction(const char *operator) {
 
 //Obtiene la instrucción de comparación correspondiente dependiendo del operador.
 char* getComparationInstruction(const char *comparador) {
-    if(ORcondition) { 
+    // Esto nos va a servir para cuando venga un OR, ya que hay que invertir la primer comparacion
+    // para que pueda evaluar las dos, sin hacer tantos if
+    if(ORcondition) { //Pongo operadores opuestos porque los carga al reves en la pila para compararlos
         if (strcmp(comparador, "OPMAYOR") == 0)
-            return "JA";
-        if (strcmp(comparador, "OPMAYORIGUAL") == 0)
-            return "JAE";
-        if (strcmp(comparador, "OPMENOR") == 0)
             return "JB";
+        if (strcmp(comparador, "OPMAYORIGUAL") == 0)
+            return "JBE";
+        if (strcmp(comparador, "OPMENOR") == 0)
+            return "JA";
         if (strcmp(comparador, "OPMENORIGUAL") == 0)
-            return "JNA";
+            return "JAE";
         if (strcmp(comparador, "OPIDENTICO") == 0)
             return "JE";
         if (strcmp(comparador, "OPDISTINTO") == 0)
-            return "JNE";    
+            return "JNE";
     } else if(NOTcondition) { 
         if (strcmp(comparador, "OPMAYOR") == 0)
-            return "JA";
-        if (strcmp(comparador, "OPMAYORIGUAL") == 0)
-            return "JAE";
-        if (strcmp(comparador, "OPMENOR") == 0)
             return "JB";
-        if (strcmp(comparador, "OPMENORIGUAL") == 0)
-            return "JNA";
-        if (strcmp(comparador, "OPIDENTICO") == 0)
-            return "JE";
-        if (strcmp(comparador, "OPDISTINTO") == 0)
-            return "JNE";            
-    } else{ 
-		if (strcmp(comparador, "OPMAYOR") == 0)
-            return "JNA";
         if (strcmp(comparador, "OPMAYORIGUAL") == 0)
-            return "JB";
+            return "JBE";
         if (strcmp(comparador, "OPMENOR") == 0)
-            return "JAE";
-        if (strcmp(comparador, "OPMENORIGUAL") == 0)
             return "JA";
+        if (strcmp(comparador, "OPMENORIGUAL") == 0)
+            return "JAE";
         if (strcmp(comparador, "OPIDENTICO") == 0)
             return "JNE";
         if (strcmp(comparador, "OPDISTINTO") == 0)
-            return "JE";      
+            return "JE";
+    } else{ //Pongo operadores opuestos porque los carga al reves en la pila para compararlos y ademas los niego porque si no se cumple, salgo
+        if (strcmp(comparador, "OPMAYOR") == 0)
+            return "JNB";
+        if (strcmp(comparador, "OPMAYORIGUAL") == 0)
+            return "JNBE";
+        if (strcmp(comparador, "OPMENOR") == 0)
+            return "JNA";
+        if (strcmp(comparador, "OPMENORIGUAL") == 0)
+            return "JNAE";
+        if (strcmp(comparador, "OPIDENTICO") == 0)
+            return "JNE";
+        if (strcmp(comparador, "OPDISTINTO") == 0)
+            return "JE";            
     }
 }
 
@@ -1774,12 +1771,12 @@ char* getJump() {
     if(ORcondition) {
         if(isWhile)
             return "startWhile";
-        return "startIf"; //startIf
+        return "startIf";
     } else {
         if(isWhile)
             return "endwhile";
         if (hasElse) {
-            return "else"; //else
+            return "else";
         } else {
             return "endif";
         }

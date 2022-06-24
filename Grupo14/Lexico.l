@@ -26,7 +26,7 @@ void validarInt(int);
 DIGITO    		[0-9]
 LETRA     		[a-zA-Z]
 COMENTARIO		"-/"(.*?)"/-"
-CONS_STR  		\"([^\"\\]|\\\"|\\\\)*\"
+CONS_STR  		\"({LETRA}|{DIGITO})({LETRA}|{DIGITO}|" ")*\"
 ID 		  		{LETRA}({LETRA}|{DIGITO})*
 CONS_FLOAT 		{DIGITO}*"."{DIGITO}+|{DIGITO}+"."{DIGITO}*
 CONS_INT  		{DIGITO}+

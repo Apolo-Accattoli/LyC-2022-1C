@@ -10,6 +10,18 @@ fld _3_33
 fst f1
 fld _2_22
 fst f2
+fld f1
+fld f2
+fadd
+fstp @aux1
+fld @aux1
+fld _1_11
+fadd
+fstp @aux2
+fld @aux2
+fst f2
+DisplayFloat f2,2
+newLine 1
 fild _25
 fist a
 fild _3
@@ -17,159 +29,235 @@ fist b
 fild a
 fild _5
 fadd
-fistp @aux1
+fistp @aux3
 fild b
-fild @aux1
+fild @aux3
 fmul
-fistp @aux2
-fild @aux2
+fistp @aux4
+fild @aux4
 fist a
-displayString _Ingrese_un_numero
+fild _8
+fist x
+fild _25
+fist i
+fild a
+fild _5
+fxch
+fcom
+fstsw ax
+sahf
+JA else1
+startIf1:
+fild _6
+fist x
+JMP endif1
+else1:
+fild a
+fild _30
+fxch
+fcom
+fstsw ax
+sahf
+JNA startIf2
+fld f1
+fld _31_5
+fxch
+fcom
+fstsw ax
+sahf
+JB startIf2
+JMP else2
+startIf2:
+fild _10
+fist c
+JMP endif2
+else2:
+displayString _a_____
 newLine 1
-GetInteger c
-displayString _El_numero_es
+endif2:
+fild _16
+fist i
+endif1:
+DisplayInteger x
 newLine 1
 DisplayInteger c
 newLine 1
-DisplayInteger a
+DisplayInteger i
 newLine 1
-fld f1
-fld f2
-fadd
-fstp @aux3
-fld @aux3
-fld _1_11
-fadd
-fstp @aux4
-fld @aux4
-fst f2
-DisplayFloat f2,2
+displayString _Ingrese_repeticiones
 newLine 1
-fild a
-fild b
+GetInteger x
+displayString _Ingrese_otro_repeticiones
+newLine 1
+GetInteger i
+fild x
+fild _40
 fxch
 fcom
 fstsw ax
 sahf
-JB startIf1
-fld f2
-fld f1
+JA endif3
+fild i
+fild _5
 fxch
 fcom
 fstsw ax
 sahf
-JB startIf1
-JMP else1
-startIf1:
-displayString _Verdadero
+JNE endif3
+startIf3:
+displayString _If_sin_Else
 newLine 1
-JMP endif1
-else1:
-displayString _Falso
+displayString _b
 newLine 1
-endif1:
+endif3:
+fild _0
+fist c
+fild _0
+fist a
 condicionWhile1:
-fild c
-fild _10
+fild a
+fild x
 fxch
 fcom
 fstsw ax
 sahf
 JAE endwhile1
+fild b
+fild _1
+fxch
+fcom
+fstsw ax
+sahf
+JE endwhile1
 startWhile1:
+condicionWhile2:
+fild c
+fild i
+fxch
+fcom
+fstsw ax
+sahf
+JAE endwhile2
+startWhile2:
+DisplayInteger c
+newLine 1
+fild c
+fild _100
+fxch
+fcom
+fstsw ax
+sahf
+JAE else4
+startIf4:
+displayString _menor
+newLine 1
+JMP endif4
+else4:
+displayString _Mayor
+newLine 1
+endif4:
 fild c
 fild _1
 fadd
 fistp @aux5
 fild @aux5
 fist c
-DisplayInteger c
+JMP condicionWhile2
+endwhile2:
+displayString _Ingrese_1_para_salir
 newLine 1
-JMP condicionWhile1
-endwhile1:
-fild _2
-fild b
-fmul
+GetInteger b
+fild a
+fild _1
+fadd
 fistp @aux6
 fild @aux6
-fild _7
-fadd
-fistp @aux7
+fist a
+JMP condicionWhile1
+endwhile1:
 fild a
-fild @aux7
+fild _2
 fxch
 fcom
 fstsw ax
 sahf
-JE startIf2
+JNA else5
+fild a
+fild _15
+fxch
+fcom
+fstsw ax
+sahf
+JAE else5
+startIf5:
+displayString _si_BETWEEN
+newLine 1
+JMP endif5
+else5:
+displayString _no_BETWEEN
+newLine 1
+endif5:
+fild _2
+fild b
+fmul
+fistp @aux7
+fild @aux7
+fild _7
+fadd
+fistp @aux8
+fild a
+fild @aux8
+fxch
+fcom
+fstsw ax
+sahf
+JE startIf6
 fild a
 fild _12
 fxch
 fcom
 fstsw ax
 sahf
-JE startIf2
+JE startIf6
 fild _34
-fild c
+fild i
 fadd
-fistp @aux8
-fild b
-fild @aux8
-fmul
 fistp @aux9
-fild a
+fild b
 fild @aux9
-fadd
+fmul
 fistp @aux10
 fild a
 fild @aux10
+fadd
+fistp @aux11
+fild a
+fild @aux11
 fxch
 fcom
 fstsw ax
 sahf
-JE startIf2
+JE startIf6
 fild a
 fild _48
 fxch
 fcom
 fstsw ax
 sahf
-JE startIf2
-JMP else2
-startIf2:
+JE startIf6
+JMP else6
+startIf6:
 displayString _si_INLIST
 newLine 1
-JMP endif2
-else2:
+JMP endif6
+else6:
 displayString _no_INLIST
 newLine 1
-endif2:
-fild a
-fild _2
-fxch
-fcom
-fstsw ax
-sahf
-JNA else3
-fild a
-fild _90
-fxch
-fcom
-fstsw ax
-sahf
-JAE else3
-startIf3:
-displayString _si_BETWEEN
-newLine 1
-JMP endif3
-else3:
-displayString _no_BETWEEN
-newLine 1
-endif3:
-displayString _Escriba_unas_palabras
-newLine 1
-getString cadena
-displayString _Usted_escribio
-newLine 1
+endif6:
+MOV si, OFFSET   _una_cadena
+MOV di, OFFSET  cadena
+CALL assignString
 displayString cadena
+newLine 1
+displayString _ewr
 newLine 1

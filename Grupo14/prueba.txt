@@ -1,41 +1,72 @@
 DECVAR
-a, b, c : INTEGER
-f1, f2 : FLOAT
+a, b, c, i, x : INTEGER
 cadena : STRING
+f1, f2, f3 : FLOAT
 ENDDEC
 f1:=3.33
 f2:=2.22
+f2:=f1+f2+1.11
+WRITE f2
 a := 25
 b := 3
 a := b*(a+5)
-WRITE "Ingrese un numero"
-READ c
-WRITE "El numero es"
-WRITE c
-WRITE a
-f2:=f1+f2+1.11
-WRITE f2
-IF (a<b OR f2<f1)
-	WRITE "Verdadero"
+x := 8
+i := 25
+IF (NOT a > 5 )
+	x:=6
 ELSE
-	WRITE "Falso"
-ENDIF
-WHILE (c<10)
-	c := c+1
-	WRITE c
-ENDWHILE
-IF (INLIST (a, [2*b+7 ; 12 ; a+b*(34+c) ; 48]))
-	WRITE "si INLIST"
-ELSE
-	WRITE "no INLIST"
+	IF (a <= 30 OR f1 < 31.5)
+		c:=10
+	ELSE
+		WRITE "a     "
+	ENDIF
+	i:=16
 ENDIF
 
-IF (BETWEEN (a, [2 ; 90]))
+WRITE x
+WRITE c
+WRITE i
+WRITE "Ingrese repeticiones"
+READ x
+WRITE "Ingrese otro repeticiones"
+READ i
+
+IF (x <= 40 AND i == 5)
+	WRITE "If sin Else"
+	WRITE "b"
+ENDIF
+c := 0
+a := 0
+WHILE(a < x AND b != 1)
+	WHILE(c < i)
+		WRITE c
+		IF(c < 100)
+		
+			WRITE "menor"
+		
+		ELSE
+		
+			WRITE "Mayor"
+		ENDIF
+		c := c + 1
+	ENDWHILE
+	
+	WRITE "Ingrese 1 para salir"
+	READ b
+	a := a +1
+ENDWHILE
+
+IF (BETWEEN (a, [2 ; 15]))
 	WRITE "si BETWEEN"
 ELSE
 	WRITE "no BETWEEN"
 ENDIF
-WRITE "Escriba unas palabras"
-READ cadena
-WRITE "Usted escribio"
+
+IF (INLIST (a, [2*b+7 ; 12 ; a+b*(34+i) ; 48]))
+	WRITE "si INLIST"
+ELSE
+	WRITE "no INLIST"
+ENDIF
+cadena := "una cadena" 
 WRITE cadena
+WRITE "ewr" -/ donde "ewr" debe ser una cte string /-

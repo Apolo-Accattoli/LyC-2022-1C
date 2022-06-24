@@ -3,33 +3,48 @@
 a                               	dd	?
 b                               	dd	?
 c                               	dd	?
+i                               	dd	?
+x                               	dd	?
+cadena                          	dd	?
 f1                              	dd	?
 f2                              	dd	?
-cadena                          	dd	?
+f3                              	dd	?
 _3_33                           	dd	3.33
 _2_22                           	dd	2.22
+_1_11                           	dd	1.11
 _25                             	dd	25
 _3                              	dd	3
 _5                              	dd	5
-_Ingrese_un_numero              	db	"Ingrese un numero",'$', 17 dup (?)
-_El_numero_es                   	db	"El numero es",'$', 12 dup (?)
-_1_11                           	dd	1.11
-_Verdadero                      	db	"Verdadero",'$', 9 dup (?)
-_Falso                          	db	"Falso",'$', 5 dup (?)
+_8                              	dd	8
+_6                              	dd	6
+_30                             	dd	30
+_31_5                           	dd	31.5
 _10                             	dd	10
+_a_____                         	db	"a     ",'$', 6 dup (?)
+_16                             	dd	16
+_Ingrese_repeticiones           	db	"Ingrese repeticiones",'$', 20 dup (?)
+_Ingrese_otro_repeticiones      	db	"Ingrese otro repeticiones",'$', 25 dup (?)
+_40                             	dd	40
+_If_sin_Else                    	db	"If sin Else",'$', 11 dup (?)
+_b                              	db	"b",'$', 1 dup (?)
+_0                              	dd	0
 _1                              	dd	1
+_100                            	dd	100
+_menor                          	db	"menor",'$', 5 dup (?)
+_Mayor                          	db	"Mayor",'$', 5 dup (?)
+_Ingrese_1_para_salir           	db	"Ingrese 1 para salir",'$', 20 dup (?)
 _2                              	dd	2
+_15                             	dd	15
+_si_BETWEEN                     	db	"si BETWEEN",'$', 10 dup (?)
+_no_BETWEEN                     	db	"no BETWEEN",'$', 10 dup (?)
 _7                              	dd	7
 _12                             	dd	12
 _34                             	dd	34
 _48                             	dd	48
 _si_INLIST                      	db	"si INLIST",'$', 9 dup (?)
 _no_INLIST                      	db	"no INLIST",'$', 9 dup (?)
-_90                             	dd	90
-_si_BETWEEN                     	db	"si BETWEEN",'$', 10 dup (?)
-_no_BETWEEN                     	db	"no BETWEEN",'$', 10 dup (?)
-_Escriba_unas_palabras          	db	"Escriba unas palabras",'$', 21 dup (?)
-_Usted_escribio                 	db	"Usted escribio",'$', 14 dup (?)
+_una_cadena                     	db	"una cadena",'$', 10 dup (?)
+_ewr                            	db	"ewr",'$', 3 dup (?)
 @aux1                           	dd	?
 @aux2                           	dd	?
 @aux3                           	dd	?
@@ -40,5 +55,29 @@ _Usted_escribio                 	db	"Usted escribio",'$', 14 dup (?)
 @aux8                           	dd	?
 @aux9                           	dd	?
 @aux10                          	dd	?
+@aux11                          	dd	?
 
 .CODE
+strlen proc
+	mov bx, 0
+	strLoop:
+		cmp BYTE PTR [si+bx],'$'
+		je strend
+		inc bx
+		jmp strLoop
+	strend:
+		ret
+strlen endp
+assignString proc
+	call strlen
+	cmp bx , MAXTEXTSIZE
+	jle assignStringSizeOk
+	mov bx , MAXTEXTSIZE
+	assignStringSizeOk:
+		mov cx , bx
+		cld
+		rep movsb
+		mov al , '$'
+		mov byte ptr[di],al
+		ret
+assignString endp

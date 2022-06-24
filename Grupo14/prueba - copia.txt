@@ -1,0 +1,41 @@
+DECVAR
+a, b, c : INTEGER
+f1, f2 : FLOAT
+cadena : STRING
+ENDDEC
+f1:=3.33
+f2:=2.22
+a := 25
+b := 3
+a := b*(a+5)
+WRITE "Ingrese un numero"
+READ c
+WRITE "El numero es"
+WRITE c
+WRITE a
+f2:=f1+f2+1.11
+WRITE f2
+IF (a<b OR f2<f1)
+	WRITE "Verdadero"
+ELSE
+	WRITE "Falso"
+ENDIF
+WHILE (c<10)
+	c := c+1
+	WRITE c
+ENDWHILE
+IF (INLIST (a, [2*b+7 ; 12 ; a+b*(34+c) ; 48]))
+	WRITE "si INLIST"
+ELSE
+	WRITE "no INLIST"
+ENDIF
+
+IF (BETWEEN (a, [2 ; 90]))
+	WRITE "si BETWEEN"
+ELSE
+	WRITE "no BETWEEN"
+ENDIF
+WRITE "Escriba unas palabras"
+READ cadena
+WRITE "Usted escribio"
+WRITE cadena

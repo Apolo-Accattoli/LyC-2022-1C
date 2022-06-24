@@ -1823,10 +1823,12 @@ char* getDisplayInstruction(tNodo* nodo) {
 char* getInstructionGet(tNodo* nodo) {
     char * auxiliartipo = getTipoId (nodo->info.dato);
 	
-    if (strcmp(auxiliartipo,"INTEGER")==0 || strcmp(auxiliartipo,"FLOAT")==0 )
+    if (strcmp(auxiliartipo,"FLOAT")==0 )
         return "GetFloat";
     if (strcmp(auxiliartipo,"STRING")==0)
         return "getString"; //Esta en macros2.asm
+	if (strcmp(auxiliartipo,"INTEGER")==0)
+		return "GetInteger";
 }
 
 int esHoja(tNodo *hoja) {

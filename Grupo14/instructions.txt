@@ -10,8 +10,6 @@ fld _3_33
 fst f1
 fld _2_22
 fst f2
-fild _0
-fist c
 fild _25
 fist a
 fild _3
@@ -26,6 +24,13 @@ fmul
 fistp @aux2
 fild @aux2
 fist a
+displayString _Ingrese_un_numero
+newLine 1
+GetInteger c
+displayString _El_numero_es
+newLine 1
+DisplayInteger c
+newLine 1
 DisplayInteger a
 newLine 1
 fld f1
@@ -161,3 +166,10 @@ else3:
 displayString _no_BETWEEN
 newLine 1
 endif3:
+displayString _Escriba_unas_palabras
+newLine 1
+getString cadena
+displayString _Usted_escribio
+newLine 1
+displayString cadena
+newLine 1

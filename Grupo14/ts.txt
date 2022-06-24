@@ -4,12 +4,14 @@ b                             INTEGER                       --                  
 c                             INTEGER                       --                            --
 f1                            FLOAT                         --                            --
 f2                            FLOAT                         --                            --
+cadena                        STRING                        --                            --
 _3_33                         CONS_FLOAT                    3.33                          4
 _2_22                         CONS_FLOAT                    2.22                          4
-_0                            CONS_INT                      0                             1
 _25                           CONS_INT                      25                            2
 _3                            CONS_INT                      3                             1
 _5                            CONS_INT                      5                             1
+_Ingrese_un_numero            CONS_STR                      Ingrese un numero             17
+_El_numero_es                 CONS_STR                      El numero es                  12
 _1_11                         CONS_FLOAT                    1.11                          4
 _Verdadero                    CONS_STR                      Verdadero                     9
 _Falso                        CONS_STR                      Falso                         5
@@ -25,6 +27,8 @@ _no_INLIST                    CONS_STR                      no INLIST           
 _90                           CONS_INT                      90                            2
 _si_BETWEEN                   CONS_STR                      si BETWEEN                    10
 _no_BETWEEN                   CONS_STR                      no BETWEEN                    10
+_Escriba_unas_palabras        CONS_STR                      Escriba unas palabras         21
+_Usted_escribio               CONS_STR                      Usted escribio                14
 @aux1                         INTEGER                       --                            --
 @aux2                         INTEGER                       --                            --
 @aux3                         FLOAT                         --                            --

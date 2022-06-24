@@ -5,10 +5,6 @@ f2
 2.22 
 OPASIG 
 BLOQUE 
-c 
-0 
-OPASIG 
-BLOQUE 
 a 
 25 
 OPASIG 
@@ -24,6 +20,18 @@ a
 OPSUMA 
 OPMUL 
 OPASIG 
+BLOQUE 
+Ingrese un numero 
+WRITE 
+BLOQUE 
+c 
+READ 
+BLOQUE 
+El numero es 
+WRITE 
+BLOQUE 
+c 
+WRITE 
 BLOQUE 
 a 
 WRITE 
@@ -111,4 +119,16 @@ no BETWEEN
 WRITE 
 CUERPO 
 IF 
+BLOQUE 
+Escriba unas palabras 
+WRITE 
+BLOQUE 
+cadena 
+READ 
+BLOQUE 
+Usted escribio 
+WRITE 
+BLOQUE 
+cadena 
+WRITE 
 BLOQUE 
